@@ -1,5 +1,6 @@
 <?php
-	$username = "bencentra"; // $_SERVER['WEBAUTH_USER'];
+	$userName = "bencentra"; // $_SERVER['WEBAUTH_USER'];
+	$commonName = "Ben Centra"; // $_SERVER['WEBAUTH_LDAP_CN'];
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -91,22 +92,26 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJDy3u2nsUVz_l8AON489lo29SzHTEGYI"></script>
 	<script>
 
-		var username = "<?php echo $username; ?>";
+		var uid = "<?php echo $userName; ?>";
+		var cn = "<?php echo $commonName; ?>"; 
 
 		var map = false;
+		var geocoder = false;
 		var markers = [];
-		var myLatlng = new google.maps.LatLng(37,-97);
+		var center = new google.maps.LatLng(37,-97);
 
 		function initialize() {
 			var mapCanvas = document.querySelector("#map-canvas");
 
       var mapOptions = {
       	disableDefaultUI: true,
-        center: myLatlng,
+        center: center,
         zoom: 5
       };
 
       map = map || new google.maps.Map(mapCanvas, mapOptions);
+
+      geocoder = new google.maps.Geocoder();
 
       addMarkers();
     }
@@ -125,15 +130,17 @@
     					var user = users[i];
     					addMarker(user.latitude, user.longitude, user.username);
     				}
-    				console.log(markers);
     				// Check if current user is on the map
-    				var found = findUser(username, users);
-    				if (!found) {
-    					$("#addressModal").modal('show');
+    				var found = findUser(uid, users);
+    				if (found) {
+    					$("#addressChange").val(found.address);
     				} 
+    				else {
+    					$("#addressModal").modal('show');
+    				}
     			}
     			else {
-    				console.error(message);
+    				console.error(data.message);
     			}
     		},
     		error: function(ajax, status, error) {
@@ -170,17 +177,44 @@
     function saveAddress() {
     	var address = $("#addressChange").val();
     	console.log(address);
-    	// $.ajax({
-    	// 	url: "http://localhost/csh-map/lib/add_user.php",
-    	// 	dataType: "json",
-    	// 	method: "POST",
-    	// 	success: function(data, status, ajax) {
-    	// 		console.log(data);
-    	// 	},
-    	// 	error: function(ajax, status, error) {
-    	// 		console.error(error);
-    	// 	}
-    	// });
+    	try {
+    		if (!geocoder) throw "Geocoder no instantiated, can't lookup address!";
+    		geocoder.geocode({"address":address}, function (results, status) {
+	    		if (status == google.maps.GeocoderStatus.OK) {
+	    			console.log(results);
+	    			var location = results[0].geometry.location;
+	    			addMarker(location.k, location.B, uid);
+	    			$.ajax({
+	    				url: "http://localhost/csh-map/lib/add_user.php",
+	    				dataType: "json", 
+	    				method: "POST",
+	    				data: {
+	    					latitude: location.k,
+	    					longitude: location.B,
+	    					address: results[0].formatted_address
+	    				},
+	    				success: function (data, status, ajax) {
+	    					console.log(data);
+	    					if (data.status) {
+	    						$("#addressModal").modal('hide');
+	    					}
+	    					else {
+	    						console.error(data.message);
+	    					}
+	    				},
+	    				error: function (ajax, status, error) {
+	    					console.error(error);
+	    				}
+	    			});
+	    		}
+	    		else {
+	    			console.error(status);
+	    		}
+	    	});
+    	}
+    	catch (ex) {
+    		console.error(ex);
+    	}
     }
 
     // Initialize the map
