@@ -19,15 +19,11 @@
 		html { height: 100%; }
     body { height: 100%; margin: 0; padding: 0; }
     #map-canvas { height: 100%; z-index: 0}
-    #wrapper { width: 100%; position: absolute; top: 0; left: 0; z-index: 1}
-    #header { 
-    	height: 72px; 
-    	width: 100%; 
-    	padding: 12px;
-    }
-    #header h2 { margin-top: 0; }
-    .navbar { box-shadow: 0 0 12px #777777; padding: 6px;}
+    #wrapper { width: 100%; padding: 12px; position: absolute; top: 0; left: 0; z-index: 1}
+    .navbar { padding: 6px;}
     .gray { color: #777777; }
+    .shadow { box-shadow: 0 0 12px #777777; }
+    .hide { display: none; }
 	</style>
 </head>
 <body>
@@ -60,34 +56,36 @@
 	</div><!-- /.modal -->
 	<div id="map-canvas"></div>
 	<div id="wrapper">
-		<div id="header">
-			<nav class="navbar navbar-default" role="navigation">
-			  <div class="container-fluid">
-			    <!-- Brand and toggle get grouped for better mobile display -->
-			    <div class="navbar-header">
-			      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-			        <span class="sr-only">Toggle navigation</span>
-			        <span class="icon-bar"></span>
-			        <span class="icon-bar"></span>
-			        <span class="icon-bar"></span>
-			      </button>
-			      <a class="navbar-brand" href="#">CSH Map</a>
-			    </div>
-			    <!-- Collect the nav links, forms, and other content for toggling -->
-			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			      <ul class="nav navbar-nav"></ul>
-			      <p class="navbar-text">Find CSH Members and Alumni Across the Globe!</p>
-			      <ul class="navbar-form navbar-right">
-			      	<!-- <div class="form-group">
-						    <input type="text" class="form-control" placeholder="Username">
-						  </div>
-						  <button type="submit" class="btn btn-primary">Search</button>
-						  <span class="gray">&nbsp;|&nbsp;</span> -->
-			      	<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addressModal">Change My Location</button>
-			      </ul>
-			    </div><!-- /.navbar-collapse -->
-			  </div><!-- /.container-fluid -->
-			</nav><!-- /.navbar -->
+		<nav class="navbar navbar-default shadow" role="navigation">
+		  <div class="container-fluid">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+		      <a class="navbar-brand" href="#">CSH Map</a>
+		    </div>
+		    <!-- Collect the nav links, forms, and other content for toggling -->
+		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		      <ul class="nav navbar-nav"></ul>
+		      <p class="navbar-text">Find CSH Members and Alumni Across the Globe!</p>
+		      <ul class="navbar-form navbar-right">
+		      	<!-- <div class="form-group">
+					    <input type="text" class="form-control" placeholder="Username">
+					  </div>
+					  <button type="submit" class="btn btn-primary">Search</button>
+					  <span class="gray">&nbsp;|&nbsp;</span> -->
+		      	<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+		      </ul>
+		    </div><!-- /.navbar-collapse -->
+		  </div><!-- /.container-fluid -->
+		</nav><!-- /.navbar -->
+		<div class="alert alert-success shadow" id="alert" role="alert" style="display:none;">
+			<button type="button" class="close"><span>&times;</span></button>
+		  <strong class="alert-title">Title!</strong> <span class="alert-text">Text!</span>
 		</div>
 	</div>
 	<!-- Scripts -->
@@ -99,8 +97,14 @@
 		var uid = "<?php echo $userName; ?>";
 		var cn = "<?php echo $commonName; ?>"; 
 
+		$("#alert").alert();
+		$("#alert").click(function() {
+			$(this).hide();
+		});
+
 		var map = false;
 		var geocoder = false;
+		var info = false;
 		var markers = [];
 		var center = new google.maps.LatLng(37,-97);
 
@@ -110,7 +114,7 @@
       var mapOptions = {
       	disableDefaultUI: true,
         center: center,
-        zoom: 5
+        zoom: 4
       };
 
       map = map || new google.maps.Map(mapCanvas, mapOptions);
@@ -147,10 +151,16 @@
     			}
     			else {
     				console.error(data.message);
+    				$("#alert .alert-title").html("Warning!");
+						$("#alert .alert-text").html(data.message);
+						$("#alert").addClass("alert-danger").removeClass("alert-success").show();
     			}
     		},
     		error: function(ajax, status, error) {
     			console.error(error);
+    			$("#alert .alert-title").html("Warning!");
+					$("#alert .alert-text").html(error);
+					$("#alert").addClass("alert-danger").removeClass("alert-success").show();
     		}
       });
     }
@@ -217,6 +227,9 @@
 	    						removeMarker();
 	    						var title = cn + " (" + uid + ")";
 	    						addMarker(location.k, location.B, title);
+	    						$("#alert .alert-title").html("Success!");
+	    						$("#alert .alert-text").html(data.message);
+	    						$("#alert").addClass("alert-success").removeClass("alert-danger").show();
 	    						$("#addressModal").modal('hide');
 	    					}
 	    					else {
@@ -225,11 +238,19 @@
 	    				},
 	    				error: function (ajax, status, error) {
 	    					console.error(error);
+	    					$("#alert .alert-title").html("Warning!");
+								$("#alert .alert-text").html(error);
+								$("#alert").addClass("alert-danger").removeClass("alert-success").show();
+								$("#addressModal").modal('hide');
 	    				}
 	    			});
 	    		}
 	    		else {
 	    			console.error(status);
+	    			$("#alert .alert-title").html("Warning!");
+						$("#alert .alert-text").html("Error geocoding your address, please try again! (i.e. not \"Buttworld\")");
+						$("#alert").addClass("alert-danger").removeClass("alert-success").show();
+						$("#addressModal").modal('hide');
 	    		}
 	    	});
     	}
