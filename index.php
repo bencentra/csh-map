@@ -1,5 +1,5 @@
 <?php
-
+	$username = "bencentra"; // $_SERVER['WEBAUTH_USER'];
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -25,10 +25,34 @@
     	padding: 12px;
     }
     #header h2 { margin-top: 0; }
+    .navbar { box-shadow: 0 0 12px #888888; padding: 6px;}
 	</style>
 </head>
 <body>
 	<!-- Content -->
+	<div class="modal fade" id="addressModal" tabindex="-1" role="dialog" aria-labelledby="addressModal" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title">Where You Is?</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<p><em>Provide at least your city and state/country</em></p>
+	        <form role="form">
+	        	<div class="form-group">
+	        		<label for="addressChange">Address:</label>
+	        		<input type="text" id="addressChange" class="form-control" placeholder="Boston, MA"/>
+	        	</div>
+					</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary" onclick="saveAddress();">Save changes</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 	<div id="map-canvas"></div>
 	<div id="wrapper">
 		<div id="header">
@@ -44,23 +68,21 @@
 			      </button>
 			      <a class="navbar-brand" href="#">CSH Map</a>
 			    </div>
-
 			    <!-- Collect the nav links, forms, and other content for toggling -->
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			      <ul class="nav navbar-nav">
-			        
-			      </ul>
+			      <ul class="nav navbar-nav"></ul>
+			      <p class="navbar-text">Find CSH Members and Alumni Across the Globe!</p>
 			      <ul class="navbar-form navbar-right">
 			      	<div class="form-group">
 						    <input type="text" class="form-control" placeholder="Username">
 						  </div>
-						  <button type="submit" class="btn btn-default">Search</button>
+						  <button type="submit" class="btn btn-primary">Search</button>
 						  &nbsp;|&nbsp;
-			      	<button type="button" class="btn btn-default">Change My Location</button>
+			      	<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addressModal">Change My Location</button>
 			      </ul>
 			    </div><!-- /.navbar-collapse -->
 			  </div><!-- /.container-fluid -->
-			</nav>
+			</nav><!-- /.navbar -->
 		</div>
 	</div>
 	<!-- Scripts -->
@@ -68,6 +90,8 @@
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJDy3u2nsUVz_l8AON489lo29SzHTEGYI"></script>
 	<script>
+
+		var username = "<?php echo $username; ?>";
 
 		var map = false;
 		var markers = [];
@@ -79,7 +103,7 @@
       var mapOptions = {
       	disableDefaultUI: true,
         center: myLatlng,
-        zoom: 4
+        zoom: 5
       };
 
       map = map || new google.maps.Map(mapCanvas, mapOptions);
@@ -96,18 +120,24 @@
     			console.log(data);
     			if (data.status) {
     				var users = data.data;
+    				// Place Markers
     				for (var i = 0; i < users.length; i++) {
     					var user = users[i];
     					addMarker(user.latitude, user.longitude, user.username);
     				}
     				console.log(markers);
+    				// Check if current user is on the map
+    				var found = findUser(username, users);
+    				if (!found) {
+    					$("#addressModal").modal('show');
+    				} 
     			}
     			else {
-    				console.log(message);
+    				console.error(message);
     			}
     		},
     		error: function(ajax, status, error) {
-    			console.log(error);
+    			console.error(error);
     		}
       });
     }
@@ -128,6 +158,32 @@
 	    }
     }
 
+    function findUser(username, users) {
+    	for (var i = 0; i < users.length; i++) {
+    		if (users[i].username == username) {
+    			return users[i];
+    		}
+    	}
+    	return false;
+    }
+
+    function saveAddress() {
+    	var address = $("#addressChange").val();
+    	console.log(address);
+    	// $.ajax({
+    	// 	url: "http://localhost/csh-map/lib/add_user.php",
+    	// 	dataType: "json",
+    	// 	method: "POST",
+    	// 	success: function(data, status, ajax) {
+    	// 		console.log(data);
+    	// 	},
+    	// 	error: function(ajax, status, error) {
+    	// 		console.error(error);
+    	// 	}
+    	// });
+    }
+
+    // Initialize the map
     google.maps.event.addDomListener(window, 'load', initialize);
 
 	</script>	

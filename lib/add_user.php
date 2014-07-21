@@ -2,7 +2,7 @@
 
 require_once "./db_utils.php";
 
-$username = "test_user"; // $_SERVER['WEBAUTH_USER'];
+$username = "bencentra"; // $_SERVER['WEBAUTH_USER'];
 
 $params = array();
 $params["username"] = $username;
