@@ -2,7 +2,7 @@
 
 require_once "./db_utils.php";
 
-$sql = "SELECT * FROM geo";
+$sql = "SELECT username, common_name, latitude, longitude, address FROM geo";
 $query = db_select($sql, array());
 if ($query) {
 	echo json_encode(array("status" => true, "message" => "Successfully Retrieved Users!", "data" => $query));

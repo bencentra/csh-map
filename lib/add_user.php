@@ -2,14 +2,16 @@
 
 require_once "./db_utils.php";
 
-$username = "bencentra"; // $_SERVER['WEBAUTH_USER'];
-if (!$username) {
+$userName = "bencentra"; // $_SERVER['WEBAUTH_USER'];
+$commonName = "Ben Centra"; // $_SERVER['WEBAUTH_LDAP_CN'];
+if (!$userName || !$commonName) {
 	echo json_encode(array("status" => false, "message" => "Uh-oh, missing Webauth credentials!", "data" => false));
 	die();
 }
 
 $params = array();
-$params["username"] = $username;
+$params["uid"] = $userName;
+$params["cn"] = $commonName;
 
 if (array_key_exists("latitude", $_POST) && array_key_exists("longitude", $_POST)) {
 	$params["latitude"] = $_POST["latitude"];
@@ -28,7 +30,7 @@ else {
 	die();
 }
 
-$sql = "REPLACE INTO geo (username, latitude, longitude, address) VALUES (:username, :latitude, :longitude, :address)";
+$sql = "REPLACE INTO geo (username, common_name, latitude, longitude, address) VALUES (:uid, :cn, :latitude, :longitude, :address)";
 $query = db_insert($sql, $params);
 if ($query) {
 	echo json_encode(array("status" => true, "message" => "Successfully Updated Address!", "data" => true));

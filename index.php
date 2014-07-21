@@ -26,7 +26,8 @@
     	padding: 12px;
     }
     #header h2 { margin-top: 0; }
-    .navbar { box-shadow: 0 0 12px #888888; padding: 6px;}
+    .navbar { box-shadow: 0 0 12px #777777; padding: 6px;}
+    .gray { color: #777777; }
 	</style>
 </head>
 <body>
@@ -48,7 +49,10 @@
 					</form>
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      	<div class="pull-left">
+	      		<button type="button" class="btn btn-link" onclick="removeAddress();">Remove address</button>
+	      	</div>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 	        <button type="button" class="btn btn-primary" onclick="saveAddress();">Save changes</button>
 	      </div>
 	    </div><!-- /.modal-content -->
@@ -74,11 +78,11 @@
 			      <ul class="nav navbar-nav"></ul>
 			      <p class="navbar-text">Find CSH Members and Alumni Across the Globe!</p>
 			      <ul class="navbar-form navbar-right">
-			      	<div class="form-group">
+			      	<!-- <div class="form-group">
 						    <input type="text" class="form-control" placeholder="Username">
 						  </div>
 						  <button type="submit" class="btn btn-primary">Search</button>
-						  &nbsp;|&nbsp;
+						  <span class="gray">&nbsp;|&nbsp;</span> -->
 			      	<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addressModal">Change My Location</button>
 			      </ul>
 			    </div><!-- /.navbar-collapse -->
@@ -128,8 +132,10 @@
     				// Place Markers
     				for (var i = 0; i < users.length; i++) {
     					var user = users[i];
-    					addMarker(user.latitude, user.longitude, user.username);
+    					var title = user.common_name + " (" + user.username + ")";
+    					addMarker(user.latitude, user.longitude, title);
     				}
+    				console.log(markers);
     				// Check if current user is on the map
     				var found = findUser(uid, users);
     				if (found) {
@@ -165,6 +171,18 @@
 	    }
     }
 
+    function removeMarker() {
+    	var match = cn + " (" + uid + ")";
+    	for (var i = 0; i < markers.length; i++) {
+    		if (markers[i].title == match) {
+    			markers[i].setMap(null);
+    			markers.splice(i,1);
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+
     function findUser(username, users) {
     	for (var i = 0; i < users.length; i++) {
     		if (users[i].username == username) {
@@ -183,7 +201,7 @@
 	    		if (status == google.maps.GeocoderStatus.OK) {
 	    			console.log(results);
 	    			var location = results[0].geometry.location;
-	    			addMarker(location.k, location.B, uid);
+	    			var address = results[0].formatted_address;
 	    			$.ajax({
 	    				url: "http://localhost/csh-map/lib/add_user.php",
 	    				dataType: "json", 
@@ -191,11 +209,14 @@
 	    				data: {
 	    					latitude: location.k,
 	    					longitude: location.B,
-	    					address: results[0].formatted_address
+	    					address: address
 	    				},
 	    				success: function (data, status, ajax) {
 	    					console.log(data);
 	    					if (data.status) {
+	    						removeMarker();
+	    						var title = cn + " (" + uid + ")";
+	    						addMarker(location.k, location.B, title);
 	    						$("#addressModal").modal('hide');
 	    					}
 	    					else {
