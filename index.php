@@ -83,7 +83,7 @@
 						  </div>
 						  <button type="submit" class="btn btn-primary">Search</button>
 						  <span class="gray">&nbsp;|&nbsp;</span> -->
-			      	<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+			      	<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addressModal">Change My Location</button>
 			      </ul>
 			    </div><!-- /.navbar-collapse -->
 			  </div><!-- /.container-fluid -->
