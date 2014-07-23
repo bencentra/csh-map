@@ -74,6 +74,7 @@ var CSH_MAP = function(user) {
             success: function (data, status, ajax) {
               console.log(data);
               if (data.status) {
+                currentUser.address = address;
                 removeMarker(currentUser);
                 addMarker(location.k, location.B, currentUser);
                 showAlert('success', data.message);
