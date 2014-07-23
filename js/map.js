@@ -184,6 +184,29 @@ var CSH_MAP = function(user) {
     return false;
   }
 
+  function changeMapType(type) {
+    try {
+      if (!map) throw "Map not instantiated, not changing map type!";
+      console.log(type);
+      switch (type) {
+        case 'satellite':
+          map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+          break;
+        case 'hybrid':
+          map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+          break;
+        case 'terrain':
+          map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+          break;
+        default:
+          map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+      }
+    }
+    catch (ex) {
+      console.error(ex);
+    }
+  }
+
   function hideAlert() {
     $("#alert").hide();
   }
@@ -205,6 +228,9 @@ var CSH_MAP = function(user) {
     },
     removeAddress: function() {
       deleteAddress();
+    },
+    changeType: function(type) {
+      changeMapType(type);
     }
   };
 

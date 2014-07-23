@@ -24,6 +24,7 @@
     .gray { color: #777777; }
     .shadow { box-shadow: 0 0 12px #777777; }
     .hide { display: none; }
+    .center { text-align: center; }
 	</style>
 </head>
 <body>
@@ -42,14 +43,14 @@
 	        		<label for="addressChange">Address:</label>
 	        		<input type="text" id="addressChange" class="form-control" placeholder="Boston, MA"/>
 	        	</div>
+	        	<div class="pull-right">
+		      		<button type="button" class="btn btn-link" onclick="map.removeAddress();">Remove Address from Map</button>
+		      	</div>
 					</form>
 	      </div>
 	      <div class="modal-footer">
-	      	<div class="pull-left">
-	      		<button type="button" class="btn btn-link" onclick="map.removeAddress();">Remove address</button>
-	      	</div>
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	        <button type="button" class="btn btn-primary" onclick="map.updateAddress();">Save changes</button>
+        	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        	<button type="button" class="btn btn-primary" onclick="map.updateAddress();">Save Changes</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -71,14 +72,24 @@
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav"></ul>
-		      <p class="navbar-text">Find CSH Members and Alumni Across the Globe!</p>
+		      <p class="navbar-text"><em>Find CSHers Across the Globe!</em></p>
 		      <ul class="navbar-form navbar-right">
 		      	<!-- <div class="form-group">
 					    <input type="text" class="form-control" placeholder="Username">
 					  </div>
 					  <button type="submit" class="btn btn-primary">Search</button>
 					  <span class="gray">&nbsp;|&nbsp;</span> -->
-		      	<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+					  <div class="form-group">
+		      		<select class="form-control" id="mapType" onchange="map.changeType(this.value);">
+		      			<option value="roadmap" selected="selected">Road Map</option>
+		      			<option value="satellite">Satellite</option>
+		      			<option value="hybrid">Hybrid</option>
+		      			<option value="terrain">Terrain</option>
+		      		</select>
+		      	</div>
+					  <div class="form-group center">
+		      		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+		      	</div>
 		      </ul>
 		    </div><!-- /.navbar-collapse -->
 		  </div><!-- /.container-fluid -->
