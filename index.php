@@ -20,11 +20,13 @@
     body { height: 100%; margin: 0; padding: 0; }
     #map-canvas { height: 100%; z-index: 0}
     #wrapper { width: 100%; padding: 12px; position: absolute; top: 0; left: 0; z-index: 1}
-    .navbar { padding: 6px;}
+    .navbar { padding: 6px 0;}
+    .navbar-form { padding: 0 6px; }
     .gray { color: #777777; }
     .shadow { box-shadow: 0 0 12px #777777; }
     .hide { display: none; }
     .center { text-align: center; }
+    .slogan { margin: 15px 6px; }
 	</style>
 </head>
 <body>
@@ -37,7 +39,7 @@
 	        <h4 class="modal-title">Where Are You?</h4>
 	      </div>
 	      <div class="modal-body">
-	      	<p><em>Provide at least your city and state/country</em></p>
+	      	<p><em class="gray">Provide at least your city and state/country</em></p>
 	        <form role="form">
 	        	<div class="form-group">
 	        		<label for="addressChange">Address:</label>
@@ -58,43 +60,47 @@
 	<div id="map-canvas"></div>
 	<div id="wrapper">
 		<nav class="navbar navbar-default shadow" role="navigation">
-		  <div class="container-fluid">
-		    <!-- Brand and toggle get grouped for better mobile display -->
-		    <div class="navbar-header">
-		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-		        <span class="sr-only">Toggle navigation</span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		      </button>
-		      <a class="navbar-brand" href="#">CSH Map</a>
-		    </div>
-		    <!-- Collect the nav links, forms, and other content for toggling -->
-		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		      <ul class="nav navbar-nav"></ul>
-		      <p class="navbar-text"><em>Find CSHers Across the Globe!</em></p>
-		      <ul class="navbar-form navbar-right">
-		      	<!-- <div class="form-group">
-					    <input type="text" class="form-control" placeholder="Username">
-					  </div>
-					  <div class="form-group">
-					    <button type="submit" class="btn btn-primary">Search</button>
-					  </div> -->
-					  <div class="form-group">
-		      		<select class="form-control" id="mapType" onchange="map.changeType(this.value);">
-		      			<option value="roadmap" selected="selected">Road Map</option>
-		      			<option value="satellite">Satellite</option>
-		      			<option value="hybrid">Hybrid</option>
-		      			<option value="terrain">Terrain</option>
-		      		</select>
-		      	</div>
-					  <div class="form-group center">
-		      		<button type="button" class="btn btn-info" data-toggle="modal" data-target="#addressModal">Change My Location</button>
-		      	</div>
-		      </ul>
-		    </div><!-- /.navbar-collapse -->
-		  </div><!-- /.container-fluid -->
-		</nav><!-- /.navbar -->
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">CSH Map</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav center">
+            <em class="navbar-text slogan">Find CSHers Across the Globe!</em>
+          </ul>
+          <ul class="navbar-form navbar-right">
+            <div class="form-group">
+              <input class="form-control" placeholder="Search by Name" id="memberSearch" list="members" onkeydown="map.search(this.value);"/>
+              <datalist id="members"></datalist>
+            </div>
+            <div class="form-group center">
+              <button type="button" class="btn btn-default" onclick="map.center($('#memberSearch').val());">Go</button>
+            </div>
+            <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
+            <div class="form-group">
+              <select class="form-control" id="mapType" onchange="map.changeType(this.value);">
+                <option value="roadmap" selected="selected">Road Map</option>
+                <option value="satellite">Satellite</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="terrain">Terrain</option>
+              </select>
+            </div>
+            <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
+            <div class="form-group center">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+            </div>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav><!-- /.navbar -->
 		<div class="alert alert-success shadow" id="alert" role="alert" style="display:none;">
 			<button type="button" class="close"><span>&times;</span></button>
 		  <strong class="alert-title">Title!</strong> <span class="alert-text">Text!</span>

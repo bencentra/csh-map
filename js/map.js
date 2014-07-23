@@ -122,7 +122,7 @@ var CSH_MAP = function(user) {
             var user = users[i];
             addMarker(user);
           }
-          var found = findUser(currentUser.uid, users);
+          var found = findUser(currentUser.uid);
           if (found) {
             $("#addressChange").val(found.address);
           } 
@@ -158,6 +158,7 @@ var CSH_MAP = function(user) {
       var info = new google.maps.InfoWindow({content: content});
       google.maps.event.addListener(marker, 'click', function() { info.open(map, marker); });
       user.marker = marker;
+      user.info = info;
     }
     catch (ex) {
       console.error(ex);
@@ -176,7 +177,7 @@ var CSH_MAP = function(user) {
     return false;
   }
 
-  function findUser(username, users) {
+  function findUser(username) {
     for (var i = 0; i < users.length; i++) {
       if (users[i].uid == username) {
         return users[i];
@@ -189,16 +190,22 @@ var CSH_MAP = function(user) {
     search = ""+search.toLowerCase();
     var len = search.length;
     var results = [];
+    $("#members").html("");
     for (var i = 0; i < users.length; i++) {
       var name = users[i].cn.toLowerCase();
       if (name.substr(0,len) == search) {
         results.push(users[i]);
+        $("#members").append('<option value="'+users[i].cn+'">');
       }
     }
     // var results = users.filter(function(u) {
     //   if (u.cn.toLowerCase().substr(0,len) == search) return true;
     // });
     return results;
+  }
+
+  function centerMap(name) {
+    console.log(name);
   }
 
   function changeMapType(type) {
@@ -251,6 +258,9 @@ var CSH_MAP = function(user) {
     },
     search: function(search) {
       return searchUsers(search);
+    },
+    center: function(name) {
+      return centerMap(name);
     }
   };
 
