@@ -9,6 +9,7 @@ var CSH_MAP = function(user) {
   /*
   * Private variables and functions
   */
+  var apiUrl = "http://localhost/csh-map/api/";
   var map, geocoder, info;
   var markers = [];
   var currentUser = user;
@@ -25,6 +26,32 @@ var CSH_MAP = function(user) {
     addMarkers();
   }
 
+  function deleteAddress() {
+    $.ajax({
+      url: apiUrl+"/users",
+      dataType: "json",
+      method: "DELETE",
+      success: function (data, status, ajax) {
+        console.log(data);
+        if (data.status) {
+          removeMarker(currentUser);
+          showAlert('success', data.message);
+          $("#addressModal").modal('hide');
+        }
+        else {
+          console.error(data.message);
+          showAlert('warn', data.message);
+          $("#addressModal").modal('hide');
+        }
+      },
+      error: function(ajax, status, error) {
+        console.log(error);
+        showAlert('warn', error);
+        $("#addressModal").modal('hide');
+      }
+    })
+  }
+
   function saveAddress() {
     var address = $("#addressChange").val();
     console.log(address);
@@ -36,7 +63,7 @@ var CSH_MAP = function(user) {
           var location = results[0].geometry.location;
           var address = results[0].formatted_address;
           $.ajax({
-            url: "http://localhost/csh-map/lib/add_user.php",
+            url: apiUrl+"/users",
             dataType: "json", 
             method: "POST",
             data: {
@@ -54,6 +81,8 @@ var CSH_MAP = function(user) {
               }
               else {
                 console.error(data.message);
+                showAlert('warn', data.message);
+                $("#addressModal").modal('hide');
               }
             },
             error: function (ajax, status, error) {
@@ -65,7 +94,7 @@ var CSH_MAP = function(user) {
         }
         else {
           console.error(status);
-          showAlert('warn', "Error geocoding your address, please try again! (i.e. not \"Buttworld\")");
+          showAlert('warn', "Error geocoding your address, please try again!");
           $("#addressModal").modal('hide');
         }
       });
@@ -77,7 +106,7 @@ var CSH_MAP = function(user) {
 
   function addMarkers() {
     $.ajax({
-      url: "http://localhost/csh-map/lib/get_users.php",
+      url: apiUrl+"/users",
       dataType: "json",
       method: "GET",
       success: function(data, status, ajax) {
@@ -171,6 +200,9 @@ var CSH_MAP = function(user) {
     },
     updateAddress: function() {
       saveAddress();
+    },
+    removeAddress: function() {
+      deleteAddress();
     }
   };
 

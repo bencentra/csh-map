@@ -46,7 +46,7 @@
 	      </div>
 	      <div class="modal-footer">
 	      	<div class="pull-left">
-	      		<button type="button" class="btn btn-link" onclick="removeAddress();">Remove address</button>
+	      		<button type="button" class="btn btn-link" onclick="map.removeAddress();">Remove address</button>
 	      	</div>
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 	        <button type="button" class="btn btn-primary" onclick="map.updateAddress();">Save changes</button>
