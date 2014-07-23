@@ -9,10 +9,10 @@ var CSH_MAP = function(user) {
   /*
   * Private variables and functions
   */
-  var apiUrl = "http://localhost/csh-map/api";
+  var apiUrl = "http://localhost:8888/csh-map/api/";
   var profilesURL = "https://jdprofiles.csh.rit.edu/user";
   var map, geocoder, info;
-  var markers = [];
+  var users = [];
   var currentUser = user;
   var center = new google.maps.LatLng(37,-97); // Somewhere in Kansas
   
@@ -29,7 +29,7 @@ var CSH_MAP = function(user) {
 
   function deleteAddress() {
     $.ajax({
-      url: apiUrl+"/users",
+      url: apiUrl+"users",
       dataType: "json",
       method: "DELETE",
       success: function (data, status, ajax) {
@@ -64,7 +64,7 @@ var CSH_MAP = function(user) {
           var location = results[0].geometry.location;
           var address = results[0].formatted_address;
           $.ajax({
-            url: apiUrl+"/users",
+            url: apiUrl+"users",
             dataType: "json", 
             method: "POST",
             data: {
@@ -75,10 +75,12 @@ var CSH_MAP = function(user) {
             success: function (data, status, ajax) {
               console.log(data);
               if (data.status) {
+                currentUser.latitude = location.k;
+                currentUser.longitude = location.B;
                 currentUser.address = address;
                 currentUser.date = "Just Now";
                 removeMarker(currentUser);
-                addMarker(location.k, location.B, currentUser);
+                addMarker(currentUser);
                 showAlert('success', data.message);
                 $("#addressModal").modal('hide');
               }
@@ -109,18 +111,17 @@ var CSH_MAP = function(user) {
 
   function addMarkers() {
     $.ajax({
-      url: apiUrl+"/users",
+      url: apiUrl+"users",
       dataType: "json",
       method: "GET",
       success: function(data, status, ajax) {
         console.log(data);
         if (data.status) {
-          var users = data.data;
+          users = data.data;
           for (var i = 0; i < users.length; i++) {
             var user = users[i];
-            addMarker(user.latitude, user.longitude, user);
+            addMarker(user);
           }
-          console.log(markers);
           var found = findUser(currentUser.uid, users);
           if (found) {
             $("#addressChange").val(found.address);
@@ -141,13 +142,13 @@ var CSH_MAP = function(user) {
     });
   }
 
-  function addMarker(lat, long, user) {
+  function addMarker(user) {
     try {
       if (!map) throw "Map not instantiated, not adding marker!";
       var marker = new google.maps.Marker({
         map: map,
         animation: google.maps.Animation.DROP,
-        position: new google.maps.LatLng(lat, long),
+        position: new google.maps.LatLng(user.latitude, user.longitude),
         title: user.cn + " (" + user.uid + ")"
       });
       var content = '<h4>'+user.cn+'</h4>'+
@@ -156,7 +157,7 @@ var CSH_MAP = function(user) {
         '<p class="small gray">Last Updated: '+user.date+'</p>';
       var info = new google.maps.InfoWindow({content: content});
       google.maps.event.addListener(marker, 'click', function() { info.open(map, marker); });
-      markers.push(marker);
+      user.marker = marker;
     }
     catch (ex) {
       console.error(ex);
@@ -165,10 +166,10 @@ var CSH_MAP = function(user) {
 
   function removeMarker(user) {
     var match = user.cn + " (" + user.uid + ")";
-    for (var i = 0; i < markers.length; i++) {
-      if (markers[i].title == match) {
-        markers[i].setMap(null);
-        markers.splice(i,1);
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].marker.title == match) {
+        users[i].marker.setMap(null);
+        users[i].marker = null;
         return true;
       }
     }
@@ -182,6 +183,22 @@ var CSH_MAP = function(user) {
       }
     }
     return false;
+  }
+
+  function searchUsers(search) {
+    search = ""+search.toLowerCase();
+    var len = search.length;
+    var results = [];
+    for (var i = 0; i < users.length; i++) {
+      var name = users[i].cn.toLowerCase();
+      if (name.substr(0,len) == search) {
+        results.push(users[i]);
+      }
+    }
+    // var results = users.filter(function(u) {
+    //   if (u.cn.toLowerCase().substr(0,len) == search) return true;
+    // });
+    return results;
   }
 
   function changeMapType(type) {
@@ -221,16 +238,19 @@ var CSH_MAP = function(user) {
 
   return {
     initializeMap: function() {
-      initialize();
+      return initialize();
     },
     updateAddress: function() {
-      saveAddress();
+      return saveAddress();
     },
     removeAddress: function() {
-      deleteAddress();
+      return deleteAddress();
     },
     changeType: function(type) {
-      changeMapType(type);
+      return changeMapType(type);
+    },
+    search: function(search) {
+      return searchUsers(search);
     }
   };
 
