@@ -275,7 +275,12 @@ var CSH_MAP = function(user) {
     },
     center: function(name) {
       user = findUserByCommonName(name);
-      return centerMap(user);
+      if (user) {
+        return centerMap(user);
+      }
+      else {
+        showAlert('warn', 'Unable to find user with name "'+name+'", please try again.');
+      }
     }
   };
 
