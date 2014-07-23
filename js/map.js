@@ -47,9 +47,8 @@ var CSH_MAP = function(user) {
             success: function (data, status, ajax) {
               console.log(data);
               if (data.status) {
-                removeMarker(currentUser.cn, currentUser.uid);
-                var title = currentUser.cn + " (" + currentUser.uid + ")";
-                addMarker(location.k, location.B, title);
+                removeMarker(currentUser);
+                addMarker(location.k, location.B, currentUser);
                 showAlert('success', data.message);
                 $("#addressModal").modal('hide');
               }
@@ -88,8 +87,7 @@ var CSH_MAP = function(user) {
           // Place Markers
           for (var i = 0; i < users.length; i++) {
             var user = users[i];
-            var title = user.common_name + " (" + user.username + ")";
-            addMarker(user.latitude, user.longitude, title);
+            addMarker(user.latitude, user.longitude, user);
           }
           console.log(markers);
           // Check if current user is on the map
@@ -113,15 +111,20 @@ var CSH_MAP = function(user) {
     });
   }
 
-  function addMarker(lat, long, title) {
+  function addMarker(lat, long, user) {
     try {
       if (!map) throw "Map not instantiated, not adding marker!";
       var marker = new google.maps.Marker({
         map: map,
         animation: google.maps.Animation.DROP,
         position: new google.maps.LatLng(lat, long),
-        title: title
+        title: user.cn + " (" + user.uid + ")"
       });
+      var content = "<h4>"+user.cn+"</h4>"+
+        "<p><strong>"+user.uid+"</strong></p>"+
+        "<p>"+user.address+"</p>";
+      var info = new google.maps.InfoWindow({content: content});
+      google.maps.event.addListener(marker, 'click', function() { info.open(map, marker); });
       markers.push(marker);
     }
     catch (ex) {
@@ -129,8 +132,8 @@ var CSH_MAP = function(user) {
     }
   }
 
-  function removeMarker(cn, uid) {
-    var match = cn + " (" + uid + ")";
+  function removeMarker(user) {
+    var match = user.cn + " (" + user.uid + ")";
     for (var i = 0; i < markers.length; i++) {
       if (markers[i].title == match) {
         markers[i].setMap(null);
@@ -143,7 +146,7 @@ var CSH_MAP = function(user) {
 
   function findUser(username, users) {
     for (var i = 0; i < users.length; i++) {
-      if (users[i].username == username) {
+      if (users[i].uid == username) {
         return users[i];
       }
     }
@@ -163,8 +166,12 @@ var CSH_MAP = function(user) {
   }
 
   return {
-    initializeMap: initialize,
-    updateAddress: saveAddress
+    initializeMap: function() {
+      initialize();
+    },
+    updateAddress: function() {
+      saveAddress();
+    }
   };
 
 };
