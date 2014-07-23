@@ -29,7 +29,8 @@ __Sample Response:__
             "cn": "Ben Centra",
             "latitude": "42.376485",
             "longitude": "-71.235611",
-            "address": "Waltham, MA, USA"
+            "address": "Waltham, MA, USA",
+            "date": "2014-07-22 23:12:52"
         },
         ...
     ]
