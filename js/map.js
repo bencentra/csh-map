@@ -196,13 +196,29 @@ var CSH_MAP = function(user) {
   }
 
   function searchUsers(search) {
-    search = ""+search.toLowerCase();
+    search = ""+search.toLowerCase().trim();
     var len = search.length;
     var results = [];
     $("#members").html("");
+    if (len == 0) return results;
     for (var i = 0; i < users.length; i++) {
       var name = users[i].cn.toLowerCase();
-      if (name.substr(0,len) == search) {
+      var parts = name.split(" ");
+      var found = false;
+      // Check parts of name
+      for (var j = 0; j < parts.length; j++) {
+        if (parts[j].substr(0,len) == search) {
+          found = true;
+        }
+      }
+      // Check whole name
+      if (!found) {
+        if (name.substr(0,len) == search) {
+          found = true;
+        }
+      }
+      // Add to datalist
+      if (found) {
         results.push(users[i]);
         $("#members").append('<option value="'+users[i].cn+'">'+users[i].uid+'</option>');
       }
