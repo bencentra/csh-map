@@ -10,6 +10,7 @@ var CSH_MAP = function(user) {
   * Private variables and functions
   */
   var apiUrl = "http://localhost/csh-map/api/";
+  var profilesURL = "https://jdprofiles.csh.rit.edu/user/";
   var map, geocoder, info;
   var markers = [];
   var currentUser = user;
@@ -75,6 +76,7 @@ var CSH_MAP = function(user) {
               console.log(data);
               if (data.status) {
                 currentUser.address = address;
+                currentUser.date = "Just Now";
                 removeMarker(currentUser);
                 addMarker(location.k, location.B, currentUser);
                 showAlert('success', data.message);
@@ -114,13 +116,11 @@ var CSH_MAP = function(user) {
         console.log(data);
         if (data.status) {
           var users = data.data;
-          // Place Markers
           for (var i = 0; i < users.length; i++) {
             var user = users[i];
             addMarker(user.latitude, user.longitude, user);
           }
           console.log(markers);
-          // Check if current user is on the map
           var found = findUser(currentUser.uid, users);
           if (found) {
             $("#addressChange").val(found.address);
@@ -150,9 +150,10 @@ var CSH_MAP = function(user) {
         position: new google.maps.LatLng(lat, long),
         title: user.cn + " (" + user.uid + ")"
       });
-      var content = "<h4>"+user.cn+"</h4>"+
-        "<p><strong>"+user.uid+"</strong></p>"+
-        "<p>"+user.address+"</p>";
+      var content = '<h4>'+user.cn+'</h4>'+
+        '<p><a href="'+profilesURL+'/'+user.uid+'" target="_blank">'+user.uid+'</a></p>'+
+        '<p>'+user.address+'</p>'+
+        '<p class="small gray">Last Updated: '+user.date+'</p>';
       var info = new google.maps.InfoWindow({content: content});
       google.maps.event.addListener(marker, 'click', function() { info.open(map, marker); });
       markers.push(marker);

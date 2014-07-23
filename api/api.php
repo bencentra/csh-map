@@ -114,7 +114,7 @@ class MapAPI extends API
   protected function users() {
     switch ($this->method) {
       case "GET":
-        $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address FROM geo";
+        $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address, last_update as date FROM geo";
         $query = db_select($sql, array());
         if ($query) {
           return $this->result(true, "", $query);
@@ -149,7 +149,7 @@ class MapAPI extends API
                 VALUES (:uid, :cn, :latitude, :longitude, :address)";
         $query = db_insert($sql, $params);
         if ($query) {
-          return $this->result(true, "", $query);
+          return $this->result(true, "", true);
         }
         else {
           return $this->result(false, "Error: Failed to update address.", false);
@@ -161,7 +161,7 @@ class MapAPI extends API
         $sql = "DELETE FROM geo WHERE username = :uid";
         $query = db_delete($sql, $params);
         if ($query) {
-          return $this->result(true, "", $query);
+          return $this->result(true, "", true);
         }
         else {
           return $this->result(false, "Error: Failed to remove address.", false);
