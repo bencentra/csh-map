@@ -32,6 +32,7 @@ __Sample Response:__
             "address": "Waltham, MA, USA"
         },
         ...
+    ]
 }
 ```
 
