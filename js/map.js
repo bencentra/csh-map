@@ -122,7 +122,7 @@ var CSH_MAP = function(user) {
             var user = users[i];
             addMarker(user);
           }
-          var found = findUser(currentUser.uid);
+          var found = findUserByUsername(currentUser.uid);
           if (found) {
             $("#addressChange").val(found.address);
           } 
@@ -177,9 +177,18 @@ var CSH_MAP = function(user) {
     return false;
   }
 
-  function findUser(username) {
+  function findUserByUsername(username) {
     for (var i = 0; i < users.length; i++) {
       if (users[i].uid == username) {
+        return users[i];
+      }
+    }
+    return false;
+  }
+
+  function findUserByCommonName(commonName) {
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].cn == commonName) {
         return users[i];
       }
     }
@@ -195,17 +204,22 @@ var CSH_MAP = function(user) {
       var name = users[i].cn.toLowerCase();
       if (name.substr(0,len) == search) {
         results.push(users[i]);
-        $("#members").append('<option value="'+users[i].cn+'">');
+        $("#members").append('<option value="'+users[i].cn+'">'+users[i].uid+'</option>');
       }
     }
-    // var results = users.filter(function(u) {
-    //   if (u.cn.toLowerCase().substr(0,len) == search) return true;
-    // });
     return results;
   }
 
-  function centerMap(name) {
-    console.log(name);
+  function centerMap(user) {
+    try {
+      if (!map) throw "Map not instantiated, not centering map!";
+      map.setCenter(new google.maps.LatLng(user.latitude, user.longitude));
+      map.setZoom(12);
+      google.maps.event.trigger(user.marker, 'click');
+    }
+    catch (ex) {
+      console.error(ex);
+    }
   }
 
   function changeMapType(type) {
@@ -260,7 +274,8 @@ var CSH_MAP = function(user) {
       return searchUsers(search);
     },
     center: function(name) {
-      return centerMap(name);
+      user = findUserByCommonName(name);
+      return centerMap(user);
     }
   };
 
