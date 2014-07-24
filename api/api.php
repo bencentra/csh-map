@@ -156,7 +156,7 @@ class MapAPI extends API
         }
         break;
       case "DELETE":
-        $params = [];
+        $params = array();
         $params["uid"] = $this->uid;
         $sql = "DELETE FROM geo WHERE username = :uid";
         $query = db_delete($sql, $params);
