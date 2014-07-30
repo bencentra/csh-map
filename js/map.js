@@ -9,7 +9,7 @@ var CSH_MAP = function(user) {
   /*
   * Private variables and functions
   */
-  var apiUrl = "http://localhost:8888/csh-map/api/";
+  var apiUrl = "http://localhost/csh-map/api/"; //"http://localhost:8888/csh-map/api/";
   var profilesURL = "https://jdprofiles.csh.rit.edu/user";
   var map, geocoder, info;
   var users = [];

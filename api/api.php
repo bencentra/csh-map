@@ -99,8 +99,8 @@ class MapAPI extends API
 
   public function __construct($request, $origin) {
     parent::__construct($request);
-    $this->uid = "bencentra"; // $_SERVER['WEBAUTH_USER'];
-    $this->cn = "Ben Centra"; // $_SERVER['WEBAUTH_LDAP_CN'];
+    $this->uid = htmlentities("bencentra"); // htmlentities($_SERVER['WEBAUTH_USER']);
+    $this->cn = htmlentities("Ben Centra <script>alert('LOL');</script>"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
   }
 
   private function result($status, $message, $data) {

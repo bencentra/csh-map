@@ -1,6 +1,6 @@
 <?php
-	$userName = "bencentra"; // $_SERVER['WEBAUTH_USER'];
-	$commonName = "Ben Centra"; // $_SERVER['WEBAUTH_LDAP_CN'];
+	$userName = htmlentities("bencentra"); // htmlentities($_SERVER['WEBAUTH_USER']);
+	$commonName = htmlentities("Ben Centra <script>alert('LOL');</script>"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -20,8 +20,8 @@
     body { height: 100%; margin: 0; padding: 0; }
     #map-canvas { height: 100%; z-index: 0}
     #wrapper { width: 100%; padding: 12px; position: absolute; top: 0; left: 0; z-index: 1}
-    .navbar { padding: 6px 0;}
-    .navbar-form { padding: 0 6px; }
+    .navbar { padding: 6px 0;  margin-bottom: 10px;}
+    .navbar-form { padding: 0 6px;}
     .gray { color: #777777; }
     .shadow { box-shadow: 0 0 12px #777777; }
     .hide { display: none; }
