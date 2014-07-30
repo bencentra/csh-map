@@ -118,6 +118,7 @@ var CSH_MAP = function(user) {
         console.log(data);
         if (data.status) {
           users = data.data;
+          searchUsers();
           for (var i = 0; i < users.length; i++) {
             var user = users[i];
             addMarker(user);
@@ -156,7 +157,11 @@ var CSH_MAP = function(user) {
         '<p>'+user.address+'</p>'+
         '<p class="small gray">Last Updated: '+user.date+'</p>';
       var info = new google.maps.InfoWindow({content: content});
-      google.maps.event.addListener(marker, 'click', function() { info.open(map, marker); });
+      google.maps.event.addListener(marker, 'click', function() { 
+        info.open(map, marker); 
+        map.setZoom(12);
+        map.setCenter(marker.position);
+      });
       user.marker = marker;
       user.info = info;
     }
@@ -196,31 +201,25 @@ var CSH_MAP = function(user) {
   }
 
   function searchUsers(search) {
+    if (typeof search === "undefined") search = "";
     search = ""+search.toLowerCase().trim();
     var len = search.length;
     var results = [];
     $("#members").html("");
-    if (len == 0) return results;
+    if (len == 0) {
+      for (var i = 0; i < users.length; i++) {
+        var match = users[i].cn+' ('+users[i].uid+')';
+        $("#members").append('<option value="'+match+'">'+match+'</option>');
+      }
+      return false;
+    }
     for (var i = 0; i < users.length; i++) {
-      var name = users[i].cn.toLowerCase();
-      var parts = name.split(" ");
-      var found = false;
-      // Check parts of name
-      for (var j = 0; j < parts.length; j++) {
-        if (parts[j].substr(0,len) == search) {
-          found = true;
-        }
-      }
-      // Check whole name
-      if (!found) {
-        if (name.substr(0,len) == search) {
-          found = true;
-        }
-      }
-      // Add to datalist
-      if (found) {
+      var match = users[i].cn+' ('+users[i].uid+')';
+      var matchLow = match.toLowerCase();
+      if (match.indexOf(search) > -1) {
+        console.log(match.indexOf(search));
         results.push(users[i]);
-        $("#members").append('<option value="'+users[i].cn+'">'+users[i].uid+'</option>');
+        $("#members").append('<option value="'+match+'">'+match+'</option>');
       }
     }
     return results;

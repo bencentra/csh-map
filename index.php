@@ -78,9 +78,15 @@
           </ul>
           <ul class="navbar-form navbar-right">
             <div class="form-group">
-              <input class="form-control" placeholder="Search by Name" id="memberSearch" list="members" onkeydown="map.search(this.value);"/>
+              <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/>
               <datalist id="members"></datalist>
             </div>
+			<!-- <div class="form-group">
+              <select class="form-control">
+              	<option value="1">Full Name</option>
+              	<option value="2">Username</option>
+              </select>
+            </div> -->
             <div class="form-group center">
               <button type="button" class="btn btn-default" onclick="map.center($('#memberSearch').val());">Go</button>
             </div>
