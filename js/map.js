@@ -217,7 +217,6 @@ var CSH_MAP = function(user) {
       var match = users[i].cn+' ('+users[i].uid+')';
       var matchLow = match.toLowerCase();
       if (match.indexOf(search) > -1) {
-        console.log(match.indexOf(search));
         results.push(users[i]);
         $("#members").append('<option value="'+match+'">'+match+'</option>');
       }
@@ -289,7 +288,8 @@ var CSH_MAP = function(user) {
       return searchUsers(search);
     },
     center: function(name) {
-      user = findUserByCommonName(name);
+      name = name.split("(")[1].split(")")[0].trim();
+      user = findUserByUsername(name);
       if (user) {
         return centerMap(user);
       }
