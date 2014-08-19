@@ -113,16 +113,41 @@ class MapAPI extends API
 
   protected function users() {
     switch ($this->method) {
+      // GET /users - Get a list of all users and their location
       case "GET":
-        $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address, last_update as date FROM geo";
+        $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address, last_update as date FROM geo ORDER BY address ASC";
         $query = db_select($sql, array());
-        if ($query) {
-          return $this->result(true, "", $query);
+        if ($this->verb == "group_by") {
+          if ($this->args[0] == "location") {
+            if ($query) {
+              $data = [];
+              $currentAddress = "";
+              foreach($query as $user) {
+                if ($user["address"] != $currentAddress) {
+                  $currentAddress = $user["address"];
+                }
+                $data[$currentAddress][] = $user;
+              }
+              return $this->result(true, "", $data);
+            }
+            else {
+              return $this->result(false, "Error: Failed to retrieve users.", false);
+            }
+          }
+          else {
+            return $this->result(false, "Error: Invalid group type.", false);
+          }
         }
         else {
-          return $this->result(false, "Error: Failed to retrieve users.", false);
+          if ($query) {
+            return $this->result(true, "", $query);
+          }
+          else {
+            return $this->result(false, "Error: Failed to retrieve users.", false);
+          }
         }
         break;
+      // POST /users - Update your location
       case "POST":
         $params = array();
         $params["uid"] = $this->uid;
@@ -155,6 +180,7 @@ class MapAPI extends API
           return $this->result(false, "Error: Failed to update address.", false);
         }
         break;
+      // DELETE /users - Remove your location
       case "DELETE":
         $params = array();
         $params["uid"] = $this->uid;
@@ -167,6 +193,7 @@ class MapAPI extends API
           return $this->result(false, "Error: Failed to remove address.", false);
         }
         break;
+      // Invalid HTTP method
       default:
         return $this->result(false, 'Invalid HTTP method for endpoint "users."', false);
     }

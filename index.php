@@ -1,6 +1,6 @@
 <?php
 	$userName = htmlentities("bencentra"); // htmlentities($_SERVER['WEBAUTH_USER']);
-	$commonName = htmlentities("Ben Centra <script>alert('LOL');</script>"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
+	$commonName = htmlentities("Ben Centra"); // htmlentities("Ben Centra  <script>alert('LOL');</script>"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
 ?>
 <!DOCTYPE HTML>
 <html>
