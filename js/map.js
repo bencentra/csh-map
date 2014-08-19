@@ -1,28 +1,32 @@
-var CSH_MAP = function(user) {
+var CSH_MAP = function(id, user) {
 
   // Activate alerts
-  $("#alert").alert();
-  $("#alert").click(function() {
+  $(".alert").alert();
+  $(".alert").click(function() {
     hideAlert();
   });
 
-  /*
-  * Private variables and functions
-  */
-  var apiUrl = "http://localhost/csh-map/api/"; //"http://localhost:8888/csh-map/api/";
+  // API url
+  // var apiUrl = "https://members.csh.rit.edu/~bencentra/csh-map/api/api.php?request=";
+  // var apiUrl = "http://localhost:8888/csh-map/api/";
+  var apiUrl = "http://localhost/csh-map/api/"; 
+
+  // Profiles url
   var profilesURL = "https://jdprofiles.csh.rit.edu/user";
-  var map, geocoder, info;
-  var users = [];
-  var currentUser = user;
-  var center = new google.maps.LatLng(37,-97); // Somewhere in Kansas
+
+  // Map components
+  var map, geocoder, center, currentUser, users, userNames, currentInfo;
   
+  // Initialize the map
   function initialize() {
+    users = [];
+    currentUser = user;
     var mapOptions = {
       disableDefaultUI: true,
-      center: center,
+      center: new google.maps.LatLng(37,-97), // Somewhere in Kansas;
       zoom: 4
     };
-    map = map || new google.maps.Map(document.querySelector("#map-canvas"), mapOptions);
+    map = map || new google.maps.Map(document.getElementById(id), mapOptions);
     geocoder = new google.maps.Geocoder();
     addMarkers();
   }
@@ -33,20 +37,17 @@ var CSH_MAP = function(user) {
       dataType: "json",
       method: "DELETE",
       success: function (data, status, ajax) {
-        console.log(data);
         if (data.status) {
           removeMarker(currentUser);
           showAlert('success', data.message);
           $("#addressModal").modal('hide');
         }
         else {
-          console.error(data.message);
           showAlert('warn', data.message);
           $("#addressModal").modal('hide');
         }
       },
       error: function(ajax, status, error) {
-        console.log(error);
         showAlert('warn', error);
         $("#addressModal").modal('hide');
       }
@@ -60,7 +61,6 @@ var CSH_MAP = function(user) {
       if (!geocoder) throw "Geocoder no instantiated, can't lookup address!";
       geocoder.geocode({"address":address}, function (results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-          console.log(results);
           var location = results[0].geometry.location;
           var address = results[0].formatted_address;
           $.ajax({
@@ -73,7 +73,6 @@ var CSH_MAP = function(user) {
               address: address
             },
             success: function (data, status, ajax) {
-              console.log(data);
               if (data.status) {
                 currentUser.latitude = location.k;
                 currentUser.longitude = location.B;
@@ -85,20 +84,17 @@ var CSH_MAP = function(user) {
                 $("#addressModal").modal('hide');
               }
               else {
-                console.error(data.message);
                 showAlert('warn', data.message);
                 $("#addressModal").modal('hide');
               }
             },
             error: function (ajax, status, error) {
-              console.error(error);
               showAlert('warn', error);
               $("#addressModal").modal('hide');
             }
           });
         }
         else {
-          console.error(status);
           showAlert('warn', "Error geocoding your address, please try again!");
           $("#addressModal").modal('hide');
         }
@@ -115,10 +111,14 @@ var CSH_MAP = function(user) {
       dataType: "json",
       method: "GET",
       success: function(data, status, ajax) {
-        console.log(data);
         if (data.status) {
           users = data.data;
-          searchUsers();
+          userNames = $.map(users, function(user) { 
+            return user.cn+" ("+user.uid+")"; 
+          });
+          $("#memberSearch").autocomplete({
+            source: userNames
+          });
           for (var i = 0; i < users.length; i++) {
             var user = users[i];
             addMarker(user);
@@ -132,12 +132,10 @@ var CSH_MAP = function(user) {
           }
         }
         else {
-          console.error(data.message);
           showAlert('warn', data.message);
         }
       },
       error: function(ajax, status, error) {
-        console.error(error);
         showAlert('warn', error);
       }
     });
@@ -159,8 +157,8 @@ var CSH_MAP = function(user) {
       var info = new google.maps.InfoWindow({content: content});
       google.maps.event.addListener(marker, 'click', function() { 
         info.open(map, marker); 
-        map.setZoom(12);
         map.setCenter(marker.position);
+        map.setZoom(12);
       });
       user.marker = marker;
       user.info = info;
@@ -200,36 +198,12 @@ var CSH_MAP = function(user) {
     return false;
   }
 
-  function searchUsers(search) {
-    if (typeof search === "undefined") search = "";
-    search = ""+search.toLowerCase().trim();
-    var len = search.length;
-    var results = [];
-    $("#members").html("");
-    if (len == 0) {
-      for (var i = 0; i < users.length; i++) {
-        var match = users[i].cn+' ('+users[i].uid+')';
-        $("#members").append('<option value="'+match+'">'+match+'</option>');
-      }
-      return false;
-    }
-    for (var i = 0; i < users.length; i++) {
-      var match = users[i].cn+' ('+users[i].uid+')';
-      var matchLow = match.toLowerCase();
-      if (match.indexOf(search) > -1) {
-        results.push(users[i]);
-        $("#members").append('<option value="'+match+'">'+match+'</option>');
-      }
-    }
-    return results;
-  }
-
   function centerMap(user) {
     try {
       if (!map) throw "Map not instantiated, not centering map!";
-      map.setCenter(new google.maps.LatLng(user.latitude, user.longitude));
-      map.setZoom(12);
+      if (currentInfo) currentInfo.close();
       google.maps.event.trigger(user.marker, 'click');
+      currentInfo = user.info;
     }
     catch (ex) {
       console.error(ex);
@@ -239,7 +213,6 @@ var CSH_MAP = function(user) {
   function changeMapType(type) {
     try {
       if (!map) throw "Map not instantiated, not changing map type!";
-      console.log(type);
       switch (type) {
         case 'satellite':
           map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
@@ -283,9 +256,6 @@ var CSH_MAP = function(user) {
     },
     changeType: function(type) {
       return changeMapType(type);
-    },
-    search: function(search) {
-      return searchUsers(search);
     },
     center: function(name) {
       name = name.split("(")[1].split(")")[0].trim();

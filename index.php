@@ -14,6 +14,7 @@
 	<title>CSH Member/Alumni Map</title>
 	<!-- Styles -->
 	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="./jquery-ui-autocomplete/jquery-ui.min.css">
 	<style>
 		* { box-sizing: border-box; }
 		html { height: 100%; }
@@ -78,8 +79,9 @@
           </ul>
           <ul class="navbar-form navbar-right">
             <div class="form-group">
-              <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/>
-              <datalist id="members"></datalist>
+              <input class="form-control" type="text" placeholder="Search..." id="memberSearch"/>
+              <!-- <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/> -->
+              <!-- <datalist id="members"></datalist> -->
             </div>
 			<!-- <div class="form-group">
               <select class="form-control">
@@ -115,6 +117,7 @@
 	<!-- Scripts -->
 	<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
 	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="./jquery-ui-autocomplete/jquery-ui.min.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJDy3u2nsUVz_l8AON489lo29SzHTEGYI"></script>
 	<script src="./js/map.js"></script>
 	<script>
@@ -124,7 +127,7 @@
 			cn: "<?php echo $commonName ?>"
 		};
 
-		var map = new CSH_MAP(currentUser);
+		var map = new CSH_MAP("map-canvas", currentUser);
 		map.initializeMap();
 
 	</script>	
