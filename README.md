@@ -14,7 +14,7 @@ The following API methods are available:
 
 ### GET /users
 
-__Description:__ Gets a list of all adresses.
+__Description:__ Gets an array of all users and their addresses.
 
 __Parameters:__ No required parameters.
 
@@ -36,6 +36,37 @@ __Sample Response:__
         },
         ...
     ]
+}
+```
+
+### GET /users/group_by/location
+
+__Description:__ Gets an object with all users grouped by location.
+
+__Parameters:__ No required parameters.
+
+__Sample Response:__
+
+```json
+{
+    "status": true,
+    "message": "",
+    "data": {
+        ...
+        "Rochester, NY, USA": [
+            ...
+            {
+                "uid": "rossdylan",
+                "cn": "Ross Delinger",
+                "latitude": "43.1610300",
+                "longitude": "-77.6109219",
+                "address": "Rochester, NY, USA",
+                "date": "2014-07-29 20:37:04"
+            },
+            ...
+        ],
+        ...
+    }
 }
 ```
 
