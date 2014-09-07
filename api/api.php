@@ -100,7 +100,7 @@ class MapAPI extends API
   public function __construct($request, $origin) {
     parent::__construct($request);
     $this->uid = htmlentities("bencentra"); // htmlentities($_SERVER['WEBAUTH_USER']);
-    $this->cn = htmlentities("Ben Centra <script>alert('LOL');</script>"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
+    $this->cn = htmlentities("Ben Centra"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
   }
 
   private function result($status, $message, $data) {
@@ -110,6 +110,12 @@ class MapAPI extends API
       "data" => $data
     );
   }
+
+  private function sanitizeFields($user) {
+    $user["uid"] = htmlentities($user["uid"]);
+    $user["cn"] = htmlentities($user["cn"]);
+    return $user;
+  } 
 
   protected function users() {
     switch ($this->method) {
@@ -126,7 +132,7 @@ class MapAPI extends API
                 if ($user["address"] != $currentAddress) {
                   $currentAddress = $user["address"];
                 }
-                $data[$currentAddress][] = $user;
+                $data[$currentAddress][] = $this->sanitizeFields($user);
               }
               return $this->result(true, "", $data);
             }

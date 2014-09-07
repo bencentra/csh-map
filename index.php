@@ -20,6 +20,7 @@
 		html { height: 100%; }
     body { height: 100%; margin: 0; padding: 0; }
     #map-canvas { height: 100%; z-index: 0}
+    #infoWindow { width: 300px; overflow: auto;}
     #wrapper { width: 100%; padding: 12px; position: absolute; top: 0; left: 0; z-index: 1}
     .navbar { padding: 6px 0;  margin-bottom: 10px;}
     .navbar-form { padding: 0 6px;}
@@ -70,7 +71,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">CSH Map</a>
+          <a class="navbar-brand" href="index.php">CSH Map</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -90,7 +91,7 @@
               </select>
             </div> -->
             <div class="form-group center">
-              <button type="button" class="btn btn-default" onclick="map.center($('#memberSearch').val());">Go</button>
+              <button type="button" class="btn btn-default" onclick="map.search($('#memberSearch').val());">Go</button>
             </div>
             <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
             <div class="form-group">
@@ -128,7 +129,7 @@
 		};
 
 		var map = new CSH_MAP("map-canvas", currentUser);
-		map.initializeMap();
+		map.init();
 
 	</script>	
 </body>

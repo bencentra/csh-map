@@ -1,272 +1,323 @@
-var CSH_MAP = function(id, user) {
+var CSH_MAP;
 
-  // Activate alerts
-  $(".alert").alert();
-  $(".alert").click(function() {
-    hideAlert();
-  });
+(function (jq, gmaps) {
 
-  // API url
-  // var apiUrl = "https://members.csh.rit.edu/~bencentra/csh-map/api/api.php?request=";
-  // var apiUrl = "http://localhost:8888/csh-map/api/";
-  var apiUrl = "http://localhost/csh-map/api/"; 
+  "use strict";
 
-  // Profiles url
-  var profilesURL = "https://jdprofiles.csh.rit.edu/user";
+  CSH_MAP = function (mapCanvas, currentUser) {
 
-  // Map components
-  var map, geocoder, center, currentUser, users, userNames, currentInfo;
-  
-  // Initialize the map
-  function initialize() {
-    users = [];
-    currentUser = user;
-    var mapOptions = {
-      disableDefaultUI: true,
-      center: new google.maps.LatLng(37,-97), // Somewhere in Kansas;
-      zoom: 4
-    };
-    map = map || new google.maps.Map(document.getElementById(id), mapOptions);
-    geocoder = new google.maps.Geocoder();
-    addMarkers();
-  }
-
-  function deleteAddress() {
-    $.ajax({
-      url: apiUrl+"users",
-      dataType: "json",
-      method: "DELETE",
-      success: function (data, status, ajax) {
-        if (data.status) {
-          removeMarker(currentUser);
-          showAlert('success', data.message);
-          $("#addressModal").modal('hide');
-        }
-        else {
-          showAlert('warn', data.message);
-          $("#addressModal").modal('hide');
-        }
-      },
-      error: function(ajax, status, error) {
-        showAlert('warn', error);
-        $("#addressModal").modal('hide');
-      }
-    })
-  }
-
-  function saveAddress() {
-    var address = $("#addressChange").val();
-    console.log(address);
-    try {
-      if (!geocoder) throw "Geocoder no instantiated, can't lookup address!";
-      geocoder.geocode({"address":address}, function (results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          var location = results[0].geometry.location;
-          var address = results[0].formatted_address;
-          $.ajax({
-            url: apiUrl+"users",
-            dataType: "json", 
-            method: "POST",
-            data: {
-              latitude: location.k,
-              longitude: location.B,
-              address: address
-            },
-            success: function (data, status, ajax) {
-              if (data.status) {
-                currentUser.latitude = location.k;
-                currentUser.longitude = location.B;
-                currentUser.address = address;
-                currentUser.date = "Just Now";
-                removeMarker(currentUser);
-                addMarker(currentUser);
-                showAlert('success', data.message);
-                $("#addressModal").modal('hide');
-              }
-              else {
-                showAlert('warn', data.message);
-                $("#addressModal").modal('hide');
-              }
-            },
-            error: function (ajax, status, error) {
-              showAlert('warn', error);
-              $("#addressModal").modal('hide');
-            }
-          });
-        }
-        else {
-          showAlert('warn', "Error geocoding your address, please try again!");
-          $("#addressModal").modal('hide');
-        }
-      });
-    }
-    catch (ex) {
-      console.error(ex);
-    }
-  }
-
-  function addMarkers() {
-    $.ajax({
-      url: apiUrl+"users",
-      dataType: "json",
-      method: "GET",
-      success: function(data, status, ajax) {
-        if (data.status) {
-          users = data.data;
-          userNames = $.map(users, function(user) { 
-            return user.cn+" ("+user.uid+")"; 
-          });
-          $("#memberSearch").autocomplete({
-            source: userNames
-          });
-          for (var i = 0; i < users.length; i++) {
-            var user = users[i];
-            addMarker(user);
-          }
-          var found = findUserByUsername(currentUser.uid);
-          if (found) {
-            $("#addressChange").val(found.address);
-          } 
-          else {
-            $("#addressModal").modal('show');
-          }
-        }
-        else {
-          showAlert('warn', data.message);
-        }
-      },
-      error: function(ajax, status, error) {
-        showAlert('warn', error);
-      }
+    jq(".alert").alert();
+    jq(".alert").click(function() {
+      hideAlert();
     });
-  }
 
-  function addMarker(user) {
-    try {
-      if (!map) throw "Map not instantiated, not adding marker!";
-      var marker = new google.maps.Marker({
+    // var apiUrl = "https://members.csh.rit.edu/~bencentra/csh-map/api/api.php?request=";
+    // var apiUrl = "http://localhost:8888/csh-map/api/";
+    var apiUrl = "http://localhost/csh-map/api/"; 
+
+    var profilesURL = "https://jdprofiles.csh.rit.edu/user";
+
+    var map, geocoder, center, markers, names, currentInfo, myMarker;
+
+    function initialize () {
+      if (typeof map === "object") {
+        console.warn("CSH_MAP already initialized.");
+        return;
+      }
+      if (typeof jq === "undefined" || !jq) {
+        console.warn("Can't initialize CSH_MAP; missing jQuery.");
+        return;
+      }
+      if (typeof gmaps === "undefined" || !gmaps) {
+        console.warn("Can't initialize CSH_MAP; missing Google Maps API.");
+        return;
+      }
+      if (typeof mapCanvas === "object") {
+        map = mapCanvas;
+      }
+      else if (typeof mapCanvas === "string") {
+        var mapOptions = {
+          disableDefaultUI: true,
+          center: new gmaps.LatLng(37,-97), // Somewhere in Kansas;
+          zoom: 4
+        };
+        map = new gmaps.Map(document.getElementById(mapCanvas), mapOptions);
+      }
+      else {
+        console.warn("Can't initialize CSH_MAP; mapCanvas of invalid type.");
+        return;
+      }
+      geocoder = new gmaps.Geocoder();
+      markers = [];
+      getAllMarkers();
+    }
+
+    function getAllMarkers() {
+      jq.ajax({
+        url: apiUrl+"users/group_by/location", 
+        method: "GET",
+        dataType: "json",
+        success: function (result) {
+          if (!result.status || !result.data) {
+            showAlert("warn", result.message);
+            return;
+          }
+          jq.each(result.data, function (location, users) {
+            addMarker(location, users);
+          });
+          names = getUserNames();
+          jq("#memberSearch").autocomplete({
+            source: names
+          });
+          myMarker = findMarkerByUser(currentUser.uid);
+          if (myMarker) {
+            currentUser.latitude = myMarker.users[0].latitude;
+            currentUser.longitude = myMarker.users[0].longitude;
+            currentUser.address = myMarker.location;
+            currentUser.date = "Some time";
+            jq("#addressChange").val(myMarker.location);
+          }
+          else {
+            jq("#addressModal").modal("show");
+          }
+        }, 
+        error: ajaxError
+      });
+    }
+
+    function addMarker (location, users) {
+      var marker = new gmaps.Marker({
         map: map,
-        animation: google.maps.Animation.DROP,
-        position: new google.maps.LatLng(user.latitude, user.longitude),
-        title: user.cn + " (" + user.uid + ")"
+        animation: gmaps.Animation.DROP,
+        position: new gmaps.LatLng(users[0].latitude, users[0].longitude),
+        title: location
       });
-      var content = '<h4>'+user.cn+'</h4>'+
-        '<p><a href="'+profilesURL+'/'+user.uid+'" target="_blank">'+user.uid+'</a></p>'+
-        '<p>'+user.address+'</p>'+
-        '<p class="small gray">Last Updated: '+user.date+'</p>';
-      var info = new google.maps.InfoWindow({content: content});
-      google.maps.event.addListener(marker, 'click', function() { 
-        info.open(map, marker); 
-        map.setCenter(marker.position);
-        map.setZoom(12);
+      var info = createInfoWindow(marker, users);
+      markers.push({
+        marker: marker,
+        info: info,
+        users: users,
+        location: location
       });
-      user.marker = marker;
-      user.info = info;
     }
-    catch (ex) {
-      console.error(ex);
-    }
-  }
 
-  function removeMarker(user) {
-    var match = user.cn + " (" + user.uid + ")";
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].marker.title == match) {
-        users[i].marker.setMap(null);
-        users[i].marker = null;
-        return true;
+    function createInfoWindow (marker, users) {
+      var content = "<div id=\"infoWindow\"><h4>"+marker.title+"</h4>";
+      content += "<p><button type=\"button\" onclick=\"map.zoom('"+marker.title+"')\">Zoom In</button></p>";
+      jq.each(users, function(index, user) {
+        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+profilesURL+"\" target=\"_blank\">"+user.uid+"</a>)</p>";
+      });
+      content += "</div>";
+      var info = new gmaps.InfoWindow({content: content});
+      gmaps.event.addListener(marker, "click", function() {
+        if (currentInfo) currentInfo.close();
+        info.open(map, marker);
+        currentInfo = info;
+        //map.setZoom(12);
+        //map.setCenter(marker.position);
+      });
+      return info;
+    }
+
+    function updateMyAddress() {
+      if (!geocoder) return;
+      var address = $("#addressChange").val();
+      geocoder.geocode({address:address}, function (results, status) {
+        if (status == gmaps.GeocoderStatus.OK) {
+          var location = results[0].geometry.location;
+          address = results[0].formatted_address;
+        }
+        jq.ajax({
+          url: apiUrl+"users",
+          method: "POST",
+          dataType: "json",
+          data: {
+            latitude: location.k,
+            longitude: location.B,
+            address: address
+          },
+          success: function (result) {
+            if (!result.status || !result.data) {
+              showAlert("warn", result.message);
+              return;
+            }
+            var oldMarker = findMarkerByUser(currentUser.uid);
+            if (oldMarker) {
+              removeMeFromMarker(oldMarker);
+              updateOrRemoveMarker(oldMarker);
+            }
+            currentUser.address = address;
+            currentUser.latitude = location.k;
+            currentUser.longitude = location.B;
+            currentUser.date = "Just Now";
+            var existingMarker = findMarkerByLocation(address);
+            if (existingMarker) {
+              existingMarker.users.push(currentUser);
+              existingMarker.info = createInfoWindow(existingMarker.marker, existingMarker.users);
+            }
+            else {
+              var users = [currentUser];
+              addMarker(address, users);
+            }
+            names = getUserNames();
+            jq("#memberSearch").autocomplete({
+              source: names
+            });
+            jq("#addressChange").val(address);
+            jq("#addressModal").modal("hide");
+            showAlert("success", "Address updated successfully!");
+          },
+          error: ajaxError
+        });
+      }); 
+    }
+
+    function removeMeFromMap() {
+      myMarker = myMarker || findMarkerByUser(currentUser.uid);
+      if (!myMarker) return;
+      jq.ajax({
+        url: apiUrl+"users",
+        method: "DELETE",
+        dataType: "json",
+        success: function (result) {
+          if (!result.status || !result.data) {
+            showAlert("warn", result.message);
+            return;
+          }
+          removeMeFromMarker(myMarker);
+          updateOrRemoveMarker(myMarker);
+          currentUser.address = "";
+          currentUser.latitude = 0;
+          currentUser.longitude = 0;
+          currentUser.date = "Just Now";
+          names = getUserNames();
+          jq("#memberSearch").autocomplete({
+            source: names
+          });
+          jq("#addressChange").val("");
+          jq("#addressModal").modal("hide");
+          showAlert("success", "Address removed successfully!");
+        },
+        error: ajaxError
+      });
+    }
+
+    function removeMeFromMarker (marker) {
+      for (var i = 0; i < marker.users.length; i++) {
+        var user = marker.users[i];
+        if (user.uid == currentUser.uid) {
+          marker.users.splice(i, 1);
+          break;
+        }
       }
     }
-    return false;
-  }
 
-  function findUserByUsername(username) {
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].uid == username) {
-        return users[i];
+    function updateOrRemoveMarker (marker) {
+      if (marker.users.length > 0) {
+        marker.info = createInfoWindow(marker.marker, marker.users);
+      }
+      else {
+        marker.marker.setMap(null);
+        marker = false;
       }
     }
-    return false;
-  }
 
-  function findUserByCommonName(commonName) {
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].cn == commonName) {
-        return users[i];
+    function findMarkerByUser (uid) {
+      var found = false;
+      jq.each(markers, function (index, marker) {
+        jq.each(marker.users, function (index, user) {
+          if (user.uid == uid) {
+            found = marker;
+          }
+        }); 
+      });
+      return found;
+    }
+
+    function findMarkerByLocation (loc) {
+      var found = false;
+      jq.each(markers, function (index, marker) {
+        if (marker.location == loc) {
+          found = marker;
+        }
+      });
+      return found;
+    }
+
+    function getUserNames () {
+      var userNames = [];
+      jq.each(markers, function (location, marker) {
+        jq.each(marker.users, function (index, user) {
+          userNames.push(user.cn + " (" + user.uid + ")");
+        });
+      });
+      return userNames;
+    }
+
+    function ajaxError (error) {
+      console.error(error);
+    }
+
+    function searchUsers (search) {
+      var uid = search.split("(")[1].split(")")[0].trim();
+      var marker = findMarkerByUser(uid);
+      if (marker) {
+        centerMapOnMarker(marker);
+      }
+      else {
+        showAlert("warn", "Unable to find user \""+uid+"\", please try again.");
       }
     }
-    return false;
-  }
 
-  function centerMap(user) {
-    try {
-      if (!map) throw "Map not instantiated, not centering map!";
-      if (currentInfo) currentInfo.close();
-      google.maps.event.trigger(user.marker, 'click');
-      currentInfo = user.info;
+    function centerMapOnLocation (loc) {
+      var marker = findMarkerByLocation(loc);
+      centerMapOnMarker(marker);
     }
-    catch (ex) {
-      console.error(ex);
-    }
-  }
 
-  function changeMapType(type) {
-    try {
-      if (!map) throw "Map not instantiated, not changing map type!";
+    function centerMapOnMarker (marker) {
+      gmaps.event.trigger(marker.marker, "click");
+      map.setCenter(marker.marker.getPosition());
+      map.setZoom(12);
+    }
+
+    function changeMapType (type) {
+      if (!map) return;
       switch (type) {
-        case 'satellite':
+        case "satellite":
           map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
           break;
-        case 'hybrid':
+        case "hybrid":
           map.setMapTypeId(google.maps.MapTypeId.HYBRID);
           break;
-        case 'terrain':
+        case "terrain":
           map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
           break;
         default:
           map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
       }
     }
-    catch (ex) {
-      console.error(ex);
+
+    function hideAlert() {
+      jq("#alert").hide();
     }
-  }
 
-  function hideAlert() {
-    $("#alert").hide();
-  }
-
-  function showAlert(status, message) {
-    $("#alert .alert-title").html((status == 'warn') ? "Warning!" : "Success!");
-    $("#alert .alert-text").html(message);
-    var add = (status == 'warn') ? 'alert-danger' : 'alert-success';
-    var remove = (status == 'warn') ? 'alert-success' : 'alert-danger';
-    $("#alert").addClass(add).removeClass(remove).show();
-  }
-
-  return {
-    initializeMap: function() {
-      return initialize();
-    },
-    updateAddress: function() {
-      return saveAddress();
-    },
-    removeAddress: function() {
-      return deleteAddress();
-    },
-    changeType: function(type) {
-      return changeMapType(type);
-    },
-    center: function(name) {
-      name = name.split("(")[1].split(")")[0].trim();
-      user = findUserByUsername(name);
-      if (user) {
-        return centerMap(user);
-      }
-      else {
-        showAlert('warn', 'Unable to find user with name "'+name+'", please try again.');
-      }
+    function showAlert(status, message) {
+      jq("#alert .alert-title").html((status == "warn") ? "Warning!" : "Success!");
+      jq("#alert .alert-text").html(message);
+      var add = (status == "warn") ? "alert-danger" : "alert-success";
+      var remove = (status == "warn") ? "alert-success" : "alert-danger";
+      jq("#alert").addClass(add).removeClass(remove).show();
     }
+
+    return {
+      init: initialize,
+      updateAddress: updateMyAddress,
+      removeAddress: removeMeFromMap,
+      changeType: changeMapType,
+      search: searchUsers,
+      zoom: centerMapOnLocation
+    }
+
   };
 
-};
+}) (window.jQuery, window.google.maps);
