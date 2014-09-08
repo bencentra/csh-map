@@ -105,7 +105,7 @@ var CSH_MAP;
       var content = "<div id=\"infoWindow\"><h4>"+marker.title+"</h4>";
       content += "<p><button type=\"button\" onclick=\"map.zoom('"+marker.title+"')\">Zoom In</button></p>";
       jq.each(users, function(index, user) {
-        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+profilesURL+"\" target=\"_blank\">"+user.uid+"</a>)</p>";
+        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+profilesURL+"/"+user.uid+"\" target=\"_blank\">"+user.uid+"</a>)</p>";
       });
       content += "</div>";
       var info = new gmaps.InfoWindow({content: content});
@@ -113,8 +113,6 @@ var CSH_MAP;
         if (currentInfo) currentInfo.close();
         info.open(map, marker);
         currentInfo = info;
-        //map.setZoom(12);
-        //map.setCenter(marker.position);
       });
       return info;
     }

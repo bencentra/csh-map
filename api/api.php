@@ -126,7 +126,7 @@ class MapAPI extends API
         if ($this->verb == "group_by") {
           if ($this->args[0] == "location") {
             if ($query) {
-              $data = [];
+              $data = array();
               $currentAddress = "";
               foreach($query as $user) {
                 if ($user["address"] != $currentAddress) {
