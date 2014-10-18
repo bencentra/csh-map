@@ -54,7 +54,7 @@
 	      </div>
 	      <div class="modal-footer">
         	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        	<button type="button" class="btn btn-primary" onclick="map.updateAddress();">Save Changes</button>
+        	<button type="button" class="btn btn-primary" onclick="map.updateAddress();">Update Address</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -123,12 +123,12 @@
     var map, currentUser;
 
     document.addEventListener("DOMContentLoaded", function() {
-      var currentUser = {
+      currentUser = {
         uid: "<?php echo $userName ?>",
         cn: "<?php echo $commonName ?>"
       };
 
-      var map = new CSH_MAP("map-canvas", currentUser);
+      map = new CSH_MAP("map-canvas", currentUser);
       map.init();
     }, true);
 
