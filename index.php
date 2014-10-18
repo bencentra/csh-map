@@ -79,21 +79,13 @@
             <em class="navbar-text slogan">Find CSHers Across the Globe!</em>
           </ul>
           <ul class="navbar-form navbar-right">
-            <div class="form-group">
-              <input class="form-control" type="text" placeholder="Search..." id="memberSearch"/>
-              <!-- <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/> -->
-              <!-- <datalist id="members"></datalist> -->
-            </div>
-			<!-- <div class="form-group">
-              <select class="form-control">
-              	<option value="1">Full Name</option>
-              	<option value="2">Username</option>
-              </select>
-            </div> -->
             <div class="form-group center">
-              <button type="button" class="btn btn-default" onclick="map.search($('#memberSearch').val());">Go</button>
+              <span id="popoverBtn" data-toggle="tooltop" data-placement="bottom" data-container="body">
+                <button id="addressBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+              </span>
             </div>
             <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
+
             <div class="form-group">
               <select class="form-control" id="mapType" onchange="map.changeType(this.value);">
                 <option value="roadmap" selected="selected">Road Map</option>
@@ -103,8 +95,13 @@
               </select>
             </div>
             <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
+            <div class="form-group">
+              <input class="form-control" type="text" placeholder="Search..." id="memberSearch"/>
+              <!-- <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/> -->
+              <!-- <datalist id="members"></datalist> -->
+            </div>
             <div class="form-group center">
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">Change My Location</button>
+              <button id="searchBtn" type="button" class="btn btn-default" onclick="map.search($('#memberSearch').val());">Go</button>
             </div>
           </ul>
         </div><!-- /.navbar-collapse -->
@@ -123,13 +120,17 @@
 	<script src="./js/map.js"></script>
 	<script>
 
-		var currentUser = {
-			uid: "<?php echo $userName ?>",
-			cn: "<?php echo $commonName ?>"
-		};
+    var map, currentUser;
 
-		var map = new CSH_MAP("map-canvas", currentUser);
-		map.init();
+    document.addEventListener("DOMContentLoaded", function() {
+      var currentUser = {
+        uid: "<?php echo $userName ?>",
+        cn: "<?php echo $commonName ?>"
+      };
+
+      var map = new CSH_MAP("map-canvas", currentUser);
+      map.init();
+    }, true);
 
 	</script>	
 </body>

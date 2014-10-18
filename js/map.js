@@ -12,8 +12,8 @@ var CSH_MAP;
     });
 
     // var apiUrl = "https://members.csh.rit.edu/~bencentra/csh-map/api/api.php?request=";
-    // var apiUrl = "http://localhost:8888/csh-map/api/";
-    var apiUrl = "http://localhost/csh-map/api/"; 
+    var apiUrl = "http://localhost:8888/csh-map/api/";
+    // var apiUrl = "http://localhost/csh-map/api/"; 
 
     var profilesURL = "https://jdprofiles.csh.rit.edu/user";
 
@@ -76,6 +76,7 @@ var CSH_MAP;
             currentUser.address = myMarker.location;
             currentUser.date = "Some time";
             jq("#addressChange").val(myMarker.location);
+            showUpdatePopover(myMarker);
           }
           else {
             jq("#addressModal").modal("show");
@@ -292,6 +293,26 @@ var CSH_MAP;
           break;
         default:
           map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+      }
+    }
+
+    function showUpdatePopover(marker) {
+      var me, i, date, now;
+      for (i = 0; i < marker.users.length; i++) {
+        if (marker.users[i].uid === currentUser.uid) {
+          me = marker.users[i];
+          break;
+        }
+      }
+      if (typeof me === "undefined") return;
+      date = Date.parse(me.date);
+      now = Date.now();
+      if ((now - date) > (2628000000 * 6)) {
+        jq("#popoverBtn").popover({
+          html: true,
+          content: "<div class='center'><strong>Looks like it's been a while.</strong><br/> Is your address up to date?</div>"
+        }).popover('show');
+        jq(".popover").css("top", "60px");
       }
     }
 
