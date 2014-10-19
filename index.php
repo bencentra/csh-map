@@ -85,16 +85,6 @@
               </span>
             </div>
             <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
-
-            <div class="form-group">
-              <select class="form-control" id="mapType" onchange="map.changeType(this.value);">
-                <option value="roadmap" selected="selected">Road Map</option>
-                <option value="satellite">Satellite</option>
-                <option value="hybrid">Hybrid</option>
-                <option value="terrain">Terrain</option>
-              </select>
-            </div>
-            <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
             <div class="form-group">
               <input class="form-control" type="text" placeholder="Search..." id="memberSearch"/>
               <!-- <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/> -->
@@ -102,6 +92,15 @@
             </div>
             <div class="form-group center">
               <button id="searchBtn" type="button" class="btn btn-default" onclick="map.search($('#memberSearch').val());">Go</button>
+            </div>
+            <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
+            <div class="form-group">
+              <select class="form-control" id="mapType" onchange="map.changeType(this.value);">
+                <option value="roadmap" selected="selected">Road Map</option>
+                <option value="satellite">Satellite</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="terrain">Terrain</option>
+              </select>
             </div>
           </ul>
         </div><!-- /.navbar-collapse -->
