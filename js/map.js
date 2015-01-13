@@ -68,7 +68,7 @@
             currentUser.latitude = myMarker.users[0].latitude;
             currentUser.longitude = myMarker.users[0].longitude;
             currentUser.address = myMarker.location;
-            currentUser.date = "Some time";
+            currentUser.date = findUserInMarker(currentUser.uid, myMarker).date;
             jq("#addressChange").val(myMarker.location);
             showUpdatePopover(myMarker);
           }
@@ -100,7 +100,9 @@
       var content = "<div id=\"infoWindow\"><h4>"+marker.title+"</h4>";
       content += "<p><button type=\"button\" onclick=\"map.zoom('"+marker.title+"')\">Zoom In</button></p>";
       jq.each(users, function(index, user) {
-        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+profilesURL+"/"+user.uid+"\" target=\"_blank\">"+user.uid+"</a>)</p>";
+        var date = Date.parse(user.date);
+        date = new Date(date).toDateString();
+        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+profilesURL+"/"+user.uid+"\" target=\"_blank\">"+user.uid+"</a>) <span class=\"gray small\"> - Last Updated: "+date+"</span></p>";
       });
       content += "</div>";
       var info = new gmaps.InfoWindow({content: content});
@@ -200,7 +202,7 @@
     function removeMeFromMarker (marker) {
       for (var i = 0; i < marker.users.length; i++) {
         var user = marker.users[i];
-        if (user.uid == currentUser.uid) {
+        if (user.uid === currentUser.uid) {
           marker.users.splice(i, 1);
           break;
         }
@@ -221,7 +223,7 @@
       var found = false;
       jq.each(markers, function (index, marker) {
         jq.each(marker.users, function (index, user) {
-          if (user.uid == uid) {
+          if (user.uid === uid) {
             found = marker;
           }
         }); 
@@ -232,8 +234,18 @@
     function findMarkerByLocation (loc) {
       var found = false;
       jq.each(markers, function (index, marker) {
-        if (marker.location == loc) {
+        if (marker.location === loc) {
           found = marker;
+        }
+      });
+      return found;
+    }
+
+    function findUserInMarker(uid, marker) {
+      var found = false;
+      jq.each(marker.users, function(i, user) {
+        if (user.uid === uid) {
+          found = user;
         }
       });
       return found;

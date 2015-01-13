@@ -20,7 +20,8 @@
     #wrapper { width: 100%; padding: 12px; position: absolute; top: 0; left: 0; z-index: 1}
     .navbar { padding: 6px 0;  margin-bottom: 10px;}
     .navbar-form { padding: 0 6px;}
-    .gray { color: #777777; }
+    .gray { color: #999999; }
+    .small { font-size: .8em; }
     .shadow { box-shadow: 0 0 12px #777777; }
     .hide { display: none; }
     .center { text-align: center; }
