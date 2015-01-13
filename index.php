@@ -1,7 +1,3 @@
-<?php
-	$userName = htmlentities("bencentra"); // htmlentities($_SERVER['WEBAUTH_USER']);
-	$commonName = htmlentities("Ben Centra"); // htmlentities("Ben Centra  <script>alert('LOL');</script>"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
-?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -13,7 +9,7 @@
 	<meta name="author" content="">
 	<title>CSH Member/Alumni Map</title>
 	<!-- Styles -->
-	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="./jquery-ui-autocomplete/jquery-ui.min.css">
 	<style>
 		* { box-sizing: border-box; }
@@ -112,10 +108,30 @@
 		</div>
 	</div>
 	<!-- Scripts -->
-	<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
-	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	<script src="./jquery-ui-autocomplete/jquery-ui.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJDy3u2nsUVz_l8AON489lo29SzHTEGYI"></script>
+  <?php
+    require_once("./config.php");
+    if (DEV_MODE) {
+      $userName = htmlentities(DEV_USER);
+      $commonName = htmlentities(DEV_CN);
+      $apiUrl = DEV_API_URL;
+    }
+    else {
+      $userName = htmlentities($_SERVER['WEBAUTH_USER']);
+      $commonName = htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
+      $apiUrl = API_URL;
+    }
+    $profilesUrl = PROFILES_URL;
+  ?>
+  <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo GMAPS_API_KEY; ?>"></script>
+  <script>
+    var CSH_MAP_CONFIG = {
+      apiUrl: "<?php echo $apiUrl; ?>",
+      profilesUrl: "<?php echo $profilesUrl; ?>"
+    }
+  </script>
 	<script src="./js/map.js"></script>
 	<script>
 
@@ -123,8 +139,8 @@
 
     document.addEventListener("DOMContentLoaded", function() {
       currentUser = {
-        uid: "<?php echo $userName ?>",
-        cn: "<?php echo $commonName ?>"
+        uid: "<?php echo $userName; ?>",
+        cn: "<?php echo $commonName; ?>"
       };
 
       map = new CSH_MAP("map-canvas", currentUser);

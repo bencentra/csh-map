@@ -1,22 +1,16 @@
-var CSH_MAP;
-
-(function (jq, gmaps) {
+(function (window, console, jq, gmaps) {
 
   "use strict";
 
-  CSH_MAP = function (mapCanvas, currentUser) {
+  window.CSH_MAP = function (mapCanvas, currentUser) {
 
     jq(".alert").alert();
     jq(".alert").click(function() {
       hideAlert();
     });
 
-    // var apiUrl = "https://members.csh.rit.edu/~bencentra/csh-map/api/api.php?request=";
-    var apiUrl = "http://localhost:8888/csh-map/api/";
-    // var apiUrl = "http://localhost/csh-map/api/"; 
-
-    var profilesURL = "https://jdprofiles.csh.rit.edu/user";
-
+    var apiUrl = window.CSH_MAP_CONFIG["apiUrl"] || false;
+    var profilesURL = window.CSH_MAP_CONFIG["profilesURL"] || false;
     var map, geocoder, center, markers, names, currentInfo, myMarker;
 
     function initialize () {
@@ -119,20 +113,22 @@ var CSH_MAP;
     }
 
     function updateMyAddress() {
+      var address, location;
       if (!geocoder) return;
-      var address = $("#addressChange").val();
+      address = $("#addressChange").val();
       geocoder.geocode({address:address}, function (results, status) {
         if (status == gmaps.GeocoderStatus.OK) {
-          var location = results[0].geometry.location;
+          location = results[0].geometry.location;
           address = results[0].formatted_address;
         }
+        console.log(location);
         jq.ajax({
           url: apiUrl+"users",
           method: "POST",
           dataType: "json",
           data: {
             latitude: location.k,
-            longitude: location.B,
+            longitude: location.D,
             address: address
           },
           success: function (result) {
@@ -147,7 +143,7 @@ var CSH_MAP;
             }
             currentUser.address = address;
             currentUser.latitude = location.k;
-            currentUser.longitude = location.B;
+            currentUser.longitude = location.D;
             currentUser.date = "Just Now";
             var existingMarker = findMarkerByLocation(address);
             if (existingMarker) {
@@ -335,8 +331,8 @@ var CSH_MAP;
       changeType: changeMapType,
       search: searchUsers,
       zoom: centerMapOnLocation
-    }
+    };
 
   };
 
-}) (window.jQuery, window.google.maps);
+}) (window, window.console, window.jQuery, window.google.maps);

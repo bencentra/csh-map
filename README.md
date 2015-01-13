@@ -8,7 +8,7 @@ Members of CSH can access the map here: https://members.csh.rit.edu/~bencentra/c
 API
 ---
 
-A simple RESTful API for setting and retrieving addresses. Requests can be in the form of either `/api/<request>` or `/api/api.php?request=<request>`. Relies on Webauth for authentication.
+A simple JSON API for setting and retrieving addresses. Requests can be in the form of ~~either `/api/<request>`~~ or `/api/api.php?request=<request>`. Relies on Webauth for authentication.
 
 The following API methods are available:
 
