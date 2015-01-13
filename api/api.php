@@ -1,6 +1,11 @@
 <?php
 
+// Include the DatabaseUtils class
 require_once "./db_utils.php";
+// Include config options
+require_once "../config.php";
+// Include the database connection info
+require_once("../../../maps_db_info.inc");
 
 abstract class API
 {
@@ -96,11 +101,13 @@ class MapAPI extends API
 {
   private $uid = "";
   private $cn = "";
+  private $db;
 
   public function __construct($request, $origin) {
     parent::__construct($request);
-    $this->uid = htmlentities("bencentra"); // htmlentities($_SERVER['WEBAUTH_USER']);
-    $this->cn = htmlentities("Ben Centra"); // htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
+    $this->uid = (DEV_MODE) ? htmlentities(DEV_USER) : htmlentities($_SERVER['WEBAUTH_USER']);
+    $this->cn = (DEV_MODE) ? htmlentities(DEV_CN) : htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
+    $this->db = new DatabaseUtils(DB_NAME, DB_HOST, DB_USER, DB_PASS);
   }
 
   private function result($status, $message, $data) {
@@ -122,7 +129,7 @@ class MapAPI extends API
       // GET /users - Get a list of all users and their location
       case "GET":
         $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address, last_update as date FROM geo ORDER BY address ASC";
-        $query = db_select($sql, array());
+        $query = $this->db->select($sql, array());
         if ($this->verb == "group_by") {
           if ($this->args[0] == "location") {
             if ($query) {
@@ -178,7 +185,7 @@ class MapAPI extends API
         }
         $sql = "REPLACE INTO geo (username, common_name, latitude, longitude, address) 
                 VALUES (:uid, :cn, :latitude, :longitude, :address)";
-        $query = db_insert($sql, $params);
+        $query = $this->db->insert($sql, $params);
         if ($query) {
           return $this->result(true, "", true);
         }
@@ -191,7 +198,7 @@ class MapAPI extends API
         $params = array();
         $params["uid"] = $this->uid;
         $sql = "DELETE FROM geo WHERE username = :uid";
-        $query = db_delete($sql, $params);
+        $query = $this->db->delete($sql, $params);
         if ($query) {
           return $this->result(true, "", true);
         }
