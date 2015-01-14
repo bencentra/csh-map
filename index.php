@@ -26,6 +26,7 @@
     .hide { display: none; }
     .center { text-align: center; }
     .slogan { margin: 15px 6px; }
+    .ui-autocomplete { position: absolute; cursor: default; z-index:10000 !important;} 
 	</style>
 </head>
 <body>
@@ -49,6 +50,7 @@
 		      	</div>
 					</form>
 	      </div>
+        <br>
 	      <div class="modal-footer">
         	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         	<button type="button" class="btn btn-primary" onclick="map.updateAddress();">Update Address</button>
@@ -56,6 +58,35 @@
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
+  <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title">Search Map</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form">
+            <div class="form-group">
+              <label>Type</label>
+              <select class="form-control" id="searchType" onchange="map.changeSearchType(this.value);">
+                <option value="name">Name</option>
+                <option value="location">Location</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Search</label>
+              <input type="text" id="searchValue" class="form-control" placeholder="Real Name or Username..."/>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-info" onclick="map.search($('#searchValue').val());">Search</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 	<div id="map-canvas"></div>
 	<div id="wrapper">
 		<nav class="navbar navbar-default shadow" role="navigation">
@@ -76,23 +107,19 @@
             <em class="navbar-text slogan">Find CSHers Across the Globe!</em>
           </ul>
           <ul class="navbar-form navbar-right">
+            <br class="visible-xs">
             <div class="form-group center">
               <span id="popoverBtn" data-toggle="tooltop" data-placement="bottom" data-container="body">
                 <button id="addressBtn" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addressModal">Change My Location</button>
               </span>
             </div>
             <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
-            <div class="form-group">
-              <input class="form-control" type="text" placeholder="Search..." id="memberSearch"/>
-              <!-- <input class="form-control" type="text" autocomplete="off" placeholder="Search..." id="memberSearch" list="members" onkeyup="map.search(this.value);"/> -->
-              <!-- <datalist id="members"></datalist> -->
-            </div>
             <div class="form-group center">
-              <button id="searchBtn" type="button" class="btn btn-default" onclick="map.search($('#memberSearch').val());">Go</button>
+              <button id="searchBtn" type="button" class="btn btn-info" data-toggle="modal" data-target="#searchModal">Search Map</button>
             </div>
             <span class="gray hidden-xs">&nbsp;|&nbsp;</span>
             <div class="form-group">
-              <select class="form-control" id="mapType" onchange="map.changeType(this.value);">
+              <select class="form-control" id="mapType" onchange="map.changeMapType(this.value);">
                 <option value="roadmap" selected="selected">Road Map</option>
                 <option value="satellite">Satellite</option>
                 <option value="hybrid">Hybrid</option>

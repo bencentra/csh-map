@@ -11,7 +11,7 @@
 
     var apiUrl = window.CSH_MAP_CONFIG["apiUrl"] || false;
     var profilesURL = window.CSH_MAP_CONFIG["profilesURL"] || false;
-    var map, geocoder, center, markers, names, currentInfo, myMarker;
+    var map, geocoder, center, markers, names, currentInfo, myMarker, locations, searchType;
 
     function initialize () {
       if (typeof map === "object") {
@@ -44,6 +44,24 @@
       geocoder = new gmaps.Geocoder();
       markers = [];
       getAllMarkers();
+      getAllLocations();
+      searchType = "name";
+    }
+
+    function getAllLocations() {
+      jq.ajax({
+        url: apiUrl+"locations",
+        method: "GET",
+        dataType: "json",
+        success: function (result) {
+          if (!result.status || !result.data) {
+            showAlert("warn", result.message);
+            return;
+          }
+          locations = result.data;
+        },
+        error: ajaxError
+      });
     }
 
     function getAllMarkers() {
@@ -59,10 +77,7 @@
           jq.each(result.data, function (location, users) {
             addMarker(location, users);
           });
-          names = getUserNames();
-          jq("#memberSearch").autocomplete({
-            source: names
-          });
+          getUserNames();
           myMarker = findMarkerByUser(currentUser.uid);
           if (myMarker) {
             currentUser.latitude = myMarker.users[0].latitude;
@@ -102,7 +117,7 @@
       jq.each(users, function(index, user) {
         var date = Date.parse(user.date);
         date = new Date(date).toDateString();
-        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+profilesURL+"/"+user.uid+"\" target=\"_blank\">"+user.uid+"</a>) <span class=\"gray small\"> - Last Updated: "+date+"</span></p>";
+        content += "<p><strong>"+user.cn+"</strong> (<a href=\""+CSH_MAP_CONFIG.profilesUrl+"/"+user.uid+"\" target=\"_blank\">"+user.uid+"</a>) <span class=\"gray small\"> - Last Updated: "+date+"</span></p>";
       });
       content += "</div>";
       var info = new gmaps.InfoWindow({content: content});
@@ -156,10 +171,7 @@
               var users = [currentUser];
               addMarker(address, users);
             }
-            names = getUserNames();
-            jq("#memberSearch").autocomplete({
-              source: names
-            });
+            getUserNames();
             jq("#addressChange").val(address);
             jq("#addressModal").modal("hide");
             showAlert("success", "Address updated successfully!");
@@ -187,10 +199,7 @@
           currentUser.latitude = 0;
           currentUser.longitude = 0;
           currentUser.date = "Just Now";
-          names = getUserNames();
-          jq("#memberSearch").autocomplete({
-            source: names
-          });
+          getUserNames();
           jq("#addressChange").val("");
           jq("#addressModal").modal("hide");
           showAlert("success", "Address removed successfully!");
@@ -253,16 +262,60 @@
 
     function getUserNames () {
       var userNames = [];
-      jq.each(markers, function (location, marker) {
+      jq.each(markers, function (i, marker) {
         jq.each(marker.users, function (index, user) {
           userNames.push(user.cn + " (" + user.uid + ")");
         });
       });
-      return userNames;
+      names = userNames;
+      jq("#searchValue").autocomplete({
+        source: names
+      });
+    }
+
+    function getLocationNames () {
+      var locationNames = []
+      for (var i = 0; i < locations.length; i++) {
+        locationNames.push(locations[i].address);
+      }
+      console.log(locationNames);
+      jq("#searchValue").autocomplete({
+        source: locationNames
+      });
     }
 
     function ajaxError (error) {
       console.error(error);
+    }
+
+    function changeSearchType (type) {
+      type = type.toLowerCase();
+      if (type === "name") {
+        searchType = type;
+        jq("#searchValue").attr("placeholder", "Real Name or Username...").val("");
+        getUserNames();
+      }
+      else if (type === "location") {
+        searchType = type;
+        jq("#searchValue").attr("placeholder", "City, State, etc...").val("");
+        getLocationNames();
+      }
+      else {
+        console.warn("Invalid search type");
+      }
+    }
+
+    function search (search) {
+      jq("#searchModal").modal("hide");
+      if (searchType === "name") {
+        searchUsers(search);
+      }
+      else if (searchType === "location") {
+        searchLocations(search);
+      }
+      else {
+        console.warn("Invalid search type");
+      }
     }
 
     function searchUsers (search) {
@@ -273,6 +326,17 @@
       }
       else {
         showAlert("warn", "Unable to find user \""+uid+"\", please try again.");
+      }
+    }
+
+    function searchLocations (search) {
+      var location = search.trim();
+      var marker = findMarkerByLocation(location);
+      if (marker) {
+        centerMapOnMarker(marker);
+      }
+      else {
+        showAlert("warn", "Unable to find location \""+location+"\", please try again.");
       }
     }
 
@@ -340,8 +404,10 @@
       init: initialize,
       updateAddress: updateMyAddress,
       removeAddress: removeMeFromMap,
-      changeType: changeMapType,
-      search: searchUsers,
+      changeMapType: changeMapType,
+      changeSearchType: changeSearchType,
+      search: search,
+      // searchLocation: searchLocations,
       zoom: centerMapOnLocation
     };
 

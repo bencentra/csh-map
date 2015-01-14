@@ -124,6 +124,24 @@ class MapAPI extends API
     return $user;
   } 
 
+  protected function locations() {
+    switch ($this->method) {
+      case "GET":
+        $sql = "SELECT address, latitude, longitude FROM geo GROUP BY address ORDER BY address ASC";
+        $query = $this->db->select($sql, array());
+        if ($query) {
+          return $this->result(true, "", $query);
+        }
+        else {
+          return $this->result(false, "Error: Failed to retrieve locations.", false);
+        }
+        break;
+      // Invalid HTTP method
+      default: 
+        return $this->result(false, 'Invalid HTTP method for endpoint "locations."', false);
+    }
+  }
+
   protected function users() {
     switch ($this->method) {
       // GET /users - Get a list of all users and their location
