@@ -129,7 +129,7 @@ class MapAPI extends API
       case "GET":
         $sql = "SELECT address, latitude, longitude FROM geo GROUP BY address ORDER BY address ASC";
         $query = $this->db->select($sql, array());
-        if ($query) {
+        if ($query !== false) {
           return $this->result(true, "", $query);
         }
         else {
@@ -150,7 +150,7 @@ class MapAPI extends API
         $query = $this->db->select($sql, array());
         if ($this->verb == "group_by") {
           if ($this->args[0] == "location") {
-            if ($query) {
+            if ($query !== false) {
               $data = array();
               $currentAddress = "";
               foreach($query as $user) {
@@ -170,7 +170,7 @@ class MapAPI extends API
           }
         }
         else {
-          if ($query) {
+          if ($query !== false) {
             return $this->result(true, "", $query);
           }
           else {
@@ -204,7 +204,7 @@ class MapAPI extends API
         $sql = "REPLACE INTO geo (username, common_name, latitude, longitude, address) 
                 VALUES (:uid, :cn, :latitude, :longitude, :address)";
         $query = $this->db->insert($sql, $params);
-        if ($query) {
+        if ($query !== false) {
           return $this->result(true, "", true);
         }
         else {
@@ -217,7 +217,7 @@ class MapAPI extends API
         $params["uid"] = $this->uid;
         $sql = "DELETE FROM geo WHERE username = :uid";
         $query = $this->db->delete($sql, $params);
-        if ($query) {
+        if ($query !== false) {
           return $this->result(true, "", true);
         }
         else {
