@@ -12,6 +12,30 @@ A simple JSON API for setting and retrieving addresses. Requests can be in the f
 
 The following API methods are available:
 
+### GET /locations
+
+__Description:__ Gets an array of all locations (address, latitude, and longitude)
+
+__Parameters:__ No required parameters.
+
+__Sample Response:__
+
+```json
+{
+    "status": true,
+    "message": "",
+    "data": [
+        ...
+        {
+            "address": "1 Dorm Crescent, Rochester, NY 14623, USA",
+            "latitude": "43.0852629",
+            "longitude": "-77.6665976"
+        },
+        ...
+    ]
+}
+```
+
 ### GET /users
 
 __Description:__ Gets an array of all users and their addresses.
