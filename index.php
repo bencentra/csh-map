@@ -40,7 +40,7 @@
 	      </div>
 	      <div class="modal-body">
 	      	<p><em class="gray">Provide at least your city and state/country</em></p>
-	        <form role="form">
+	        <form role="form" onsubmit="return false;">
 	        	<div class="form-group">
 	        		<label for="addressChange">Address:</label>
 	        		<input type="text" id="addressChange" class="form-control" placeholder="Boston, MA"/>
@@ -52,8 +52,8 @@
 	      </div>
         <br>
 	      <div class="modal-footer">
-        	<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         	<button type="button" class="btn btn-primary" onclick="map.updateAddress();">Update Address</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -66,7 +66,7 @@
           <h4 class="modal-title">Search Map</h4>
         </div>
         <div class="modal-body">
-          <form role="form">
+          <form role="form" onsubmit="return false;">
             <div class="form-group">
               <label>Type</label>
               <select class="form-control" id="searchType" onchange="map.changeSearchType(this.value);">
@@ -76,13 +76,13 @@
             </div>
             <div class="form-group">
               <label>Search</label>
-              <input type="text" id="searchValue" class="form-control" placeholder="Real Name or Username..."/>
+              <input type="text" id="searchValue" class="form-control" placeholder="Real Name or Username..." />
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-info" onclick="map.search($('#searchValue').val());">Search</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -173,6 +173,19 @@
 
       map = new CSH_MAP("map-canvas", currentUser);
       map.init();
+
+      $(searchValue).on('keypress', function(e) {
+        if (e.keyCode == 13) {
+          map.search($('#searchValue').val());
+        }
+      });
+
+      $(addressChange).on('keypress', function(e) {
+        if (e.keyCode == 13) {
+          map.updateAddress();
+        }
+      });
+
     }, true);
 
 	</script>	

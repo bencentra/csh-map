@@ -307,6 +307,7 @@
 
     function search (search) {
       jq("#searchModal").modal("hide");
+      jq("#searchValue").autocomplete("close");
       if (searchType === "name") {
         searchUsers(search);
       }
@@ -319,13 +320,18 @@
     }
 
     function searchUsers (search) {
-      var uid = search.split("(")[1].split(")")[0].trim();
-      var marker = findMarkerByUser(uid);
-      if (marker) {
-        centerMapOnMarker(marker);
+      try {
+        var uid = search.split("(")[1].split(")")[0].trim();
+        var marker = findMarkerByUser(uid);
+        if (marker) {
+          centerMapOnMarker(marker);
+        }
+        else {
+          showAlert("warn", "Unable to find user \""+uid+"\", please try again.");
+        }
       }
-      else {
-        showAlert("warn", "Unable to find user \""+uid+"\", please try again.");
+      catch (e) {
+        showAlert("warn", "Unable to find user \""+search+"\", please try again.");
       }
     }
 
