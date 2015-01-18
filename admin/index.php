@@ -24,6 +24,9 @@ require_once("./adminCheck.php");
     .small {
       font-size: .85em;
     }
+    .hide {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -63,8 +66,8 @@ require_once("./adminCheck.php");
             </form>
           </div>
         </div>
-        <div id="emailAlert" class="alert alert-success alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <div id="emailAlert" class="alert alert-success hide" role="alert">
+          <button type="button" class="close" onclick="$('#emailAlert').addClass('hide');"><span aria-hidden="true">&times;</span></button>
           <span class="message">Lorem ipsum and the rest!</span>
         </div>
       </div>
@@ -77,7 +80,7 @@ require_once("./adminCheck.php");
   <script>
 
     function setAlertClass(selector, success) {
-      var $alert = $(id);
+      var $alert = $(selector);
       if (!$alert) return;
       if (success) {
         $alert.removeClass("alert-danger").addClass("alert-success");
@@ -102,7 +105,7 @@ require_once("./adminCheck.php");
           else {
             setAlertClass("#emailAlert", false);
           }
-          $("#emailAlert").find(".message").text(response.message);
+          $("#emailAlert").removeClass('hide').find(".message").text(response.message);
         },
         error: function(error) {
           console.error(error);

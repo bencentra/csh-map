@@ -1,11 +1,12 @@
 <?php
 require_once("../config.php");
-$admins = ['bencentra'];
+$admins = array("bencentra");
+$adminUser = "";
 if (DEV_MODE) {
-  $user = htmlentities(DEV_USER);
+  $adminUser = htmlentities(DEV_USER);
 }
 else {
-  $user = htmlentities($_SERVER["WEBAUTH_USER"]);
+  $adminUser = htmlentities($_SERVER["WEBAUTH_USER"]);
 }
-$isAdmin = in_array($user, $admins);
+$isAdmin = in_array($adminUser, $admins);
 ?>
