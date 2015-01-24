@@ -84,6 +84,11 @@
             currentUser.longitude = myMarker.users[0].longitude;
             currentUser.address = myMarker.location;
             currentUser.date = findUserInMarker(currentUser.uid, myMarker).date;
+            currentUser.email = findUserInMarker(currentUser.uid, myMarker).email;
+            if (!currentUser.email) 
+              jq("#emailOptOut").attr("checked", true);
+            else
+              jq("#emailOptOut").removeAttr("checked");
             jq("#addressChange").val(myMarker.location);
             showUpdatePopover(myMarker);
           }
@@ -199,7 +204,9 @@
           currentUser.latitude = 0;
           currentUser.longitude = 0;
           currentUser.date = "Just Now";
+          currentUser.email = 0;
           getUserNames();
+          jq("#emailOptOut").prop("checked", false);
           jq("#addressChange").val("");
           jq("#addressModal").modal("hide");
           showAlert("success", "Address removed successfully!");
@@ -226,6 +233,22 @@
         marker.marker.setMap(null);
         marker = false;
       }
+    }
+
+    function updateEmailStatus (status) {
+      var canEmail = status ? 0 : 1;
+      jq.ajax({
+        url: apiUrl+"email",
+        method: "POST",
+        dataType: "json",
+        data: {
+          can_email: canEmail
+        },
+        success: function (response) {
+          currentUser.email = canEmail;
+        },
+        error: ajaxError
+      });
     }
 
     function findMarkerByUser (uid) {
@@ -414,7 +437,8 @@
       changeSearchType: changeSearchType,
       search: search,
       // searchLocation: searchLocations,
-      zoom: centerMapOnLocation
+      zoom: centerMapOnLocation,
+      changeEmailStatus: updateEmailStatus
     };
 
   };

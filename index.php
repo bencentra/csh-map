@@ -27,6 +27,8 @@
     .center { text-align: center; }
     .slogan { margin: 15px 6px; }
     .ui-autocomplete { position: absolute; cursor: default; z-index:10000 !important;} 
+    .clearfix { clear: both; }
+    .lift { position: relative; top: -4px; }
 	</style>
 </head>
 <body>
@@ -48,6 +50,11 @@
 	        	<div class="pull-right">
 		      		<button type="button" class="btn btn-link" onclick="map.removeAddress();">Remove Address from Map</button>
 		      	</div>
+            <div class="checkbox pull-left lift">
+              <label>
+                <input type="checkbox" id="emailOptOut" onclick="map.changeEmailStatus(this.checked);">Opt-out From Email Notifications
+              </label>
+            </div>
 					</form>
 	      </div>
         <br>

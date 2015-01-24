@@ -52,7 +52,7 @@ if ($months > 12) {
 }
 
 $users = array();
-$sql = "SELECT username, last_update FROM geo WHERE last_update < DATE_SUB(NOW(), INTERVAL :months MONTH)";
+$sql = "SELECT username, last_update FROM geo WHERE last_update < DATE_SUB(NOW(), INTERVAL :months MONTH) AND can_email = 1";
 $params = array("months" => $months);
 $result = $db->select($sql, $params);
 if ($result !== false) {

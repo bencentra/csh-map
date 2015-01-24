@@ -126,6 +126,7 @@ class MapAPI extends API
 
   protected function locations() {
     switch ($this->method) {
+      // GET /locations - Get a list of all locations
       case "GET":
         $sql = "SELECT address, latitude, longitude FROM geo GROUP BY address ORDER BY address ASC";
         $query = $this->db->select($sql, array());
@@ -142,11 +143,50 @@ class MapAPI extends API
     }
   }
 
+  protected function email() {
+    switch ($this->method) {
+      // GET /email - Get your current email status (1 for true, 0 for false)
+      case "GET":
+        $sql = "SELECT can_email as email FROM geo WHERE username = :username";
+        $params = array();
+        $params["username"] = $this->uid;
+        $query = $this->db->select($sql, $params);
+        if ($query) {
+          return $this->result(true, "", $query);
+        }
+        else {
+          return $this->result(false, "Error: Failed to retrieve email setting.", false);
+        }
+        break;
+      // POST /email - Update your email status 
+      case "POST":
+        $sql = "UPDATE geo SET can_email = :can_email WHERE username = :username";
+        $params = array();
+        $params["username"] = $this->uid;
+        if (array_key_exists("can_email", $this->request)) {
+          $params["can_email"] = $this->request["can_email"];
+        }
+        else {
+          return $this->result(false, "Error: Missing can_email.", false);
+        }
+        $query = $this->db->update($sql, $params);
+        if ($query) {
+          return $this->result(true, "", true);
+        }
+        else {
+          return $this->result(false, "Error: Failed to update email setting.", false);
+        }
+        break;
+      default:
+        return $this->result(false, 'Invalid HTTP method for endpoint "email."', false);
+    }
+  }
+
   protected function users() {
     switch ($this->method) {
       // GET /users - Get a list of all users and their location
       case "GET":
-        $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address, last_update as date FROM geo ORDER BY address ASC";
+        $sql = "SELECT username as uid, common_name as cn, latitude, longitude, address, last_update as date, can_email as email FROM geo ORDER BY address ASC";
         $query = $this->db->select($sql, array());
         if ($this->verb == "group_by") {
           if ($this->args[0] == "location") {
@@ -201,8 +241,7 @@ class MapAPI extends API
         else {
           return $this->result(false, "Error: Missing address.", false);
         }
-        $sql = "REPLACE INTO geo (username, common_name, latitude, longitude, address) 
-                VALUES (:uid, :cn, :latitude, :longitude, :address)";
+        $sql = "UPDATE geo SET common_name = :common_name, latitude = :latitude, longitude = :longitude, address = :address WHERE username = :username";
         $query = $this->db->insert($sql, $params);
         if ($query !== false) {
           return $this->result(true, "", true);
