@@ -152,7 +152,7 @@ class MapAPI extends API
         $params["username"] = $this->uid;
         $query = $this->db->select($sql, $params);
         if ($query) {
-          return $this->result(true, "", $query);
+          return $this->result(true, "", $query[0]["email"]);
         }
         else {
           return $this->result(false, "Error: Failed to retrieve email setting.", false);
@@ -171,7 +171,7 @@ class MapAPI extends API
         }
         $query = $this->db->update($sql, $params);
         if ($query) {
-          return $this->result(true, "", true);
+          return $this->result(true, "", $this->request["can_email"]);
         }
         else {
           return $this->result(false, "Error: Failed to update email setting.", false);
@@ -241,8 +241,8 @@ class MapAPI extends API
         else {
           return $this->result(false, "Error: Missing address.", false);
         }
-        $sql = "UPDATE geo SET common_name = :common_name, latitude = :latitude, longitude = :longitude, address = :address WHERE username = :username";
-        $query = $this->db->insert($sql, $params);
+        $sql = "UPDATE geo SET common_name = :cn, latitude = :latitude, longitude = :longitude, address = :address, last_update = NOW() WHERE username = :uid";
+        $query = $this->db->update($sql, $params);
         if ($query !== false) {
           return $this->result(true, "", true);
         }

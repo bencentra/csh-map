@@ -16,7 +16,7 @@ The following API methods are available:
 
 __Description:__ Gets an array of all locations (address, latitude, and longitude)
 
-__Parameters:__ No required parameters.
+__Parameters:__ None.
 
 __Sample Response:__
 
@@ -40,7 +40,7 @@ __Sample Response:__
 
 __Description:__ Gets an array of all users and their addresses.
 
-__Parameters:__ No required parameters.
+__Parameters:__ None.
 
 __Sample Response:__
 
@@ -56,7 +56,8 @@ __Sample Response:__
             "latitude": "42.376485",
             "longitude": "-71.235611",
             "address": "Waltham, MA, USA",
-            "date": "2014-07-22 23:12:52"
+            "date": "2014-07-22 23:12:52",
+            "email": "1"
         },
         ...
     ]
@@ -67,7 +68,7 @@ __Sample Response:__
 
 __Description:__ Gets an object with all users grouped by location.
 
-__Parameters:__ No required parameters.
+__Parameters:__ None.
 
 __Sample Response:__
 
@@ -120,7 +121,7 @@ __Sample Response:__
 
 __Description:__ Delete your own address.
 
-__Parameters:__ No required parameters.
+__Parameters:__ None.
 
 __Sample Response:__
 
@@ -129,5 +130,41 @@ __Sample Response:__
     "status": true,
     "message": "",
     "data": true
+}
+```
+
+### GET /email
+
+__Description:__ Get your current email notification setting (1 = on, 0 = off)
+
+__Parameters:__ None.
+
+__Sample Response:__
+
+```json
+{
+    "status": true,
+    "message": "",
+    "data": "1"
+}
+```
+
+### POST /email
+
+__Description:__ Update your current email notification setting
+
+__Parameters:__
+
+param|description|required
+---|---|---
+can_email|The new email notification setting (1 = on, 0 = off)|true
+
+__Sample Response:__
+
+```json
+{
+    "status": true,
+    "message": "",
+    "data": "0"
 }
 ```

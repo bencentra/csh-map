@@ -84,7 +84,7 @@
             currentUser.longitude = myMarker.users[0].longitude;
             currentUser.address = myMarker.location;
             currentUser.date = findUserInMarker(currentUser.uid, myMarker).date;
-            currentUser.email = findUserInMarker(currentUser.uid, myMarker).email;
+            currentUser.email = parseInt(findUserInMarker(currentUser.uid, myMarker).email);
             if (!currentUser.email) 
               jq("#emailOptOut").attr("checked", true);
             else
@@ -120,7 +120,7 @@
       var content = "<div id=\"infoWindow\"><h4>"+marker.title+"</h4>";
       content += "<p><button type=\"button\" onclick=\"map.zoom('"+marker.title+"')\">Zoom In</button></p>";
       jq.each(users, function(index, user) {
-        var date = Date.parse(user.date);
+        var date = (typeof user.date === "number") ? user.date : Date.parse(user.date);
         date = new Date(date).toDateString();
         content += "<p><strong>"+user.cn+"</strong> (<a href=\""+CSH_MAP_CONFIG.profilesUrl+"/"+user.uid+"\" target=\"_blank\">"+user.uid+"</a>) <span class=\"gray small\"> - Last Updated: "+date+"</span></p>";
       });
@@ -143,7 +143,6 @@
           location = results[0].geometry.location;
           address = results[0].formatted_address;
         }
-        console.log(location);
         jq.ajax({
           url: apiUrl+"users",
           method: "POST",
@@ -166,7 +165,7 @@
             currentUser.address = address;
             currentUser.latitude = location.k;
             currentUser.longitude = location.D;
-            currentUser.date = "Just Now";
+            currentUser.date = Date.now();
             var existingMarker = findMarkerByLocation(address);
             if (existingMarker) {
               existingMarker.users.push(currentUser);
