@@ -178,6 +178,7 @@
             getUserNames();
             jq("#addressChange").val(address);
             jq("#addressModal").modal("hide");
+            jq("#popoverBtn").popover("hide");
             showAlert("success", "Address updated successfully!");
           },
           error: ajaxError
@@ -208,6 +209,7 @@
           jq("#emailOptOut").prop("checked", false);
           jq("#addressChange").val("");
           jq("#addressModal").modal("hide");
+          jq("#popoverBtn").popover("hide");
           showAlert("success", "Address removed successfully!");
         },
         error: ajaxError

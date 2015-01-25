@@ -38,7 +38,7 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-	        <h4 class="modal-title">Where Are You?</h4>
+	        <h4 class="modal-title">Change My Location</h4>
 	      </div>
 	      <div class="modal-body">
 	      	<p><em class="gray">Provide at least your city and state/country</em></p>
@@ -59,8 +59,8 @@
 	      </div>
         <br>
 	      <div class="modal-footer">
-        	<button type="button" class="btn btn-primary" onclick="map.updateAddress();">Update Address</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        	<button type="button" class="btn btn-success" onclick="map.updateAddress();">Update Address</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -88,8 +88,8 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-info" onclick="map.search($('#searchValue').val());">Search</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" onclick="map.search($('#searchValue').val());">Search</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -133,6 +133,24 @@
                 <option value="terrain">Terrain</option>
               </select>
             </div>
+            <!-- <div class="btn-group center">
+              <button id="addressBtn" type="button" class="btn btn-default" data-toggle="modal" data-target="#addressModal">
+                <span id="popoverBtn" data-toggle="tooltop" data-placement="bottom" data-container="body">
+                  Change My Location
+                </span>
+              </button>
+              <button id="searchBtn" type="button" class="btn btn-default" data-toggle="modal" data-target="#searchModal">Search Map</button>
+              <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Map Type&nbsp;
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#" onclick="map.changeMapType('roadmap');">Road Map</a></li>
+                <li><a href="#" onclick="map.changeMapType('satellite');">Satellite</a></li>
+                <li><a href="#" onclick="map.changeMapType('hybrid');">Hybrid</a></li>
+                <li><a href="#" onclick="map.changeMapType('terrain');">Terrain</a></li>
+              </ul>
+            </div> -->
           </ul>
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
