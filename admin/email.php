@@ -21,22 +21,25 @@ function result($status, $message, $data) {
 
 function sendEmail($user, $date) {
   global $adminUser;
-  $url = "https://members.csh.rit.edu/~bencentra/csh-map/";
-  $to = "blcentra@gmail.com";//$user."@csh.rit.edu";
+  $date = date("F j, Y", strtotime($date));
+  $url = "http://bit.ly/csh-global-map";
+  $to = $user."@csh.rit.edu";
   $from = "bencentra@csh.rit.edu";
   $subject = "CSH Map - Update Your Location!";
   $headers = "From: ".$from."\r\n";
   $headers .= "Reply-To: ".$from."\r\n";
   $headers .= "MIME-Version: 1.0\r\n";
   $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-  $message = "<html><body>";
-  $message .= "<h3>Is your location accurate on the CSH Map?</h3>";
-  $message .= "<p>You last updated your location on ".$date.". If your location has changed, you can update it here: <a href='".$url."'>".$url."</a>.";
-  $message .= " You can also choose to remove yourself from the map, or opt-out of future email notifications.</p>";
-  $message .= "<p>The more accurate the map is, the better we can see where CSHers are across the country and around the world!</p>";
-  $message .= "<p>Thanks for using the CSH Map!</p>";
-  $message .= "<p><b>Ben Centra</b><br/><a href='mailto:".$from."'>".$from."</a><br/>RIT/CSH 2010-2014</p>";
-  $message .= "</body></html>";
+  $message = "<html><body><div style='width: 440px; margin: auto; padding: 20px; border: 1px solid black;'>";
+  $message .= "<h2 style='text-align: center;'>Is your location accurate <br/>on the CSH Map?</h2>";
+  $message .= "<a href='".$url."' style='text-decoration: none;'>";
+  $message .= "<div style='width: 170px; margin: auto; text-align: center; padding: 5px; font-size: 16px; font-weight: bold; color: white; background-color: #bc0000;'>Update My Location</div></a>";
+  $message .= "<p style='font-size: 16px;'>You last updated your location on <span style='font-weight: bold;'>".$date."</span>. You can update or confirm it here: <a href='".$url."'>".$url."</a>.</p>";
+  $message .= "<p style='font-size: 14px;'>You can also remove yourself from the map, or opt-out of future email notifications.</p>";
+  $message .= "<p style='font-size: 14px;'>The more accurate the map is, the better we can see where CSHers are across the country and around the world!</p>";
+  $message .= "<p style='font-size: 14px;'>Thanks for using the CSH Map!</p>";
+  $message .= "<p style='font-size: 14px;'><b>Ben Centra</b><br/><a href='mailto:".$from."'>".$from."</a><br/>RIT/CSH 2010-2014</p>";
+  $message .= "</div></body></html>";
   return mail($to, $subject, $message, $headers);
 }
 
@@ -55,6 +58,7 @@ $users = array();
 $sql = "SELECT username, last_update FROM geo WHERE last_update < DATE_SUB(NOW(), INTERVAL :months MONTH) AND can_email = 1";
 $params = array("months" => $months);
 $result = $db->select($sql, $params);
+$sent = array();
 if ($result !== false) {
   $users = $result;
   $success = true;
@@ -65,9 +69,12 @@ if ($result !== false) {
       $lastUser = $user;
       break;
     }
+    else {
+      $sent[] = $user["username"];
+    }
   }
   if ($success) {
-    echo result(true, "Emails sent successfully!", true);
+    echo result(true, "Emails sent successfully!", $sent);
   }
   else {
     echo result(false, "Error sending email.", $lastUser);
