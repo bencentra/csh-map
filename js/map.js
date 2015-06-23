@@ -148,8 +148,8 @@
           method: "POST",
           dataType: "json",
           data: {
-            latitude: location.k,
-            longitude: location.D,
+            latitude: location.A,
+            longitude: location.F,
             address: address
           },
           success: function (result) {
@@ -163,8 +163,8 @@
               updateOrRemoveMarker(oldMarker);
             }
             currentUser.address = address;
-            currentUser.latitude = location.k;
-            currentUser.longitude = location.D;
+            currentUser.latitude = location.A;
+            currentUser.longitude = location.F;
             currentUser.date = Date.now();
             var existingMarker = findMarkerByLocation(address);
             if (existingMarker) {
