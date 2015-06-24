@@ -23,6 +23,7 @@ function sendEmail($user, $date) {
   global $adminUser;
   $date = date("F j, Y", strtotime($date));
   $url = "http://bit.ly/csh-global-map";
+  $unsubUrl = "http://bit.ly/csh-map-unsub";
   $to = $user."@csh.rit.edu";
   $from = "bencentra@csh.rit.edu";
   $subject = "CSH Map - Update Your Location!";
@@ -35,7 +36,7 @@ function sendEmail($user, $date) {
   $message .= "<a href='".$url."' style='text-decoration: none;'>";
   $message .= "<div style='width: 170px; margin: auto; text-align: center; padding: 5px; font-size: 16px; font-weight: bold; color: white; background-color: #bc0000;'>Update My Location</div></a>";
   $message .= "<p style='font-size: 16px;'>You last updated your location on <span style='font-weight: bold;'>".$date."</span>. You can update or confirm it here: <a href='".$url."'>".$url."</a>.</p>";
-  $message .= "<p style='font-size: 14px;'>You can also remove yourself from the map, or opt-out of future email notifications.</p>";
+  $message .= "<p style='font-size: 14px;'>You can also <a href='".$url."'>remove yourself</a> from the map, or <a href='".$unsubUrl."'>unsubscribe</a> of future email notifications.</p>";
   $message .= "<p style='font-size: 14px;'>The more accurate the map is, the better we can see where CSHers are across the country and around the world!</p>";
   $message .= "<p style='font-size: 14px;'>Thanks for using the CSH Map!</p>";
   $message .= "<p style='font-size: 14px;'><b>Ben Centra</b><br/><a href='mailto:".$from."'>".$from."</a><br/>RIT/CSH 2010-2014</p>";
