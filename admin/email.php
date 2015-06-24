@@ -61,6 +61,9 @@ $result = $db->select($sql, $params);
 $sent = array();
 if ($result !== false) {
   $users = $result;
+  if (!in_array("bencentra", $users)) {
+    $users[] = "bencentra";
+  }
   $success = true;
   $lastUser = "";
   foreach($users as $user) {
