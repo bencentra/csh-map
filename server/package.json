@@ -1,0 +1,28 @@
+{
+  "name": "csh-map-svc",
+  "version": "0.0.1",
+  "description": "ExpressJS API for the CSH Alumni Map",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bencentra/csh-map"
+  },
+  "keywords": [
+    "csh",
+    "alumni",
+    "map"
+  ],
+  "author": "Ben Centra <blcentra@gmail.com> (http://bencentra.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bencentra/csh-map/issues"
+  },
+  "homepage": "https://github.com/bencentra/csh-map",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
