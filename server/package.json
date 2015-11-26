@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/bencentra/csh-map",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "mysql": "^2.9.0",
+    "sequelize": "^3.14.1"
   }
 }
