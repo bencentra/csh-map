@@ -5,3 +5,5 @@ dist/
 npm-debug.log
 db.development.sqlite
 config.json
+*.sqlite
+.env

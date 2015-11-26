@@ -1,5 +1,6 @@
 {
   "name": "csh-map-svc",
+  "private": true,
   "version": "0.0.1",
   "description": "ExpressJS API for the CSH Alumni Map",
   "main": "src/index.js",
@@ -23,6 +24,8 @@
   },
   "homepage": "https://github.com/bencentra/csh-map",
   "dependencies": {
+    "body-parser": "^1.14.1",
+    "dotenv": "^1.2.0",
     "express": "^4.13.3",
     "mysql": "^2.9.0",
     "sequelize": "^3.14.1"

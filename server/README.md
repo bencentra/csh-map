@@ -4,8 +4,18 @@ ExpressJS API for the CSH Alumni Map.
 
 ## Installation
 
+1) Install dependencies:
+
 ```bash
 npm install
+```
+
+2) Perform database setup (see below).
+
+3) Start the server:
+
+```bash
+node bin/www
 ```
 
 ### Database Setup
