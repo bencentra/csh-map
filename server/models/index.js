@@ -19,7 +19,7 @@ fs.readdirSync(__dirname)
     db[model.name] = model;
   });
 
-// TODO: Explain this part
+// Perform database associations
 Object.keys(db).forEach(function(modelName) {
   if ('associate' in db[modelName]) {
     db[modelName].associate(db);

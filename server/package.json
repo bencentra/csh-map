@@ -5,7 +5,7 @@
   "description": "ExpressJS API for the CSH Alumni Map",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "",
     "test": ""
   },
   "repository": {

@@ -1,3 +1,9 @@
-import Backbone from 'backbone';
+var app = app || {};
 
-console.log("Hello World!");
+(function(Backbone, _, $) {
+
+  'use strict';
+
+  new app.MapView();
+
+})(Backbone, _, jQuery);

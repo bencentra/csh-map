@@ -42,3 +42,9 @@ exit;
 ```bash
 sequelize db:migrate
 ```
+### `.env` File
+
+```
+NODE_ENV=development
+PORT=3000
+```
