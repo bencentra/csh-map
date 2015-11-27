@@ -42,7 +42,9 @@ exit;
 ```bash
 sequelize db:migrate
 ```
-### `.env` File
+### Environment Variables
+
+Create a `.env` file with the following contents:
 
 ```
 NODE_ENV=development

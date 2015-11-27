@@ -1,8 +1,9 @@
 'use strict';
 
 module.exports = {
+
   up: function (queryInterface, Sequelize) {
-    return queryInterface.createTable('Markers', {
+    return queryInterface.createTable('Reasons', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -10,13 +11,13 @@ module.exports = {
       },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,
-      address: Sequelize.STRING,
-      latitude: Sequelize.DOUBLE,
-      longitude: Sequelize.DOUBLE
+      name: Sequelize.STRING,
+      description: Sequelize.STRING
     });
   },
 
   down: function (queryInterface, Sequelize) {
-    return queryInterface.dropTable('Markers');
+    return queryInterface.dropTable('Reasons');
   }
+
 };

@@ -1,23 +1,21 @@
 'use strict';
 
 module.exports = {
+
   up: function (queryInterface, Sequelize) {
     return queryInterface.createTable('Members', {
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      uid: {
+        type: Sequelize.STRING,
+        primaryKey: true
       },
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE,
-      uid: Sequelize.STRING,
       cn: Sequelize.STRING,
-      canEmail: Sequelize.BOOLEAN,
-      markerId: Sequelize.INTEGER
+      createdAt: Sequelize.DATE,
+      updatedAt: Sequelize.DATE
     });
   },
 
   down: function (queryInterface, Sequelize) {
     return queryInterface.dropTable('Members');
   }
+  
 };
