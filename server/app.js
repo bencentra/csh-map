@@ -8,12 +8,14 @@ var bodyParser = require('body-parser');
 
 // Routes
 var index = require('./routes/index');
+var members = require('./routes/members');
 
 // Express app instance
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
+app.use('/members', members);
 
 // 404 error handler middleware
 app.use(function(req, res, next) {
