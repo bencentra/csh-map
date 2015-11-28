@@ -50,3 +50,98 @@ Create a `.env` file with the following contents:
 NODE_ENV=development
 PORT=3000
 ```
+## API
+
+### Members
+
+A "member" is a CSH Member who has interacted with the CSH Map.
+
+#### GET /members
+
+Get data for one or more members.
+
+__Parameters:__
+
+| Name | Description | Example | 
+| --- | --- | --- |
+| uid (optional) | Username of the single user to retrieve | `"bencentra"` |
+
+__Response:__
+
+If `uid` is present, returns a single user object. Otherwise, returns an array of users.
+
+#### POST /members
+
+Add a new member. 
+
+__Parameters:__
+
+| Name | Description | Example | 
+| --- | --- | --- |
+| uid | Username of the single user | `"bencentra"` |
+| cn | Full name of the single user | `"Ben Centra"` |
+
+__Response:__
+
+An object with the `uid` of the member.
+
+### Locations
+
+A "location" is a city that a member has recorded themselves as being in.
+
+#### GET /locations
+
+Get data for recorded locations.
+
+__Parameters:__
+
+None.
+
+__Response:__
+
+An array of location objects.
+
+#### POST /locations
+
+Add a new location. 
+
+__Parameters:__
+
+| Name | Description | Example | 
+| --- | --- | --- |
+| address | Name of the location | `"Boston, MA, USA"` |
+| latitude | Latitude of the location | `42.3601` |
+| longitude | Longitude of the location | `71.0589` |
+
+__Response:__
+
+An object with the `id` of the location.
+
+### Records
+
+A "record" represents a member changing the city they are in, including removing themselves from the map.
+
+#### GET /records
+
+Get a list of records. By default only returns a member's most recent record.
+
+__Parameters:__
+
+| Name | Description | Example | 
+| --- | --- | --- |
+| allRecords | Include all records, not just a user's most recent one | `true` |
+
+__Response:__
+
+#### POST /records
+
+Add a new record.
+
+__Parameters:__
+
+| Name | Description | Example | 
+| --- | --- | --- |
+| member | Username of the member to record | `"bencentra"` |
+| location | The ID of the location to record. Set to `null` to remove the member from the map. | `123` | 
+
+__Response:__
