@@ -7,7 +7,11 @@ var router = express.Router();
 router.get('/:uid?', function(req, res) {
   var uid = req.params.uid;
   if (uid) {
-    models.Member.findOne({where: {uid: uid}}).then(function(member) {
+    models.Member.findOne({
+      where: {
+        uid: uid
+      }
+    }).then(function(member) {
       res.send(member || {});
     }).catch(function(error) {
       res.send(error);
@@ -28,7 +32,10 @@ router.post('/', function(req, res) {
     res.send({error: 'Missing uid parameter'});
   }
   var cn = req.body.cn || '';
-  models.Member.create({uid: uid, cn: cn}).then(function(member) {
+  models.Member.create({
+    uid: uid, 
+    cn: cn
+  }).then(function(member) {
     res.send(member);
   }).catch(function(error) {
     res.send(error);
@@ -41,7 +48,13 @@ router.put('/:uid', function(req, res) {
     res.send({error: 'Missing uid parameter'});
   }
   var cn = req.body.cn || '';
-  models.Member.update({cn: cn}, {where: {uid: uid}}).then(function(member) {
+  models.Member.update({
+    cn: cn
+  }, {
+    where: {
+      uid: uid
+    }
+  }).then(function(member) {
     res.send(member);
   }).catch(function(error) {
     res.send(error);

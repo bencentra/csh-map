@@ -10,25 +10,3 @@ module.exports = function(sequelize, DataTypes) {
   });  
   return Record;
 };
-
-    // },
-    // member: {
-    //   type: DataTypes.STRING
-    //   // references: {
-    //   //   model: sequelize.models.Member,
-    //   //   key: 'uid'
-    //   // }
-    // },
-    // location: {
-    //   type: DataTypes.INTEGER
-    //   // references: {
-    //   //   model: sequelize.models.Location,
-    //   //   key: 'id'
-    //   // }
-    // },
-    // reason: {
-    //   type: DataTypes.INTEGER
-    //   // references: {
-    //   //   model: sequelize.models.Reason,
-    //   //   key: 'id'
-    //   // }
