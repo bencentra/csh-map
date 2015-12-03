@@ -1,6 +1,6 @@
 'use strict';
 
-var models = require('../models');
+var models = require('../models').models;
 var express = require('express');
 var router = express.Router();
 

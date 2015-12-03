@@ -1,16 +1,7 @@
 #!/usr/bin/env node
 
 var app = require('../app');
-var models = require('../models');
 
-app.set('port', process.env.PORT || 3000);
-
-models.sequelize.sync({force: true}).then(function() {
-	var server = app.listen(app.get('port'), function() {
-		var host = server.address().address;
-    	var port = server.address().port;
-		console.log('App listening at http://%s:%s', host, port);
-	});
-}).catch(function(error) {
-	console.error(error);
+app.init({
+	port: process.env.PORT || 3000
 });
