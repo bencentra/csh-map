@@ -45,7 +45,7 @@ router.post('/', function(req, res) {
     longitude: lon
   }).then(function(location) {
     res.send(location);
-  }).then(function(error) {
+  }).catch(function(error) {
     res.send(error);
   });
 });

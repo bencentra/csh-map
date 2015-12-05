@@ -1,5 +1,7 @@
 'use strict';
 
+var Promise = require('bluebird');
+
 module.exports = function(sequelize, DataTypes) {
   var Location = sequelize.define('Location', {
     id: {
@@ -19,7 +21,19 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Location.hasMany(models.Record);
+        Location.belongsToMany(models.Member, { through: models.Record });
+      },
+      seedData: function() {
+        return sequelize.transaction(function(t) {
+          return Promise.all([
+            Location.upsert({
+              id: 1,
+              address: 'Boston, MA, USA',
+              latitude: 42.3601,
+              longitude: 71.0589
+            }, { transaction: t })
+          ]);
+        });
       }
     }
   }); 

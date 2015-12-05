@@ -12,14 +12,14 @@ router.get('/:id?', function(req, res) {
         id: id
       }
     }).then(function(reason) {
-      res.send(reason);
+      res.send(reason || {});
     }).catch(function(error) {
       res.send(error);
     });
   }
   else {
     models.Reason.findAll().then(function(reasons) {
-      res.send(reasons);
+      res.send(reasons || []);
     }).catch(function(error) {
       res.send(error);
     });

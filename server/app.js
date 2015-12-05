@@ -1,10 +1,10 @@
 'use strict';
 
 // Dependencies
-require('dotenv').load();
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
+var Promise = require('bluebird');
 
 // Models
 var db = require('./models');
@@ -53,15 +53,17 @@ function startServer() {
 
 // Load seed data
 function seedData() {
-  Object.keys(db.models).forEach(function(modelName) {
-    if ('seedData' in db.models[modelName]) {
-      return db.models[modelName].seedData().then(function(result) {
-        console.log(modelName + ' seed data loaded successfully!');
-      }).catch(function(error) {
-        console.log('Error loading seed data for model ' + modelName);
-      });
-    }
-  });
+  // var models = [db.models.Member, db.models.Location, db.models.Reason, db.models.Record];
+  // models.forEach(function(model) {
+  //   if ('seedData' in model) {
+  //     return model.seedData().then(function(result) {
+  //       console.log('Seed data loaded successfully!');
+  //     }).catch(function(error) {
+  //       console.log('Error loading seed data');
+  //       console.log(error);
+  //     });
+  //   }
+  // });
 }
 
 // Start the server
@@ -72,6 +74,7 @@ function init(options) {
   }).then(function() {
     seedData();
     startServer();
+    return null;
   }).catch(function(error) {
     console.error(error);
   });

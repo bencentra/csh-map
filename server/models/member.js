@@ -1,5 +1,7 @@
 'use strict';
 
+var Promise = require('bluebird');
+
 module.exports = function(sequelize, DataTypes) {
   var Member = sequelize.define('Member', {
     uid: {
@@ -10,7 +12,17 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Member.hasMany(models.Record);
+        Member.belongsToMany(models.Location, { through: models.Record });
+      },
+      seedData: function() {
+        return sequelize.transaction(function(t) {
+          return Promise.all([
+            Member.upsert({
+              uid: 'bencentra',
+              cn: 'Ben Centra'
+            }, { transaction: t })
+          ]);
+        });
       }
     }
   });
