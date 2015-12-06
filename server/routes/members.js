@@ -14,14 +14,14 @@ router.get('/:uid?', function(req, res) {
     }).then(function(member) {
       res.send(member || {});
     }).catch(function(error) {
-      res.send(error);
+      res.status(500).send(error);
     });
   }
   else {
     models.Member.findAll().then(function(members) {
       res.send(members || []);
     }).catch(function(error) {
-      res.send(error);
+      res.status(500).send(error);
     });
   }
 });
@@ -32,20 +32,24 @@ router.post('/', function(req, res) {
     res.send({error: 'Missing uid parameter'});
   }
   var cn = req.body.cn || '';
-  models.Member.create({
-    uid: uid, 
-    cn: cn
+  models.Member.findOrCreate({
+    where: {
+      uid: uid
+    }, 
+    defaults: {
+      cn: cn
+    }
   }).then(function(member) {
-    res.send(member);
+    res.send(member[0]);
   }).catch(function(error) {
-    res.send(error);
+    res.status(500).send(error);
   });
 });
 
 router.put('/:uid', function(req, res) {
   var uid = req.params.uid;
   if (!uid) {
-    res.send({error: 'Missing uid parameter'});
+    res.status(400).send({error: 'Missing uid parameter'});
   }
   var cn = req.body.cn || '';
   models.Member.update({
@@ -57,7 +61,7 @@ router.put('/:uid', function(req, res) {
   }).then(function(member) {
     res.send(member);
   }).catch(function(error) {
-    res.send(error);
+    res.status(500).send(error);
   });
 });
 

@@ -14,14 +14,14 @@ router.get('/:id?', function(req, res) {
     }).then(function(location) {
       res.send(location || {});
     }).catch(function(error) {
-      res.send(error);
+      res.status(500).send(error);
     });
   }
   else {
     models.Location.findAll().then(function(locations) {
       res.send(locations || []);
     }).catch(function(error) {
-      res.send(error);
+      res.status(500).send(error);
     });
   }
 });
@@ -29,24 +29,28 @@ router.get('/:id?', function(req, res) {
 router.post('/', function(req, res) {
   var addr = req.body.address;
   if (!addr) {
-    res.send({error: 'Missing address parameter'});
+    res.status(400).send({error: 'Missing address parameter'});
   }
   var lat = req.body.latitude;
   if (!lat) {
-    res.send({error: 'Missing latitude parameter'});
+    res.status(400).send({error: 'Missing latitude parameter'});
   }
   var lon = req.body.longitude;
   if (!lon) {
-    res.send({error: 'Missing longitude parameter'});
+    res.status(400).send({error: 'Missing longitude parameter'});
   }
-  models.Location.create({
-    address: addr, 
-    latitude: lat, 
-    longitude: lon
+  models.Location.findOrCreate({
+    where: {
+      address: addr
+    },
+    defaults: {
+      latitude: lat, 
+      longitude: lon
+    }
   }).then(function(location) {
-    res.send(location);
+    res.send(location[0]);
   }).catch(function(error) {
-    res.send(error);
+    res.status(500).send(error);
   });
 });
 

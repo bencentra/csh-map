@@ -9,22 +9,16 @@ var Promise = require('bluebird');
 // Models
 var db = require('./models');
 
-// Routes
-var index = require('./routes/index');
-var members = require('./routes/members');
-var locations = require('./routes/locations');
-var reasons = require('./routes/reasons');
-var records = require('./routes/records');
-
 // Express app instance
 var express = express();
 express.use(bodyParser.json());
+express.use(bodyParser.text());
 express.use(bodyParser.urlencoded({ extended: false }));
-express.use('/', index);
-express.use('/members', members);
-express.use('/locations', locations);
-express.use('/reasons', reasons);
-express.use('/records', records);
+express.use('/', require('./routes/index'));
+express.use('/members', require('./routes/members'));
+express.use('/locations', require('./routes/locations'));
+// express.use('/reasons', require('./routes/reasons'));
+express.use('/records', require('./routes/records'));
 
 // 404 error handler middleware
 express.use(function(req, res, next) {
@@ -53,28 +47,17 @@ function startServer() {
 
 // Load seed data
 function seedData() {
-  // var models = [db.models.Member, db.models.Location, db.models.Reason, db.models.Record];
-  // models.forEach(function(model) {
-  //   if ('seedData' in model) {
-  //     return model.seedData().then(function(result) {
-  //       console.log('Seed data loaded successfully!');
-  //     }).catch(function(error) {
-  //       console.log('Error loading seed data');
-  //       console.log(error);
-  //     });
-  //   }
-  // });
+  // TODO
 }
 
 // Start the server
 function init(options) {
   express.set('port', options.port);
   return db.sequelize.sync({
-    // force: true
+    force: true
   }).then(function() {
     seedData();
     startServer();
-    return null;
   }).catch(function(error) {
     console.error(error);
   });

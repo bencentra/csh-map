@@ -21,19 +21,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Location.belongsToMany(models.Member, { through: models.Record });
-      },
-      seedData: function() {
-        return sequelize.transaction(function(t) {
-          return Promise.all([
-            Location.upsert({
-              id: 1,
-              address: 'Boston, MA, USA',
-              latitude: 42.3601,
-              longitude: 71.0589
-            }, { transaction: t })
-          ]);
-        });
+        // TODO: https://github.com/sequelize/sequelize/issues/3220
+        // Location.belongsToMany(models.Member, { through: models.Record, unique: false });
       }
     }
   }); 

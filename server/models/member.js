@@ -12,17 +12,8 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Member.belongsToMany(models.Location, { through: models.Record });
-      },
-      seedData: function() {
-        return sequelize.transaction(function(t) {
-          return Promise.all([
-            Member.upsert({
-              uid: 'bencentra',
-              cn: 'Ben Centra'
-            }, { transaction: t })
-          ]);
-        });
+        // TODO: https://github.com/sequelize/sequelize/issues/3220
+        // Member.belongsToMany(models.Location, { through: models.Record, unique: false });
       }
     }
   });
