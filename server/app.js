@@ -14,11 +14,11 @@ var express = express();
 express.use(bodyParser.json());
 express.use(bodyParser.text());
 express.use(bodyParser.urlencoded({ extended: false }));
-express.use('/', require('./routes/index'));
-express.use('/members', require('./routes/members'));
-express.use('/locations', require('./routes/locations'));
-// express.use('/reasons', require('./routes/reasons'));
-express.use('/records', require('./routes/records'));
+express.use('/v1', require('./routes/v1/index'));
+express.use('/v1/members', require('./routes/v1/members'));
+express.use('/v1/locations', require('./routes/v1/locations'));
+// express.use('/v1/reasons', require('./routes/v1/reasons'));
+express.use('/v1/records', require('./routes/v1/records'));
 
 // 404 error handler middleware
 express.use(function(req, res, next) {
