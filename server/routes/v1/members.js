@@ -29,7 +29,7 @@ router.get('/:uid?', function(req, res) {
 router.post('/', function(req, res) {
   var uid = req.body.uid;
   if (!uid) {
-    res.send({error: 'Missing uid parameter'});
+    res.status(400).send({error: 'Missing uid parameter'});
   }
   var cn = req.body.cn || '';
   models.Member.findOrCreate({

@@ -1,11 +1,15 @@
 'use strict';
 
-var models = require('../../models').models;
+var db = require('../../models');
+var models = db.models;
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function(req, res) {
+// Get all records
+// TODO: implement limit, offset, and pagination
+router.get('/history', function(req, res) {
   models.Record.findAll({
+    order: 'id DESC',
     include: [{ all: true }]
   }).then(function(records) {
     res.send(records || []);
@@ -14,42 +18,42 @@ router.get('/', function(req, res) {
   });
 });
 
+// Get most recent record for each user
+router.get('/present', function(req, res) {
+  db.sequelize.query(
+    'SELECT r.id, r.MemberUid, r.LocationId, r.createdAt, r.updatedAt, m.updatedAt FROM Records r, Members m WHERE r.updatedAt = m.updatedAt GROUP BY r.MemberUid',
+    { type: db.sequelize.QueryTypes.SELECT }
+  ).then(function(records) {
+    res.send(records || []);
+  }).catch(function(error) {
+    res.status(500).send(error);
+  });
+});
+
 router.post('/', function(req, res) {
-  var requestBody = (typeof req.body === 'string' && req.body.length > 0) ? JSON.parse(req.body) : req.body;
-  var member = requestBody.member;
-  if (typeof member === 'undefined') {
+  var memberUid = req.body.member;
+  if (!memberUid) {
     res.status(400).send({error: 'Missing member parameter'});
   }
-  else if (typeof member !== 'object' && typeof member !== 'string') {
-    console.log(typeof member);
-    res.status(400).send({error: 'Parameter member must be either a string or an object'});
-  }
-  var location = requestBody.location;
-  if (typeof location === 'undefined') {
+  var locationId = req.body.location;
+  if (!locationId) {
     res.status(400).send({error: 'Missing location parameter'});
   }
-  else if (typeof location !== 'object' && !parseInt(location)) {
-    console.log(typeof location);
-    res.status(400).send({error: 'Parameter location must be either an integer or an object'});
-  }
-  var payload = {};
-  if (typeof member === 'object') {
-    payload.Member = member;
-  }
-  else {
-    payload.MemberUid = member;
-  }
-  if (typeof location === 'object') {
-    payload.Location = location;
-  }
-  else {
-    payload.LocationId = parseInt(location);
-  }
-  models.Record.create(
-    payload,
-    { include: [{ all: true }] }
-  ).then(function(location) {
-    res.send(location);
+  models.Record.create({
+    MemberUid: memberUid,
+    LocationId: locationId
+  }).then(function(location) {
+    models.Member.update({
+      updatedAt: location.updatedAt
+    }, {
+      where: {
+        uid: memberUid
+      }
+    }).then(function(member) {
+      res.send(location);
+    }).catch(function(error) {
+      res.status(500).send(error);
+    })
   }).catch(function(error) {
     res.status(500).send(error);
   });

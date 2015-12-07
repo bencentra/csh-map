@@ -4,15 +4,16 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 var Promise = require('bluebird');
 
 // Models
 var db = require('./models');
+var fixtures = require('sequelize-fixtures');
 
 // Express app instance
 var express = express();
 express.use(bodyParser.json());
-express.use(bodyParser.text());
 express.use(bodyParser.urlencoded({ extended: false }));
 express.use('/v1', require('./routes/v1/index'));
 express.use('/v1/members', require('./routes/v1/members'));
@@ -54,7 +55,7 @@ function seedData() {
 function init(options) {
   express.set('port', options.port);
   return db.sequelize.sync({
-    force: true
+    // force: true
   }).then(function() {
     seedData();
     startServer();
