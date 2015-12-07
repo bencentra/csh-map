@@ -30,14 +30,17 @@ router.post('/', function(req, res) {
   var addr = req.body.address;
   if (!addr) {
     res.status(400).send({error: 'Missing address parameter'});
+    return;
   }
   var lat = req.body.latitude;
   if (!lat) {
     res.status(400).send({error: 'Missing latitude parameter'});
+    return;
   }
   var lon = req.body.longitude;
   if (!lon) {
     res.status(400).send({error: 'Missing longitude parameter'});
+    return;
   }
   models.Location.findOrCreate({
     where: {

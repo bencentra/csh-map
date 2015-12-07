@@ -21,7 +21,7 @@ router.get('/history', function(req, res) {
 // Get most recent record for each user
 router.get('/present', function(req, res) {
   db.sequelize.query(
-    'SELECT r.id, r.MemberUid, r.LocationId, r.createdAt, r.updatedAt, m.updatedAt FROM Records r, Members m WHERE r.updatedAt = m.updatedAt GROUP BY r.MemberUid',
+    'SELECT r.id, r.MemberUid, r.LocationId, r.ReasonId, r.createdAt, r.updatedAt, m.updatedAt FROM Records r, Members m WHERE r.updatedAt = m.updatedAt GROUP BY r.MemberUid',
     { type: db.sequelize.QueryTypes.SELECT }
   ).then(function(records) {
     res.send(records || []);
@@ -34,14 +34,22 @@ router.post('/', function(req, res) {
   var memberUid = req.body.member;
   if (!memberUid) {
     res.status(400).send({error: 'Missing member parameter'});
+    return;
   }
   var locationId = req.body.location;
   if (!locationId) {
     res.status(400).send({error: 'Missing location parameter'});
+    return;
+  }
+  var reasonId = req.body.reason;
+  if (!reasonId) {
+    res.status(400).send({error: 'Missing reason parameter'});
+    return;
   }
   models.Record.create({
     MemberUid: memberUid,
-    LocationId: locationId
+    LocationId: locationId,
+    ReasonId: reasonId
   }).then(function(location) {
     models.Member.update({
       updatedAt: location.updatedAt

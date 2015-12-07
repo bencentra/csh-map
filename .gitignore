@@ -7,3 +7,4 @@ db.development.sqlite
 config.json
 *.sqlite
 .env
+postman.json

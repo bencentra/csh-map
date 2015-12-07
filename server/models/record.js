@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Record.belongsTo(models.Member);
         Record.belongsTo(models.Location);
-        // Record.belongsTo(models.Reason);
+        Record.belongsTo(models.Reason);
       }
     }
   });  

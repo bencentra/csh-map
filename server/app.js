@@ -18,7 +18,7 @@ express.use(bodyParser.urlencoded({ extended: false }));
 express.use('/v1', require('./routes/v1/index'));
 express.use('/v1/members', require('./routes/v1/members'));
 express.use('/v1/locations', require('./routes/v1/locations'));
-// express.use('/v1/reasons', require('./routes/v1/reasons'));
+express.use('/v1/reasons', require('./routes/v1/reasons'));
 express.use('/v1/records', require('./routes/v1/records'));
 
 // 404 error handler middleware
@@ -48,17 +48,24 @@ function startServer() {
 
 // Load seed data
 function seedData() {
-  // TODO
+  var promises = [];
+  promises.push(fixtures.loadFile('fixtures/reasons.json', db.models));
+  promises.push(fixtures.loadFile('fixtures/members.json', db.models));
+  promises.push(fixtures.loadFile('fixtures/locations.json', db.models));
+  return Promise.all(promises);
 }
 
 // Start the server
 function init(options) {
   express.set('port', options.port);
   return db.sequelize.sync({
-    // force: true
+    force: true
   }).then(function() {
-    seedData();
-    startServer();
+    seedData().then(function() {
+      startServer();
+    }).catch(function(error) {
+      console.log(error);
+    }); 
   }).catch(function(error) {
     console.error(error);
   });

@@ -1,0 +1,16 @@
+[
+  {
+    "model": "Member",
+    "data": {
+      "uid": "bencentra",
+      "cn": "Ben Centra"
+    }
+  },
+  {
+    "model": "Member",
+    "data": {
+      "uid": "mcsaucy",
+      "cn": "Josh McSaveney"
+    }
+  }
+]

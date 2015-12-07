@@ -30,6 +30,7 @@ router.post('/', function(req, res) {
   var uid = req.body.uid;
   if (!uid) {
     res.status(400).send({error: 'Missing uid parameter'});
+    return;
   }
   var cn = req.body.cn || '';
   models.Member.findOrCreate({
@@ -50,6 +51,7 @@ router.put('/:uid', function(req, res) {
   var uid = req.params.uid;
   if (!uid) {
     res.status(400).send({error: 'Missing uid parameter'});
+    return;
   }
   var cn = req.body.cn || '';
   models.Member.update({
