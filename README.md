@@ -1,6 +1,6 @@
 # CSH Alumni Map
 
-Visualization of the diaspora of CSHers out of Rochester, NY. 
+Visualizing the diaspora of CSHers out of Rochester, NY. 
 
 ## Client
 

@@ -47,28 +47,35 @@ function startServer() {
 }
 
 // Load seed data
-function seedData() {
-  var promises = [];
-  promises.push(fixtures.loadFile('fixtures/reasons.json', db.models));
-  promises.push(fixtures.loadFile('fixtures/members.json', db.models));
-  promises.push(fixtures.loadFile('fixtures/locations.json', db.models));
-  return Promise.all(promises);
+function seedData(env) {
+  if (env === 'development') {
+    var promises = [];
+    promises.push(fixtures.loadFile('fixtures/reasons.json', db.models));
+    promises.push(fixtures.loadFile('fixtures/members.json', db.models));
+    promises.push(fixtures.loadFile('fixtures/locations.json', db.models));
+    return Promise.all(promises);
+  }
+  else {
+    return Promise.resolve({});
+  }
+}
+
+// Handle startup errors
+function startupError(error) {
+  console.error(error);
 }
 
 // Start the server
 function init(options) {
   express.set('port', options.port);
+  express.set('env', options.env);
   return db.sequelize.sync({
-    force: true
+    force: (options.env === 'development') ? true : false
   }).then(function() {
-    seedData().then(function() {
+    seedData(options.env).then(function() {
       startServer();
-    }).catch(function(error) {
-      console.log(error);
-    }); 
-  }).catch(function(error) {
-    console.error(error);
-  });
+    }).catch(startupError); 
+  }).catch(startupError);
 }
 
 // Public app interface

@@ -20,10 +20,9 @@ node bin/www
 
 ### Database Setup
 
-1) Install mysql and sequelize-cli:
+1) Install and enter MySQL:
 
 ```bash
-npm install -g sequelize-cli
 brew install mysql
 mysql -u root
 ```
@@ -37,20 +36,42 @@ GRANT ALL PRIVILEGES ON csh_map.* TO 'csh_map'@'localhost';
 exit;
 ```
 
-3) Run sequelize migration:
+3) Create `config/config.json` from sample:
+
+```json
+{
+	"development": {
+		"dialect": "sqlite",
+		"storage": "./db.development.sqlite"
+	},
+	"production": {
+		"dialiect": "mysql",
+		"username": "csh_map",
+		"database": "csh_map",
+		"password": "password",
+		"host": "127.0.0.1"
+	}
+}
+```
+
+4) Start the application in dev mode to reset database and seed data:
 
 ```bash
-sequelize db:migrate
+NODE_ENV=development node bin/www
 ```
+
 ### Environment Variables
 
 Create a `.env` file with the following contents:
 
 ```
-NODE_ENV=development
+NODE_ENV=production # "production" or "development"
 PORT=3000
 ```
+
 ## API
+
+__Note:__ API is still under heavy development and may change unexpectedly!
 
 ### Members
 
