@@ -33,14 +33,7 @@ router.post('/', function(req, res) {
     return;
   }
   var cn = req.body.cn || '';
-  models.Member.findOrCreate({
-    where: {
-      uid: uid
-    }, 
-    defaults: {
-      cn: cn
-    }
-  }).then(function(member) {
+  models.Member.addMember(uid, cn).then(function(member) {
     res.send(member[0]);
   }).catch(function(error) {
     res.status(500).send(error);
@@ -54,13 +47,7 @@ router.put('/:uid', function(req, res) {
     return;
   }
   var cn = req.body.cn || '';
-  models.Member.update({
-    cn: cn
-  }, {
-    where: {
-      uid: uid
-    }
-  }).then(function(member) {
+  models.Member.setName(uid, cn).then(function(member) {
     res.send(member);
   }).catch(function(error) {
     res.status(500).send(error);

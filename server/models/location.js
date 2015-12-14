@@ -23,6 +23,17 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // TODO: https://github.com/sequelize/sequelize/issues/3220
         // Location.belongsToMany(models.Member, { through: models.Record, unique: false });
+      },
+      addLocation: function(address, latitude, longitude) {
+        return Location.findOrCreate({
+          where: {
+            address: address
+          },
+          defaults: {
+            latitude: latitude, 
+            longitude: longitude
+          }
+        });
       }
     }
   }); 

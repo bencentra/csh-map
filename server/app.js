@@ -28,7 +28,7 @@ express.use(function(req, res, next) {
   next(err);
 });
 
-// Error handler
+// Default error handler
 express.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send({

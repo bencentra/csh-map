@@ -42,15 +42,7 @@ router.post('/', function(req, res) {
     res.status(400).send({error: 'Missing longitude parameter'});
     return;
   }
-  models.Location.findOrCreate({
-    where: {
-      address: addr
-    },
-    defaults: {
-      latitude: lat, 
-      longitude: lon
-    }
-  }).then(function(location) {
+  models.Location.addLocation(addr, lat, lon).then(function(location) {
     res.send(location[0]);
   }).catch(function(error) {
     res.status(500).send(error);

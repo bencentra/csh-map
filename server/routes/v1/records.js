@@ -8,10 +8,9 @@ var router = express.Router();
 // Get all records
 // TODO: implement limit, offset, and pagination
 router.get('/history', function(req, res) {
-  models.Record.findAll({
-    order: 'id DESC',
-    include: [{ all: true }]
-  }).then(function(records) {
+  var limit = req.params.limit;
+  var offset = req.params.offset;
+  models.Record.getHistory(limit, offset).then(function(records) {
     res.send(records || []);
   }).catch(function(error) {
     res.status(500).send(error);
@@ -20,10 +19,7 @@ router.get('/history', function(req, res) {
 
 // Get most recent record for each user
 router.get('/present', function(req, res) {
-  db.sequelize.query(
-    'SELECT r.id, r.MemberUid, r.LocationId, r.ReasonId, r.createdAt, r.updatedAt, m.updatedAt FROM Records r, Members m WHERE r.updatedAt = m.updatedAt GROUP BY r.MemberUid',
-    { type: db.sequelize.QueryTypes.SELECT }
-  ).then(function(records) {
+  models.Record.getPresent().then(function(records) {
     res.send(records || []);
   }).catch(function(error) {
     res.status(500).send(error);
@@ -46,22 +42,12 @@ router.post('/', function(req, res) {
     res.status(400).send({error: 'Missing reason parameter'});
     return;
   }
-  models.Record.create({
-    MemberUid: memberUid,
-    LocationId: locationId,
-    ReasonId: reasonId
-  }).then(function(location) {
-    models.Member.update({
-      updatedAt: location.updatedAt
-    }, {
-      where: {
-        uid: memberUid
-      }
-    }).then(function(member) {
+  models.Record.addRecord(memberUid, locationId, reasonId).then(function(location) {
+    models.Member.setUpdatedAt(memberUid, location.updatedAt).then(function(member) {
       res.send(location);
     }).catch(function(error) {
       res.status(500).send(error);
-    })
+    });
   }).catch(function(error) {
     res.status(500).send(error);
   });

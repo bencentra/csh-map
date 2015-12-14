@@ -2,6 +2,13 @@
   {
     "model": "Reason",
     "data": {
+      "name": "Other",
+      "description": ""
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
       "name": "Back to School",
       "description": "Moved to go (back) to school"
     }
@@ -32,13 +39,6 @@
     "data": {
       "name": "Family",
       "description": "Moved due to family reasons"
-    }
-  },
-  {
-    "model": "Reason",
-    "data": {
-      "name": "Other",
-      "description": ""
     }
   }
 ]
