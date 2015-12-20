@@ -8,3 +8,4 @@ config.json
 *.sqlite
 .env
 postman.json
+coverage/
