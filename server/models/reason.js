@@ -1,7 +1,5 @@
 'use strict';
 
-var Promise = require('bluebird');
-
 module.exports = function(sequelize, DataTypes) {
   var Reason = sequelize.define('Reason', {
     id: {
@@ -13,10 +11,10 @@ module.exports = function(sequelize, DataTypes) {
     description: DataTypes.STRING
   }, {
     classMethods: {
-      associate: function(models) {
-        // TODO: https://github.com/sequelize/sequelize/issues/3220
-        // Reason.belongsToMany(models.Location, { through: models.Record, unique: false });
-      }
+      // TODO: https://github.com/sequelize/sequelize/issues/3220
+      // associate: function(models) {
+      //   Reason.belongsToMany(models.Location, { through: models.Record, unique: false });
+      // }
     }
   });  
   return Reason;

@@ -5,8 +5,9 @@
   "description": "ExpressJS API for the CSH Alumni Map",
   "main": "src/index.js",
   "scripts": {
-    "start": "",
-    "test": ""
+    "start": "node bin/www",
+    "test": "node_modules/.bin/mocha",
+    "lint": "node_modules/.bin/eslint -c .eslintrc.json app.js models/ routes/ test/"
   },
   "repository": {
     "type": "git",
@@ -33,5 +34,12 @@
     "mysql": "^2.9.0",
     "sequelize": "^3.14.2",
     "sequelize-fixtures": "^0.4.8"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "eslint": "^1.10.3",
+    "mocha": "^2.3.4",
+    "rewire": "^2.5.1",
+    "supertest": "^1.1.0"
   }
 }

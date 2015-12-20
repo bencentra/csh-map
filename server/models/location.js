@@ -1,7 +1,5 @@
 'use strict';
 
-var Promise = require('bluebird');
-
 module.exports = function(sequelize, DataTypes) {
   var Location = sequelize.define('Location', {
     id: {
@@ -20,10 +18,10 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     classMethods: {
-      associate: function(models) {
-        // TODO: https://github.com/sequelize/sequelize/issues/3220
-        // Location.belongsToMany(models.Member, { through: models.Record, unique: false });
-      },
+      // TODO: https://github.com/sequelize/sequelize/issues/3220
+      // associate: function(models) {
+      //   Location.belongsToMany(models.Member, { through: models.Record, unique: false });
+      // },
       addLocation: function(address, latitude, longitude) {
         return Location.findOrCreate({
           where: {

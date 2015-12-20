@@ -43,7 +43,7 @@ router.post('/', function(req, res) {
     return;
   }
   models.Record.addRecord(memberUid, locationId, reasonId).then(function(location) {
-    models.Member.setUpdatedAt(memberUid, location.updatedAt).then(function(member) {
+    models.Member.setUpdatedAt(memberUid, location.updatedAt).then(function() {
       res.send(location);
     }).catch(function(error) {
       res.status(500).send(error);
