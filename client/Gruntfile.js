@@ -1,6 +1,11 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
+    // Clean build directory
+    clean: {
+      dev: ['dist/csh-map-ui.js'],
+      dist: ['dist/csh-map-ui.min.js']
+    },
     // Watch for changes in source files
     watch: {
       src: {
@@ -25,27 +30,32 @@ module.exports = function(grunt) {
           'dist/csh-map-ui.js': ['src/index.js']
         },
         options: {
-          transform: ['babelify', 'stringify']
+          transform: ['stringify', 'babelify']
         }
-      },
+      }
+    },
+    // Minify ES5 bundle
+    uglify: {
       dist: {
-        files: {
-          'dist/csh-map-ui.min.js': ['src/index.js']
-        },
         options: {
-          transform: ['babelify', 'stringify', 'uglifyify']
+          sourceMap: true
+        },
+        files: {
+          'dist/csh-map-ui.min.js': 'dist/csh-map-ui.js'
         }
       }
     }
   });
 
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['dev']);
-  grunt.registerTask('dev', ['browserify:src', 'watch']);
-  grunt.registerTask('build' ['browserify:dist']);
+  grunt.registerTask('dev', ['clean:dev', 'browserify', 'watch']);
+  grunt.registerTask('build', ['clean:dist', 'browserify', 'uglify']);
   grunt.registerTask('serve', ['connect']);
 
 };

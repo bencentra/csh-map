@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 
-class MemberModel extends Backbone.Model {
+class LocationModel extends Backbone.Model {
 
   constructor(options) {
     super(options);
@@ -10,4 +10,4 @@ class MemberModel extends Backbone.Model {
 
 }
 
-export default MemberModel;
+export default LocationModel;

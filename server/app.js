@@ -3,7 +3,7 @@
 // Dependencies
 var express = require('express');
 var bodyParser = require('body-parser');
-// var cors = require('cors');
+var cors = require('cors');
 var Promise = require('bluebird');
 
 // Models
@@ -12,6 +12,7 @@ var fixtures = require('sequelize-fixtures');
 
 // Express app instance
 var app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/v1', require('./routes/v1/index'));
