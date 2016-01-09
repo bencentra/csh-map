@@ -1,21 +1,22 @@
-var app = app || {};
+import Backbone from 'backbone';
+import $ from 'jquery';
+import _ from 'underscore';
+import mapTemplate from '../templates/map.html';
 
-(function(Backbone, _, $) {
+class MapView extends Backbone.View {
 
-  'use strict';
+  constructor() {
+    super();
+    this.$el = $('#csh-map');
+    console.log(mapTemplate);
+    this.template = _.template(mapTemplate);
+  }
 
-  app.MapView = Backbone.View.extend({
+  render() {
+    this.$el.html(this.template({name: 'Ben'}));
+    return this;
+  }
 
-    el: '#map',
+}
 
-    events: {
-
-    },
-
-    initialize: function(options) {
-      
-    }
-
-  });
-
-})(Backbone, _, jQuery);
+export default MapView;

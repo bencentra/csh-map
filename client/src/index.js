@@ -1,9 +1,25 @@
-var app = app || {};
+import Backbone from 'backbone';
+import _ from 'underscore';
+import $ from 'jquery';
+import MapView from './views/map';
 
-(function(Backbone, _, $) {
+console.log("Hello, World");
+console.log(Backbone);
+console.log(_);
+console.log($);
 
-  'use strict';
+class CSHMap {
 
-  new app.MapView();
+  constructor() {
 
-})(Backbone, _, jQuery);
+  }
+
+  init() {
+    let map = new MapView();
+    map.render();
+  }
+
+}
+
+window.CSHMap = CSHMap;
+// export default CSHMap;
