@@ -1,7 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
-import MapEvents from '../events';
 import infoWindowTemplate from '../templates/info-window.html';
 
 class MapView extends Backbone.View {
@@ -9,19 +8,13 @@ class MapView extends Backbone.View {
   constructor(options) {
     super(options);
     console.log('Creating new MapView');
-    this.el = document.querySelector('#csh-map-canvas');
     this.gmapOptions = {
       zoom: 4,
       center: new google.maps.LatLng(37, -97), // Somewhere in Kansas
-      zoomControl: true,
-      mapTypeControl: true,
-      scaleControl: true,
-      streetViewControl: false,
-      rotateControl: false
+      disableDefaultUI: true
     };
     this.gmap = null;
     this._infoWindowTemplate = _.template(infoWindowTemplate);
-    MapEvents.on('ready', this.render, this);
   }
 
   render() {
