@@ -1,1 +1,18 @@
+<h1>Hello, world!</h1>
 <p>I'm the map. Hi <%= config.uid %>.</p>
+<h2>Locations</h2>
+<% locations.each(function(location) { %>
+  <pre><%= JSON.stringify(location.toJSON()) %></pre>
+<% }); %>
+<h2>Members</h2>
+<% members.each(function(member) { %>
+  <pre><%= JSON.stringify(member.toJSON()) %></pre>
+<% }); %>
+<h2>Records</h2>
+<% records.each(function(record) { %>
+  <pre><%= JSON.stringify(record.toJSON()) %></pre>
+<% }); %>
+<h2>Markers</h2>
+<% _.each(markers, function(marker) { %>
+  <pre><%= JSON.stringify(marker) %></pre>
+<% }); %>

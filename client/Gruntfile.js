@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     // Watch for changes in source files
     watch: {
       src: {
-        files: ['src/**/*.js'],
+        files: ['src/**/*.js', 'src/**/*.html'],
         tasks: ['browserify:src'] 
       }
     },

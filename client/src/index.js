@@ -4,8 +4,6 @@ import $ from 'jquery';
 import Config from './config';
 import MapModel from './models/map';
 import MapView from './views/map';
-import LocationCollection from './collections/locations';
-import MembersCollection from './collections/members';
 
 class CSHMap {
 
@@ -15,22 +13,11 @@ class CSHMap {
   }
 
   init() {
-    let locationCollection = new LocationCollection();
-    let membersCollection = new MembersCollection();
-    $.when(
-      locationCollection.init(), 
-      membersCollection.init()
-    ).done(function() {
-      console.log('Locations', locationCollection.toJSON());
-      console.log('Members', membersCollection.toJSON());
-    }); 
-    this.mapModel = new MapModel({
-      config: this.config
-    });
+    this.mapModel = new MapModel();
     this.mapView = new MapView({
       model: this.mapModel
     });
-    this.mapView.render();
+    // this.mapView.render();
   }
 
 }

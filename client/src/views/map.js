@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
+import MapEvents from '../events';
 import mapTemplate from '../templates/map.html';
 
 class MapView extends Backbone.View {
@@ -8,9 +9,9 @@ class MapView extends Backbone.View {
   constructor(options) {
     super(options);
     console.log('Creating new MapView');
-    console.log(options);
     this.el = document.querySelector('#csh-map');
     this.template = _.template(mapTemplate);
+    MapEvents.on('ready', this.render, this);
   }
 
   render() {
