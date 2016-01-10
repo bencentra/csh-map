@@ -18,6 +18,7 @@ class MapModel extends Backbone.Model {
     this.set('locations', new LocationCollection());
     this.set('members', new MemberCollection());
     this.set('records', new RecordCollection());
+    this.set('markers', {});
     this.init().done(this._ready.bind(this)); 
   }
 

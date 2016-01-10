@@ -2,9 +2,15 @@
 <html>
 <head>
   <title>Demo</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <link type="text/css" rel="stylesheet" href="http://localhost:8888/src/css/main.css">
 </head>
 <body>
-<div id="csh-map"></div>
+<div id="csh-map">
+  <div id="csh-map-canvas"></div>
+  <div id="csh-map-toolbar"></div>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMg7g6Cq-D_y-jVmnvX3XNfcYZc5lPu_8&v=3.22" type="text/javascript"></script>
 <script type="text/javascript" src="http://localhost:8888/dist/csh-map-ui.js"></script>
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {

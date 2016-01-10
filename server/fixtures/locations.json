@@ -4,7 +4,7 @@
     "data": {
       "address": "Cambridge, MA, USA",
       "latitude": 42.3736,
-      "longitude": 71.1106
+      "longitude": -71.1106
     }
   },
   {
@@ -12,7 +12,7 @@
     "data": {
       "address": "San Francisco, CA, USA",
       "latitude": 37.7833,
-      "longitude": 122.4167
+      "longitude": -122.4167
     }
   }
 ]

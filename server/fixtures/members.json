@@ -12,5 +12,12 @@
       "uid": "mcsaucy",
       "cn": "Josh McSaveney"
     }
+  },
+  {
+    "model": "Member",
+    "data": {
+      "uid": "cohoe",
+      "cn": "Grant Cohoe"
+    }
   }
 ]

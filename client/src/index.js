@@ -17,7 +17,7 @@ class CSHMap {
     this.mapView = new MapView({
       model: this.mapModel
     });
-    // this.mapView.render();
+    this.mapView.render();
   }
 
 }
