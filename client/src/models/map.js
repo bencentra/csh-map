@@ -1,7 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
-import Config from '../config';
 import MapEvents from '../events';
 import LocationCollection from '../collections/locations';
 import MemberCollection from '../collections/members';
@@ -11,10 +10,10 @@ let start = null, end = null;
 
 class MapModel extends Backbone.Model {
 
-  constructor(options) {
-    super(options);
+  constructor(attributes, options) {
+    super(attributes, options);
     console.log('Creating new MapModel');
-    this.set('config', Config.getInstance());
+    this.set('config', attributes.config);
     this.set('locations', new LocationCollection());
     this.set('members', new MemberCollection());
     this.set('records', new RecordCollection());

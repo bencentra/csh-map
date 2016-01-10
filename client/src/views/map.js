@@ -23,19 +23,23 @@ class MapView extends Backbone.View {
     this.gmap = this.gmap || new google.maps.Map(this.el, this.gmapOptions);
     for (locationId in this.model.get('markers')) {
       let marker = this.model.get('markers')[locationId];
-      marker.googleMarker = new google.maps.Marker({
-        position: new google.maps.LatLng(marker.location.latitude, marker.location.longitude),
-        title: marker.location.address,
-        map: this.gmap
-      });
-      marker.infoWindow = new google.maps.InfoWindow({
-        content: this._infoWindowTemplate(marker)
-      });
-      marker.googleMarker.addListener('click', function() {
-        marker.infoWindow.open(this.gmap, marker.googleMarker);
-      }.bind(this));
+      this._createGoogleMapsMarker(marker);
     }
     return this;
+  }
+
+  _createGoogleMapsMarker(marker) {
+    marker.googleMarker = new google.maps.Marker({
+      position: new google.maps.LatLng(marker.location.latitude, marker.location.longitude),
+      title: marker.location.address,
+      map: this.gmap
+    });
+    marker.infoWindow = new google.maps.InfoWindow({
+      content: this._infoWindowTemplate(marker)
+    });
+    marker.googleMarker.addListener('click', () => {
+      marker.infoWindow.open(this.gmap, marker.googleMarker);
+    }.bind(this));
   }
 
 }

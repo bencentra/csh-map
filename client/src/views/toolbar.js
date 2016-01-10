@@ -10,8 +10,8 @@ class ToolbarView extends Backbone.View {
     super(options);
     console.log('Creating new ToolbarView');
     this.events = {
-      'click a.toolbar-search': '_openSearchModal',
-      'click a.toolbar-info': '_openInfoModal'
+      'click a.toolbar-search': '_onClickSearch',
+      'click a.toolbar-info': '_onClickInfo'
     };
     this.template = _.template(toolbarTemplate);
   }
@@ -22,15 +22,13 @@ class ToolbarView extends Backbone.View {
     return this;
   }
 
-  _openSearchModal(e) {
+  _onClickSearch(e) {
     e.preventDefault();
-    console.log('_openSearchModal()');
     MapEvents.trigger('search');
   }
 
-  _openInfoModal(e) {
+  _onClickInfo(e) {
     e.preventDefault();
-    console.log('_openInfoModal()');
     MapEvents.trigger('info');
   }
 
