@@ -1,0 +1,8 @@
+<div class="csh-map-info-window">
+  <h3><%= location.address %></h3>
+  <ul>
+    <% _.each(members, function(member) { %>
+      <li><%= member.cn %> (<a href="https://profiles.csh.rit.edu/user/<%= member.uid %>" target="_blank"><%= member.uid %></a>)</li>
+    <% }); %>
+  </ul>
+</div>

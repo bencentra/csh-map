@@ -56,7 +56,6 @@ class MapModel extends Backbone.Model {
         markers[record.get('LocationId')].members.push(member);
       }
     });
-    console.log('Markers', markers);
     return markers;
   }
 

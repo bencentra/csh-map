@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import MapEvents from '../events';
-// import mapTemplate from '../templates/map.html';
+import infoWindowTemplate from '../templates/info-window.html';
 
 class MapView extends Backbone.View {
 
@@ -10,7 +10,7 @@ class MapView extends Backbone.View {
     super(options);
     console.log('Creating new MapView');
     this.el = document.querySelector('#csh-map-canvas');
-    this.mapOptions = {
+    this.gmapOptions = {
       zoom: 4,
       center: new google.maps.LatLng(37, -97), // Somewhere in Kansas
       zoomControl: true,
@@ -19,22 +19,28 @@ class MapView extends Backbone.View {
       streetViewControl: false,
       rotateControl: false
     };
-    this.googleMap = null;
-    this.googleMarkers = [];
+    this.gmap = null;
+    this._infoWindowTemplate = _.template(infoWindowTemplate);
     MapEvents.on('ready', this.render, this);
   }
 
   render() {
     console.log('MapView render()');
     let locationId = null;
-    this.googleMap = this.googleMap || new google.maps.Map(this.el, this.mapOptions);
+    this.gmap = this.gmap || new google.maps.Map(this.el, this.gmapOptions);
     for (locationId in this.model.get('markers')) {
       let marker = this.model.get('markers')[locationId];
       marker.googleMarker = new google.maps.Marker({
         position: new google.maps.LatLng(marker.location.latitude, marker.location.longitude),
         title: marker.location.address,
-        map: this.googleMap
+        map: this.gmap
       });
+      marker.infoWindow = new google.maps.InfoWindow({
+        content: this._infoWindowTemplate(marker)
+      });
+      marker.googleMarker.addListener('click', function() {
+        marker.infoWindow.open(this.gmap, marker.googleMarker);
+      }.bind(this));
     }
     return this;
   }
