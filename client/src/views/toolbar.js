@@ -8,7 +8,6 @@ class ToolbarView extends Backbone.View {
 
   constructor(options) {
     super(options);
-    console.log('Creating new ToolbarView');
     this.events = {
       'click a.toolbar-search': '_onClickSearch',
       'click a.toolbar-info': '_onClickInfo'
@@ -17,8 +16,8 @@ class ToolbarView extends Backbone.View {
   }
 
   render() {
-    console.log('ToolbarView render()');
     this.el.innerHTML = this.template();
+    this.delegateEvents();
     return this;
   }
 

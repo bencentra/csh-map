@@ -2,6 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import Config from './config';
+import mainTemplate from './templates/main.html';
 import MapEvents from './events';
 import MapModel from './models/map';
 import MapView from './views/map';
@@ -9,16 +10,17 @@ import ToolbarView from './views/toolbar';
 import SearchView from './views/search';
 import InfoView from './views/info';
 
-const WRAPPER_SELECTOR = '#csh-map';
-const MAP_SELECTOR = '#csh-map-canvas';
-const TOOLBAR_SELECTOR = '#csh-map-toolbar';
-const SEARCH_MODAL_SELECTOR = '#csh-map-search-modal';
-const INFO_MODAL_SELECTOR = '#csh-map-info-modal';
+const SELECTORS = {
+  WRAPPER: '#csh-map',
+  MAP: '#csh-map-canvas',
+  TOOLBAR: '#csh-map-toolbar',
+  SEARCH_MODAL: '#csh-map-search-modal',
+  INFO_MODAL: '#csh-map-info-modal'
+};
 
 class CSHMap {
 
   constructor(config) {
-    console.log('Creating new CSHMap instance');
     this.config = new Config(config);
   }
 
@@ -31,6 +33,7 @@ class CSHMap {
   }
 
   _initViews() {
+    $(SELECTORS.WRAPPER).html(mainTemplate);
     this.mapView = new MapView({
       model: this.mapModel
     });
@@ -57,23 +60,19 @@ class CSHMap {
   }
 
   _renderMap() {
-    $(MAP_SELECTOR).html(this.mapView.render().el);
-    this.mapView.delegateEvents();
+    $(SELECTORS.MAP).html(this.mapView.render().el);
   }
 
   _renderToolbar() {
-    $(TOOLBAR_SELECTOR).html(this.toolbarView.render().el);
-    this.toolbarView.delegateEvents();
+    $(SELECTORS.TOOLBAR).html(this.toolbarView.render().el);
   }
 
   _renderSearchModal() {
-    $(SEARCH_MODAL_SELECTOR).html(this.searchView.render().el);
-    this.searchView.delegateEvents();
+    $(SELECTORS.SEARCH_MODAL).html(this.searchView.render().el);
   }
 
   _renderInfoModal() {
-    $(INFO_MODAL_SELECTOR).html(this.infoView.render().el);
-    this.infoView.delegateEvents();
+    $(SELECTORS.INFO_MODAL).html(this.infoView.render().el);
   }
 
   _showSearchModal() {

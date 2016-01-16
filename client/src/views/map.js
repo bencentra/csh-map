@@ -7,7 +7,6 @@ class MapView extends Backbone.View {
 
   constructor(options) {
     super(options);
-    console.log('Creating new MapView');
     this.gmapOptions = {
       zoom: 4,
       center: new google.maps.LatLng(37, -97), // Somewhere in Kansas
@@ -18,14 +17,18 @@ class MapView extends Backbone.View {
   }
 
   render() {
-    console.log('MapView render()');
-    let locationId = null;
     this.gmap = this.gmap || new google.maps.Map(this.el, this.gmapOptions);
+    this._createGoogleMapsMarkers();
+    this.delegateEvents();
+    return this;
+  }
+
+  _createGoogleMapsMarkers() {
+    let locationId = null;
     for (locationId in this.model.get('markers')) {
       let marker = this.model.get('markers')[locationId];
       this._createGoogleMapsMarker(marker);
     }
-    return this;
   }
 
   _createGoogleMapsMarker(marker) {

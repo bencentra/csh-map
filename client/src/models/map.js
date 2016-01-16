@@ -12,13 +12,12 @@ class MapModel extends Backbone.Model {
 
   constructor(attributes, options) {
     super(attributes, options);
-    console.log('Creating new MapModel');
     this.set('config', attributes.config);
     this.set('locations', new LocationCollection());
     this.set('members', new MemberCollection());
     this.set('records', new RecordCollection());
     this.set('markers', {});
-    this.init().done(this._ready.bind(this)); 
+    this.init().done(this._ready.bind(this));
   }
 
   init() {
@@ -31,11 +30,7 @@ class MapModel extends Backbone.Model {
   }
 
   _ready() {
-    console.log('Locations', this.get('locations').toJSON());
-    console.log('Members', this.get('members').toJSON());
-    console.log('Records', this.get('records').toJSON());
     this.set('markers', this._createMarkers());
-    console.log('Markers', this.get('markers'));
     MapEvents.trigger('ready');
     end = Date.now();
     console.log(`Time: ${end - start}ms`);
