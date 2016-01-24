@@ -8,6 +8,7 @@ class MemberCollection extends AsyncCollection {
 
   constructor(options) {
     super(options);
+    this.name = 'MemberCollection';
     this.model = MemberModel;
     this.url = this.config.apiUrl + '/members';
   }

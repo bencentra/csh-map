@@ -26,7 +26,11 @@ class MapModel extends Backbone.Model {
       this.get('locations').init(),
       this.get('members').init(),
       this.get('records').init()
-    );
+    ).then(null, this._initError.bind(this));
+  }
+
+  _initError(error) {
+    console.error(error);
   }
 
   _ready() {

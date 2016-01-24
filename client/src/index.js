@@ -5,6 +5,8 @@ import Config from './config';
 import mainTemplate from './templates/main.html';
 import MapEvents from './events';
 import MapModel from './models/map';
+import SearchModel from './models/search';
+import InfoModel from './models/info';
 import MapView from './views/map';
 import ToolbarView from './views/toolbar';
 import SearchView from './views/search';
@@ -25,11 +27,23 @@ class CSHMap {
   }
 
   init() {
+    this._initModels();
+    this._initViews();
+    this._initEvents();
+  }
+
+  _initModels() {
     this.mapModel = new MapModel({
       config: this.config
     });
-    this._initViews();
-    this._initEvents();
+    this.searchModel = new SearchModel({
+      config: this.config,
+      map: this.mapModel
+    });
+    this.infoModel = new InfoModel({
+      config: this.config,
+      map: this.mapModel
+    });
   }
 
   _initViews() {
@@ -39,10 +53,10 @@ class CSHMap {
     });
     this.toolbarView = new ToolbarView();
     this.searchView = new SearchView({
-      config: this.config
+      model: this.searchModel
     });
     this.infoView = new InfoView({
-      config: this.config
+      model: this.infoModel
     });
   }
 

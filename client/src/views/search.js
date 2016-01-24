@@ -8,7 +8,14 @@ class SearchView extends ModalView {
 
   constructor(options) {
     super(options);
+    this.events = {
+      'click button.submit-button': '_onClickSearch'
+    };
     this.template = _.template(searchModalTemplate);
+  }
+
+  _onClickSearch(e) {
+    
   }
 
 }

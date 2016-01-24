@@ -4,11 +4,68 @@ import $ from 'jquery';
 import ModalView from './modal-view';
 import infoModalTemplate from '../templates/info-modal.html';
 
+const SELECTORS = {
+  CITY: '#csh-map-info-city',
+  STATE: '#csh-map-info-state',
+  COUNTRY: '#csh-map-info-country'
+};
+
 class InfoView extends ModalView {
 
   constructor(options) {
     super(options);
+    this.events = {
+      'click button.submit-button': '_onClickUpdate',
+      'click button.remove-button': '_onClickRemove'
+    };
     this.template = _.template(infoModalTemplate);
+  }
+
+  render() {
+    super.render();
+    let address = this.model.getAddress();
+    if (address) {
+      address = address.split(', ');
+      this.$(SELECTORS.CITY).val(address[0] || '');
+      this.$(SELECTORS.STATE).val(address[1] || '');
+      this.$(SELECTORS.COUNTRY).val(address[2] || '');
+    }
+    return this;
+  }
+
+  _onClickUpdate(e) {
+    let address = {
+      city: this.$(SELECTORS.CITY).val(),
+      state: this.$(SELECTORS.STATE).val(),
+      country: this.$(SELECTORS.COUNTRY).val()
+    };
+    this.model.updateAddress(address).then(
+      this._onUpdateSuccess.bind(this),
+      this._onUpdateError.bind(this)
+    );
+  }
+
+  _onUpdateSuccess(result) {
+    console.log(result);
+  }
+
+  _onUpdateError(error) {
+    console.error(error);
+  }
+
+  _onClickRemove(e) {
+    this.model.removeFromMap().then(
+      this._onRemoveSuccess.bind(this),
+      this._onRemoveError.bind(this)
+    );
+  }
+
+  _onRemoveSuccess(result) {
+    console.log(result);
+  }
+
+  _onRemoveError(error) {
+    console.error(error);
   }
 
 }

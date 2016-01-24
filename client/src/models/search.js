@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 
-class RecordModel extends Backbone.Model {
+class SearchModel extends Backbone.Model {
 
   constructor(attributes, options) {
     super(attributes, options);
@@ -10,4 +10,4 @@ class RecordModel extends Backbone.Model {
 
 }
 
-export default RecordModel;
+export default SearchModel;

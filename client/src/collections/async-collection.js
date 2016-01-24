@@ -16,8 +16,8 @@ class AsyncCollection extends Backbone.Collection {
       success: () => {
         defer.resolve();
       },
-      error: () => {
-        defer.reject();
+      error: (error) => {
+        defer.reject(new Error('Unable to fetch data for ' + this.name + ': ' + error));
       }
     });
     return defer.promise();

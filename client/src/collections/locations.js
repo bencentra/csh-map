@@ -8,6 +8,7 @@ class LocationCollection extends AsyncCollection {
 
   constructor(options) {
     super(options);
+    this.name = 'LocationCollection';
     this.model = LocationModel;
     this.url = this.config.apiUrl + '/locations';
   }
