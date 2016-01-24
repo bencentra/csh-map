@@ -10,7 +10,7 @@ class RecordCollection extends AsyncCollection {
     super(options);
     this.name = 'RecordCollection';
     this.model = RecordModel;
-    this.url = this.config.apiUrl + '/records/present';
+    this.url = this.config.apiUrl + '/records';
   }
 
 }

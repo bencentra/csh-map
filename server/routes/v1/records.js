@@ -5,20 +5,8 @@ var models = db.models;
 var express = require('express');
 var router = express.Router();
 
-// Get all records
-// TODO: implement limit, offset, and pagination
-router.get('/history', function(req, res) {
-  var limit = req.params.limit;
-  var offset = req.params.offset;
-  models.Record.getHistory(limit, offset).then(function(records) {
-    res.send(records || []);
-  }).catch(function(error) {
-    res.status(500).send(error);
-  });
-});
-
 // Get most recent record for each user
-router.get('/present', function(req, res) {
+router.get('/', function(req, res) {
   models.Record.getPresent().then(function(records) {
     res.send(records || []);
   }).catch(function(error) {
@@ -27,17 +15,17 @@ router.get('/present', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var memberUid = req.body.member;
+  var memberUid = req.body.MemberUid;
   if (!memberUid) {
     res.status(400).send({error: 'Missing member parameter'});
     return;
   }
-  var locationId = req.body.location;
+  var locationId = req.body.LocationId;
   if (!locationId) {
     res.status(400).send({error: 'Missing location parameter'});
     return;
   }
-  var reasonId = req.body.reason;
+  var reasonId = req.body.ReasonId;
   if (!reasonId) {
     res.status(400).send({error: 'Missing reason parameter'});
     return;
@@ -48,6 +36,18 @@ router.post('/', function(req, res) {
     }).catch(function(error) {
       res.status(500).send(error);
     });
+  }).catch(function(error) {
+    res.status(500).send(error);
+  });
+});
+
+// Get all records
+// TODO: implement limit, offset, and pagination
+router.get('/history', function(req, res) {
+  var limit = req.params.limit;
+  var offset = req.params.offset;
+  models.Record.getHistory(limit, offset).then(function(records) {
+    res.send(records || []);
   }).catch(function(error) {
     res.status(500).send(error);
   });

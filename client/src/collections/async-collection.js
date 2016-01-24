@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
+import Q from 'q';
 import Config from '../config';
 
 class AsyncCollection extends Backbone.Collection {
@@ -11,7 +12,7 @@ class AsyncCollection extends Backbone.Collection {
   }
 
   init() {
-    let defer = $.Deferred();
+    let defer = Q.defer();
     this.fetch({
       success: () => {
         defer.resolve();
@@ -20,7 +21,19 @@ class AsyncCollection extends Backbone.Collection {
         defer.reject(new Error('Unable to fetch data for ' + this.name + ': ' + error));
       }
     });
-    return defer.promise();
+    return defer.promise;
+  }
+
+  addAndSync(model, options) {
+    let newModel = this.add(model, options);
+    let defer = Q.defer();
+    Backbone.sync('create', newModel)
+      .success(response => {
+        defer.resolve(newModel);
+      }).error(error => {
+        defer.reject(new Error(error));
+      });
+    return defer.promise;
   }
 
 }

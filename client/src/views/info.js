@@ -39,10 +39,10 @@ class InfoView extends ModalView {
       state: this.$(SELECTORS.STATE).val(),
       country: this.$(SELECTORS.COUNTRY).val()
     };
-    this.model.updateAddress(address).then(
-      this._onUpdateSuccess.bind(this),
-      this._onUpdateError.bind(this)
-    );
+    this.model.updateAddress(address)
+      .then(this._onUpdateSuccess.bind(this))
+      .catch(this._onUpdateError.bind(this))
+      .done();
   }
 
   _onUpdateSuccess(result) {
@@ -54,10 +54,10 @@ class InfoView extends ModalView {
   }
 
   _onClickRemove(e) {
-    this.model.removeFromMap().then(
-      this._onRemoveSuccess.bind(this),
-      this._onRemoveError.bind(this)
-    );
+    this.model.removeFromMap()
+      .then(this._onRemoveSuccess.bind(this))
+      .catch(this._onRemoveError.bind(this))
+      .done();
   }
 
   _onRemoveSuccess(result) {

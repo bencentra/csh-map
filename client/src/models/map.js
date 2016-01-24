@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
+import Q from 'q';
 import MapEvents from '../events';
 import LocationCollection from '../collections/locations';
 import MemberCollection from '../collections/members';
@@ -22,11 +23,11 @@ class MapModel extends Backbone.Model {
 
   init() {
     start = Date.now();
-    return $.when(
+    return Q.all([
       this.get('locations').init(),
       this.get('members').init(),
       this.get('records').init()
-    ).then(null, this._initError.bind(this));
+    ]).catch(this._initError.bind(this));
   }
 
   _initError(error) {
