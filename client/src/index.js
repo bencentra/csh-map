@@ -30,7 +30,7 @@ class CSHMap {
     this._initModels();
     this._initViews();
     this._initEvents();
-    this._render();
+    return this._render();
   }
 
   _initModels() {
@@ -69,7 +69,7 @@ class CSHMap {
   }
 
   _render() {
-    this._loadMapDataAndRender()
+    return this._loadMapDataAndRender()
       .then(this._renderToolbar.bind(this))
       .then(this._renderSearchModal.bind(this))
       .then(this._renderInfoModal.bind(this));

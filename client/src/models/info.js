@@ -101,9 +101,9 @@ class InfoModel extends Backbone.Model {
   }
 
   removeFromMap() {
-    let defer = $.Deferred();
+    let defer = Q.defer();
     defer.resolve();
-    return defer.promise();
+    return defer.promise;
   }
 
   _setInfoProps() {

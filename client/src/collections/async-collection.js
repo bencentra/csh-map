@@ -13,7 +13,7 @@ class AsyncCollection extends Backbone.Collection {
 
   init() {
     let defer = Q.defer();
-    this.reset();
+    // this.reset();
     this.fetch()
       .success(response => {
         defer.resolve();
