@@ -23,7 +23,6 @@ class InfoModel extends Backbone.Model {
   updateAddress(data) {
     let address = `${data.city}, ${data.state}, ${data.country}`;
     return this._geocodeAddress(address)
-      // .then(this._updateAddress)
       .then(this._createOrGetMember.bind(this))
       .then(this._createOrGetLocation.bind(this))
       .then(this._createMoveRecord.bind(this));
@@ -34,7 +33,6 @@ class InfoModel extends Backbone.Model {
     this.geocoder.geocode({address}, (results, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
         this.geocodeResult = results[0];
-        console.log(this.geocodeResult);
         defer.resolve();
       } else {
         defer.reject(new Error('Failed to geocode address: ' + status));
@@ -46,14 +44,21 @@ class InfoModel extends Backbone.Model {
   _createOrGetMember() {
     let member = this.get('member');
     if (!member) {
+      let defer = Q.defer();
       member = {
         uid: this.get('config').uid,
         cn: this.get('config').cn
       };
-      return this.get('map').get('members').addAndSync(member)
-        .then(memberModel => {
-          this.updateData.member = memberModel;
+      member = this.get('map').get('members').add(member);
+      member.sync('create', member)
+        .success(response => {
+          member.set(response);
+          this.updateData.member = member;
+          defer.resolve();
+        }).error(error => {
+          defer.reject(error);
         });
+      return defer.promise;
     }
     this.updateData.member = member;
     return member;
@@ -62,15 +67,22 @@ class InfoModel extends Backbone.Model {
   _createOrGetLocation() {
     let location = this.get('map').get('locations').findWhere({address: this.geocodeResult.formatted_address});
     if (!location) {
+      let defer = Q.defer();
       location = {
         address: this.geocodeResult.formatted_address,
         latitude: this.geocodeResult.geometry.location.lat(),
         longitude: this.geocodeResult.geometry.location.lng()
       };
-      return this.get('map').get('locations').addAndSync(location)
-        .then(locationModel => {
-          this.updateData.location = locationModel;
+      location = this.get('map').get('locations').add(location);
+      location.sync('create', location)
+        .success(response => {
+          location.set(response);
+          this.updateData.location = location;
+          defer.resolve();
+        }).error(error => {
+          defer.reject(error);
         });
+      return defer.promise;
     }
     this.updateData.location = location;
     return location;
@@ -84,7 +96,6 @@ class InfoModel extends Backbone.Model {
     };
     return this.get('map').get('records').addAndSync(record)
       .then(recordModel => {
-        console.log(recordModel);
         this.updateData = {};
       });
   }
@@ -102,7 +113,6 @@ class InfoModel extends Backbone.Model {
     if (!record) return;
     let location = this.get('map').get('locations').findWhere({id: record.get('LocationId')});
     if (!location) return;
-    console.log(member, location, record);
     this.set('member', member);
     this.set('record', record);
     this.set('location', location);

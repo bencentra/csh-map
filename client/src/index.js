@@ -30,6 +30,7 @@ class CSHMap {
     this._initModels();
     this._initViews();
     this._initEvents();
+    this._render();
   }
 
   _initModels() {
@@ -61,16 +62,22 @@ class CSHMap {
   }
 
   _initEvents() {
-    MapEvents.on('ready', this._render, this);
+    // MapEvents.on('ready', this._render, this);
     MapEvents.on('search', this._showSearchModal, this);
     MapEvents.on('info', this._showInfoModal, this);
+    MapEvents.on('info-updated', this._loadMapDataAndRender, this);
   }
 
   _render() {
-    this._renderMap();
-    this._renderToolbar();
-    this._renderSearchModal();
-    this._renderInfoModal();
+    this._loadMapDataAndRender()
+      .then(this._renderToolbar.bind(this))
+      .then(this._renderSearchModal.bind(this))
+      .then(this._renderInfoModal.bind(this));
+  }
+
+  _loadMapDataAndRender() {
+    return this.mapModel.init()
+      .then(this._renderMap.bind(this));
   }
 
   _renderMap() {

@@ -13,14 +13,14 @@ class AsyncCollection extends Backbone.Collection {
 
   init() {
     let defer = Q.defer();
-    this.fetch({
-      success: () => {
+    this.reset();
+    this.fetch()
+      .success(response => {
         defer.resolve();
-      },
-      error: (error) => {
+      })
+      .error(error => {
         defer.reject(new Error('Unable to fetch data for ' + this.name + ': ' + error));
-      }
-    });
+      });
     return defer.promise;
   }
 
@@ -31,7 +31,7 @@ class AsyncCollection extends Backbone.Collection {
       .success(response => {
         defer.resolve(newModel);
       }).error(error => {
-        defer.reject(new Error(error));
+        defer.reject(error);
       });
     return defer.promise;
   }

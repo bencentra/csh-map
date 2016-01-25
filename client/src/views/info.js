@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
+import MapEvents from '../events';
 import ModalView from './modal-view';
 import infoModalTemplate from '../templates/info-modal.html';
 
@@ -28,7 +29,7 @@ class InfoView extends ModalView {
       address = address.split(', ');
       this.$(SELECTORS.CITY).val(address[0] || '');
       this.$(SELECTORS.STATE).val(address[1] || '');
-      this.$(SELECTORS.COUNTRY).val(address[2] || '');
+      this.$(SELECTORS.COUNTRY).val(address[2] || 'USA');
     }
     return this;
   }
@@ -45,8 +46,9 @@ class InfoView extends ModalView {
       .done();
   }
 
-  _onUpdateSuccess(result) {
-    console.log(result);
+  _onUpdateSuccess() {
+    MapEvents.trigger('info-updated');
+    this.hide();
   }
 
   _onUpdateError(error) {

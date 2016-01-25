@@ -17,17 +17,17 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
   var memberUid = req.body.MemberUid;
   if (!memberUid) {
-    res.status(400).send({error: 'Missing member parameter'});
+    res.status(400).send({error: 'Missing MemberUid parameter'});
     return;
   }
   var locationId = req.body.LocationId;
   if (!locationId) {
-    res.status(400).send({error: 'Missing location parameter'});
+    res.status(400).send({error: 'Missing LocationId parameter'});
     return;
   }
   var reasonId = req.body.ReasonId;
   if (!reasonId) {
-    res.status(400).send({error: 'Missing reason parameter'});
+    res.status(400).send({error: 'Missing ReasonId parameter'});
     return;
   }
   models.Record.addRecord(memberUid, locationId, reasonId).then(function(location) {

@@ -18,7 +18,7 @@ class MapModel extends Backbone.Model {
     this.set('members', new MemberCollection());
     this.set('records', new RecordCollection());
     this.set('markers', {});
-    this.init().done(this._ready.bind(this));
+    // this.init();
   }
 
   init() {
@@ -27,7 +27,8 @@ class MapModel extends Backbone.Model {
       this.get('locations').init(),
       this.get('members').init(),
       this.get('records').init()
-    ]).catch(this._initError.bind(this));
+    ]).then(this._ready.bind(this))
+      .catch(this._initError.bind(this));
   }
 
   _initError(error) {
@@ -35,27 +36,40 @@ class MapModel extends Backbone.Model {
   }
 
   _ready() {
-    this.set('markers', this._createMarkers());
-    MapEvents.trigger('ready');
+    this._createMarkers();
+    // MapEvents.trigger('ready');
     end = Date.now();
     console.log(`Time: ${end - start}ms`);
   }
 
   _createMarkers() {
     let markers = {};
+    this._destroyMarkers();
     this.get('records').each(record => {
-      let member = this.get('members').findWhere({uid: record.get('MemberUid')}).toJSON();
-      let location = this.get('locations').findWhere({id: record.get('LocationId')}).toJSON();
-      if (!markers[record.get('LocationId')]) {
-        markers[record.get('LocationId')] = {
-          location: location,
-          members: [member]
-        };
-      } else {
-        markers[record.get('LocationId')].members.push(member);
-      }
+      this._addMarker(record, markers);
     });
-    return markers;
+    this.set('markers', markers);
+  }
+
+  _addMarker(record, markers) {
+    let member = this.get('members').findWhere({uid: record.get('MemberUid')}).toJSON();
+    let location = this.get('locations').findWhere({id: record.get('LocationId')}).toJSON();
+    if (!markers[record.get('LocationId')]) {
+      markers[record.get('LocationId')] = {
+        location: location,
+        members: [member]
+      };
+    } else {
+      markers[record.get('LocationId')].members.push(member);
+    }
+  }
+
+  _destroyMarkers() {
+    _.each(this.get('markers'), (marker) => {
+      marker.googleMarker.setMap(null);
+      marker.googleMarker = null;
+    });
+    this.unset('markers');
   }
 
 }
