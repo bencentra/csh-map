@@ -9,15 +9,15 @@
         <form>
           <div class="form-group">
             <label for="csh-map-info-city">City</label>
-            <input type="text" class="form-control" id="csh-map-info-city" placeholder="Rochester">
+            <input type="text" class="form-control" id="csh-map-info-city" value="<%= address.city %>" placeholder="Rochester">
           </div>
           <div class="form-group">
             <label for="csh-map-info-state">State/Province</label>
-            <input type="text" class="form-control" id="csh-map-info-state" placeholder="NY">
+            <input type="text" class="form-control" id="csh-map-info-state" value="<%= address.state %>" placeholder="NY">
           </div>
           <div class="form-group">
             <label for="csh-map-info-country">Country</label>
-            <input type="text" class="form-control" id="csh-map-info-country" placeholder="USA">
+            <input type="text" class="form-control" id="csh-map-info-country" value="<%= address.country %>" placeholder="USA">
           </div>
         </form>
         <button class="btn btn-link remove-button">Remove My Address from Map</button>

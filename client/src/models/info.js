@@ -15,7 +15,13 @@ class InfoModel extends Backbone.Model {
   getAddress() {
     this._setInfoProps();
     if (this.get('location')) {
-      return this.get('location').get('address');
+      let address = this.get('location').get('address');
+      let parts = address.split(', ');
+      return {
+        city: parts[0] || '',
+        state: parts[1] || '',
+        country: parts[2] || ''
+      };
     }
     return false;
   }

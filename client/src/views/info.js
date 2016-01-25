@@ -23,14 +23,8 @@ class InfoView extends ModalView {
   }
 
   render() {
-    super.render();
     let address = this.model.getAddress();
-    if (address) {
-      address = address.split(', ');
-      this.$(SELECTORS.CITY).val(address[0] || '');
-      this.$(SELECTORS.STATE).val(address[1] || '');
-      this.$(SELECTORS.COUNTRY).val(address[2] || 'USA');
-    }
+    super.render({address});
     return this;
   }
 
@@ -52,6 +46,7 @@ class InfoView extends ModalView {
   }
 
   _onUpdateError(error) {
+    // TODO - Implement user-facing errors
     console.error(error);
   }
 
@@ -67,6 +62,7 @@ class InfoView extends ModalView {
   }
 
   _onRemoveError(error) {
+    // TODO - Implement user-facing errors
     console.error(error);
   }
 

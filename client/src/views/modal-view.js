@@ -9,8 +9,9 @@ class ModalView extends Backbone.View {
     this.model = options.model;
   }
 
-  render() {
-    this.el.innerHTML = this.template(this.model.get('config'));
+  render(data) {
+    let vars = _.extend({}, this.model.get('config'), data);
+    this.el.innerHTML = this.template(vars);
     this.$modal = this.$('.modal');
     this.$modal.modal({show: false});
     this.delegateEvents();
