@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
 require('dotenv').load();
-var app = require('../app');
+var MapAPI = require('../app');
 
-app.init({
+var app = new MapAPI({
 	port: process.env.PORT || 3000,
 	env: process.env.NODE_ENV || 'development'
 });
+
+app.init();

@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node bin/www",
-    "test": "node_modules/.bin/istanbul test node_modules/.bin/_mocha -- -R spec",
+    "test": "node_modules/.bin/istanbul cover --include-all-sources node_modules/.bin/jasmine",
     "coverage": "npm test --coverage",
     "lint": "node_modules/.bin/eslint -c .eslintrc.json app.js models/ routes/ test/"
   },
@@ -37,10 +37,9 @@
     "sequelize-fixtures": "^0.4.8"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
     "eslint": "^1.10.3",
     "istanbul": "^0.4.1",
-    "mocha": "^2.3.4",
+    "jasmine": "^2.4.1",
     "rewire": "^2.5.1",
     "supertest": "^1.1.0"
   }
