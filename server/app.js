@@ -13,15 +13,11 @@ function MapAPI(options) {
   this.port = options.port;
   this.env = options.env;
   this.db = require('./models');
-  this._setupExpressInstance();
-  this._configureRoutes();
-  this._configureErrorHandlers();
 }
 
 MapAPI.prototype.init = function() {
-  this.app.set('port', this.port);
-  this.app.set('env', this.env);
   var that = this;
+  this._setupExpressInstance();
   return this.db.sequelize.sync({
     force: (this.env === 'development') ? true : false
   }).then(function() {
@@ -36,6 +32,10 @@ MapAPI.prototype._setupExpressInstance = function() {
   this.app.use(cors());
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
+  this.app.set('port', this.port);
+  this.app.set('env', this.env);
+  this._configureRoutes();
+  this._configureErrorHandlers();
 };
 
 MapAPI.prototype._configureRoutes = function() {
