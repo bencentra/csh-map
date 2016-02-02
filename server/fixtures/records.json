@@ -22,5 +22,13 @@
       "LocationId": 1,
       "ReasonId": 4
     }
+  },
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "bencentra",
+      "LocationId": 2,
+      "ReasonId": 4
+    }
   }
 ]

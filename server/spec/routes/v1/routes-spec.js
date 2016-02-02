@@ -2,11 +2,12 @@ var request = require('supertest'),
     rewire = require('rewire'),
     MapAPI = rewire('../../../app');
 
-describe('API V1 Routes', function() {
+describe('v1 API routes', function() {
 
   var mapAPI = null,  // MapAPI instance
       app = null,     // Express app
-      jsonRegex = /application\/json/;
+      jsonRegex = /application\/json/,
+      membersLength = 0;
 
   beforeEach(function(done) {
     mapAPI = new MapAPI({
@@ -91,13 +92,135 @@ describe('API V1 Routes', function() {
 
   describe('/members', function() {
 
+    it('GETs a list of members', function(done) {
+      request(app)
+        .get('/v1/members')
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Array));
+          expect(err).toBeFalsy();
+          membersLength = res.body.length;
+          done();
+        });
+    });
+
+    it('GETs a single member', function(done) {
+      request(app)
+        .get('/v1/members/bencentra')
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Object));
+          expect(res.body.uid).toBeDefined();
+          expect(res.body.cn).toBeDefined();
+          expect(res.body.createdAt).toBeDefined();
+          expect(res.body.updatedAt).toBeDefined();
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
+    it('POSTs a new member', function(done) {
+      body = {
+        uid: 'jeid',
+        cn: 'Julien Eid'
+      };
+      request(app)
+        .post('/v1/members')
+        .send(body)
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Object));
+          expect(res.body.uid).toEqual(body.uid);
+          expect(res.body.cn).toEqual(body.cn);
+          expect(res.body.createdAt).toBeDefined();
+          expect(res.body.updatedAt).toBeDefined();
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
+    it('PUTs an existing member', function(done) {
+      body = {
+        cn: 'Bon Contro'
+      };
+      request(app)
+        .put('/v1/members/bencentra')
+        .send(body)
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Array));
+          expect(res.body[0]).toBe(1);
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
   });
 
   describe('/reasons', function() {
 
+    it('GETs a list of reasons', function(done) {
+      request(app)
+        .get('/v1/reasons')
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Array));
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
+    it('GETs a single reason', function(done) {
+      request(app)
+        .get('/v1/reasons/1')
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Object));
+          expect(res.body.id).toBeDefined();
+          expect(res.body.name).toBeDefined();
+          expect(res.body.description).toBeDefined();
+          expect(res.body.createdAt).toBeDefined();
+          expect(res.body.updatedAt).toBeDefined();
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
   });
 
   describe('/records', function() {
+
+    it('GETs the most recent record for each user', function(done) {
+      request(app)
+        .get('/v1/records')
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Array));
+          expect(res.body.length).toBe(membersLength);
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
+    it('GETs the complete list of all records', function(done) {
+      request(app)
+        .get('/v1/records/history')
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Array));
+          expect(res.body.length).toBeGreaterThan(membersLength);
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
 
   });
 

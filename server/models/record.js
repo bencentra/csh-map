@@ -16,8 +16,8 @@ module.exports = function(sequelize, DataTypes) {
       },
       getHistory: function(limit, offset) {
         var options = {
-          order: 'id DESC',
-          include: [{ all: true }]
+          order: 'id DESC'
+          // include: [{ all: true }]
         };
         if (typeof limit === 'number' && limit > 0) {
           options.limit = limit;
@@ -41,6 +41,6 @@ module.exports = function(sequelize, DataTypes) {
         });
       }
     }
-  });  
+  });
   return Record;
 };
