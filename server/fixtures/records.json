@@ -1,0 +1,26 @@
+[
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "bencentra",
+      "LocationId": 1,
+      "ReasonId": 4
+    }
+  },
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "mcsaucy",
+      "LocationId": 2,
+      "ReasonId": 4
+    }
+  },
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "cohoe",
+      "LocationId": 1,
+      "ReasonId": 4
+    }
+  }
+]

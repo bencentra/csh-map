@@ -9,3 +9,6 @@ var app = new MapAPI({
 });
 
 app.init();
+app.start().catch(function(err) {
+	console.log(err);
+});

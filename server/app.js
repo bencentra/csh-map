@@ -16,29 +16,33 @@ function MapAPI(options) {
 }
 
 MapAPI.prototype.init = function() {
-  var that = this;
+  console.log('init');
   this._setupExpressInstance();
-  return this.db.sequelize.sync({
+  this._configureRoutes();
+  this._configureErrorHandlers();
+};
+
+MapAPI.prototype.start = function() {
+  var options = {
     force: (this.env === 'development') ? true : false
-  }).then(function() {
-    return that._seedData();
-  }).then(function() {
-    that._startServer();
-  }).catch(this._startupError);
+  };
+  return this.db.sequelize.sync(options)
+    .then(this._seedData.bind(this))
+    .then(this._startServer.bind(this));
 };
 
 MapAPI.prototype._setupExpressInstance = function() {
+  console.log('_setupExpressInstance');
   this.app = express();
   this.app.use(cors());
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
   this.app.set('port', this.port);
   this.app.set('env', this.env);
-  this._configureRoutes();
-  this._configureErrorHandlers();
 };
 
 MapAPI.prototype._configureRoutes = function() {
+  console.log('_configureRoutes');
   this.app.use('/v1', require('./routes/v1/index'));
   this.app.use('/v1/members', require('./routes/v1/members'));
   this.app.use('/v1/locations', require('./routes/v1/locations'));
@@ -47,6 +51,7 @@ MapAPI.prototype._configureRoutes = function() {
 };
 
 MapAPI.prototype._configureErrorHandlers = function() {
+  console.log('_configureErrorHandlers');
   // 404 error handler middleware
   this.app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -65,6 +70,7 @@ MapAPI.prototype._configureErrorHandlers = function() {
 };
 
 MapAPI.prototype._startServer = function() {
+  console.log('_startServer');
   this.server = this.app.listen(this.app.get('port'), function() {
     var host = this.server.address().address;
     var port = this.server.address().port;
@@ -73,20 +79,24 @@ MapAPI.prototype._startServer = function() {
 };
 
 MapAPI.prototype._seedData = function() {
+  console.log('_seedData');
+  var that = this;
   if (this.env === 'development') {
-    var promises = [];
-    promises.push(fixtures.loadFile('fixtures/reasons.json', this.db.models));
-    promises.push(fixtures.loadFile('fixtures/members.json', this.db.models));
-    promises.push(fixtures.loadFile('fixtures/locations.json', this.db.models));
-    return Promise.all(promises);
+    var files = [
+      'fixtures/reasons.json',
+      'fixtures/members.json',
+      'fixtures/locations.json',
+      'fixtures/records.json'
+    ];
+    return Promise.mapSeries(files, function(file) {
+      return fixtures.loadFile(file, that.db.models);
+    }).then(function() {
+      console.log('Done loading fixtures!');
+    });
   }
   else {
-    return Promise.resolve({});
+    return Promise.resolve(true);
   }
-};
-
-MapAPI.prototype._startupError = function(error) {
-  console.error(error);
 };
 
 module.exports = MapAPI;

@@ -14,7 +14,7 @@ describe('MapAPI', function() {
   beforeEach(function() {
     apiInstance = null;
     options = {
-      port: 3000,
+      port: 3001,
       env: 'development'
     };
   });
@@ -37,10 +37,9 @@ describe('MapAPI', function() {
 
     beforeEach(function() {
       apiInstance = new MapAPI(options);
-      spyOn(apiInstance, '_startServer');
       spyOn(apiInstance, '_setupExpressInstance');
-      spyOn(apiInstance, '_seedData').and.callFake(instaResolve);
-      spyOn(apiInstance.db.sequelize, 'sync').and.callFake(instaResolve);
+      spyOn(apiInstance, '_configureRoutes');
+      spyOn(apiInstance, '_configureErrorHandlers');
     });
 
     it('is defined', function() {
@@ -50,30 +49,59 @@ describe('MapAPI', function() {
     it('creates the express instance', function() {
       apiInstance.init();
       expect(apiInstance._setupExpressInstance).toHaveBeenCalled();
+      expect(apiInstance._configureRoutes).toHaveBeenCalled();
+      expect(apiInstance._configureErrorHandlers).toHaveBeenCalled();
       expect(apiInstance.app).toBeDefined();
     });
 
+  });
+
+  describe('start()', function() {
+
+    beforeEach(function() {
+      apiInstance = new MapAPI(options);
+      spyOn(apiInstance, '_startServer');
+      spyOn(apiInstance, '_seedData').and.callFake(instaResolve);
+      spyOn(apiInstance.db.sequelize, 'sync').and.callFake(instaResolve);
+      apiInstance.init();
+    });
+
     it('syncs the database', function(done) {
-      apiInstance.init().then(function() {
+      apiInstance.start().then(function() {
         expect(apiInstance.db.sequelize.sync).toHaveBeenCalled();
         done();
       });
-
     });
 
     it('seeds data', function(done) {
-      apiInstance.init().then(function() {
+      apiInstance.start().then(function() {
         expect(apiInstance._seedData).toHaveBeenCalled();
         done();
       });
     });
 
     it('starts the server', function(done) {
-      apiInstance.init().then(function() {
+      apiInstance.start().then(function() {
         expect(apiInstance._startServer).toHaveBeenCalled();
         done();
       });
     });
+
+  });
+
+  describe('_setupExpressInstance()', function() {
+
+  });
+
+  describe('_configureRoutes()', function() {
+
+  });
+
+  describe('_startServer()', function() {
+
+  });
+
+  describe('_seedData()', function() {
 
   });
 
