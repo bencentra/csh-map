@@ -1,13 +1,16 @@
 {
 	"development": {
-		"dialect": "sqlite",
-		"storage": "./db.development.sqlite"
-	},
-	"production": {
 		"dialiect": "mysql",
 		"username": "csh_map",
-		"database": "csh_map",
-		"password": "password",
+		"database": "csh_map_test",
+		"password": "",
 		"host": "127.0.0.1"
-	}
+	},
+  "production": {
+    "dialiect": "mysql",
+    "username": "csh_map",
+    "database": "csh_map",
+    "password": "",
+    "host": "127.0.0.1"
+  }
 }

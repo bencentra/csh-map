@@ -6,6 +6,15 @@ var Sequelize = require('sequelize');
 var env = process.env.NODE_ENV || 'development';
 var config = require(__dirname + '/../config/config.json')[env];
 
+// Logging
+var logFn = console.log;
+if (env !== 'development') {
+  // TODO - Implement logging to file
+  logFn = function noop() {};
+}
+config.logging = logFn;
+
+// Initialize sequelize and create db object
 var sequelize = new Sequelize(config.database, config.username, config.password, config);
 var db = {
   models: {},

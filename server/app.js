@@ -16,7 +16,6 @@ function MapAPI(options) {
 }
 
 MapAPI.prototype.init = function() {
-  console.log('init');
   this._setupExpressInstance();
   this._configureRoutes();
   this._configureErrorHandlers();
@@ -32,7 +31,6 @@ MapAPI.prototype.start = function() {
 };
 
 MapAPI.prototype._setupExpressInstance = function() {
-  console.log('_setupExpressInstance');
   this.app = express();
   this.app.use(cors());
   this.app.use(bodyParser.json());
@@ -42,7 +40,6 @@ MapAPI.prototype._setupExpressInstance = function() {
 };
 
 MapAPI.prototype._configureRoutes = function() {
-  console.log('_configureRoutes');
   this.app.use('/v1', require('./routes/v1/index'));
   this.app.use('/v1/members', require('./routes/v1/members'));
   this.app.use('/v1/locations', require('./routes/v1/locations'));
@@ -51,7 +48,6 @@ MapAPI.prototype._configureRoutes = function() {
 };
 
 MapAPI.prototype._configureErrorHandlers = function() {
-  console.log('_configureErrorHandlers');
   // 404 error handler middleware
   this.app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -70,7 +66,6 @@ MapAPI.prototype._configureErrorHandlers = function() {
 };
 
 MapAPI.prototype._startServer = function() {
-  console.log('_startServer');
   this.server = this.app.listen(this.app.get('port'), function() {
     var host = this.server.address().address;
     var port = this.server.address().port;
@@ -79,24 +74,18 @@ MapAPI.prototype._startServer = function() {
 };
 
 MapAPI.prototype._seedData = function() {
-  console.log('_seedData');
   var that = this;
+  var files = ['fixtures/reasons.json'];
   if (this.env === 'development') {
-    var files = [
-      'fixtures/reasons.json',
-      'fixtures/members.json',
-      'fixtures/locations.json',
-      'fixtures/records.json'
-    ];
-    return Promise.mapSeries(files, function(file) {
-      return fixtures.loadFile(file, that.db.models);
-    }).then(function() {
-      console.log('Done loading fixtures!');
-    });
+    files.push('fixtures/members.json');
+    files.push('fixtures/locations.json');
+    files.push('fixtures/records.json');
   }
-  else {
-    return Promise.resolve(true);
-  }
+  return Promise.mapSeries(files, function(file) {
+    return fixtures.loadFile(file, that.db.models);
+  }).then(function() {
+    console.log('Done loading fixtures!');
+  });
 };
 
 module.exports = MapAPI;
