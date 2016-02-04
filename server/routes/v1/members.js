@@ -48,7 +48,11 @@ router.put('/:uid', function(req, res) {
   }
   var cn = req.body.cn || '';
   models.Member.setName(uid, cn).then(function(member) {
-    res.send(member);
+    if (member[0] === 1) {
+      res.send({success: true});
+    } else {
+      res.send({success: false});
+    }
   }).catch(function(error) {
     res.status(500).send(error);
   });

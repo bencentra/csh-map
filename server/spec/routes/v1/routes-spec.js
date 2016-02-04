@@ -152,8 +152,8 @@ describe('v1 API routes', function() {
         .expect(200)
         .expect('Content-Type', jsonRegex)
         .end(function(err, res) {
-          expect(res.body).toEqual(jasmine.any(Array));
-          expect(res.body[0]).toBe(1);
+          expect(res.body).toEqual(jasmine.any(Object));
+          expect(res.body.success).toBe(true);
           expect(err).toBeFalsy();
           done();
         });
