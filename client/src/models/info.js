@@ -10,32 +10,50 @@ class InfoModel extends Backbone.Model {
     this.geocoder = new google.maps.Geocoder();
     this.geocodeResult = {};
     this.updateData = {};
+    this.defaults();
   }
 
-  getAddress() {
-    this._setInfoProps();
-    if (this.get('location')) {
-      let address = this.get('location').get('address');
-      let parts = address.split(', ');
-      return {
-        city: parts[0] || '',
-        state: parts[1] || '',
-        country: parts[2] || ''
-      };
-    }
-    return false;
+  defaults() {
+    this.set({
+      member: null,
+      record: null,
+      location: null,
+      city: '',
+      state: '',
+      country: ''
+    });
   }
 
-  updateAddress(data) {
-    let address = `${data.city}, ${data.state}, ${data.country}`;
+  loadDataFromMap() {
+    let member = this.get('map').get('members').findWhere({uid: this.get('config').uid});
+    if (!member) return;
+    let record = this.get('map').get('records').findWhere({MemberUid: member.get('uid')});
+    if (!record) return;
+    let location = this.get('map').get('locations').findWhere({id: record.get('LocationId')});
+    if (!location) return;
+    let parts = location.get('address').split(', ');
+    this.set({
+      member,
+      record,
+      location,
+      city: parts[0],
+      state: parts[1],
+      country: parts[2]
+    });
+  }
+
+  updateAddress() {
+    let address = `${this.get('city')}, ${this.get('state')}, ${this.get('country')}`;
     return this._geocodeAddress(address)
       .then(this._createOrGetMember.bind(this))
       .then(this._createOrGetLocation.bind(this))
-      .then(this._createMoveRecord.bind(this));
+      .then(this._createMoveRecord.bind(this))
+      .then(this.loadDataFromMap.bind(this));
   }
 
   removeFromMap() {
-    return this._removeMember();
+    return this._removeMember()
+      .then(this.defaults.bind(this));
   }
 
   _geocodeAddress(address) {
@@ -118,18 +136,6 @@ class InfoModel extends Backbone.Model {
       ReasonId: 1 // "Other"
     };
     return this.get('map').get('records').addAndSync('create', record);
-  }
-
-  _setInfoProps() {
-    let member = this.get('map').get('members').findWhere({uid: this.get('config').uid});
-    if (!member) return;
-    let record = this.get('map').get('records').findWhere({MemberUid: member.get('uid')});
-    if (!record) return;
-    let location = this.get('map').get('locations').findWhere({id: record.get('LocationId')});
-    if (!location) return;
-    this.set('member', member);
-    this.set('record', record);
-    this.set('location', location);
   }
 
 }

@@ -6,9 +6,9 @@ import ModalView from './modal-view';
 import infoModalTemplate from '../templates/info-modal.html';
 
 const SELECTORS = {
-  CITY: '#csh-map-info-city',
-  STATE: '#csh-map-info-state',
-  COUNTRY: '#csh-map-info-country'
+  CITY: '.city-input',
+  STATE: '.state-input',
+  COUNTRY: '.country-input'
 };
 
 class InfoView extends ModalView {
@@ -16,6 +16,9 @@ class InfoView extends ModalView {
   constructor(options) {
     super(options);
     this.events = {
+      'keyup input.city-input': '_onEditCity',
+      'keyup input.state-input': '_onEditState',
+      'keyup input.country-input': '_onEditCountry',
       'click button.submit-button': '_onClickUpdate',
       'click button.remove-button': '_onClickRemove'
     };
@@ -23,18 +26,26 @@ class InfoView extends ModalView {
   }
 
   render() {
-    let address = this.model.getAddress();
-    super.render({address});
+    this.model.loadDataFromMap();
+    let data = this.model.toJSON();
+    super.render(data);
     return this;
   }
 
+  _onEditCity(e) {
+    this.model.set('city', e.target.value);
+  }
+
+  _onEditState(e) {
+    this.model.set('state', e.target.value);
+  }
+
+  _onEditCountry(e) {
+    this.model.set('country', e.target.value);
+  }
+
   _onClickUpdate(e) {
-    let address = {
-      city: this.$(SELECTORS.CITY).val(),
-      state: this.$(SELECTORS.STATE).val(),
-      country: this.$(SELECTORS.COUNTRY).val()
-    };
-    this.model.updateAddress(address)
+    this.model.updateAddress()
       .then(this._onUpdateSuccess.bind(this))
       .catch(this._onUpdateError.bind(this))
       .done();
@@ -46,7 +57,6 @@ class InfoView extends ModalView {
   }
 
   _onUpdateError(error) {
-    // TODO - Implement user-facing errors
     console.error(error);
   }
 
@@ -63,7 +73,6 @@ class InfoView extends ModalView {
   }
 
   _onRemoveError(error) {
-    // TODO - Implement user-facing errors
     console.error(error);
   }
 

@@ -73,7 +73,10 @@ class CSHMap {
     return this._loadMapDataAndRender()
       .then(this._renderToolbar.bind(this))
       .then(this._renderSearchModal.bind(this))
-      .then(this._renderInfoModal.bind(this));
+      .then(this._renderInfoModal.bind(this))
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   _loadMapDataAndRender() {
@@ -98,11 +101,11 @@ class CSHMap {
   }
 
   _showSearchModal() {
-    this.searchView.show();
+    this.searchView.render().show();
   }
 
   _showInfoModal() {
-    this.infoView.show();
+    this.infoView.render().show();
   }
 
 }
