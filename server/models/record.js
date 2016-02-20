@@ -28,8 +28,9 @@ module.exports = function(sequelize, DataTypes) {
         return Record.findAll(options);
       },
       getPresent: function() {
+        // http://ask.metafilter.com/51482/How-do-I-get-the-record-with-the-most-current-date-by-a-key-field
         return sequelize.query(
-          'SELECT r.id, r.MemberUid, r.LocationId, r.ReasonId, r.createdAt, r.updatedAt, m.updatedAt FROM Records r, Members m WHERE r.updatedAt = m.updatedAt GROUP BY r.MemberUid',
+          'SELECT * from Records a WHERE createdAt = (SELECT MAX(createdAt) from Records b WHERE a.MemberUid = b.MemberUid)',
           { model: Record }
         );
       },

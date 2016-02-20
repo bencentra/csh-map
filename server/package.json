@@ -5,11 +5,13 @@
   "description": "ExpressJS API for the CSH Alumni Map",
   "main": "src/index.js",
   "scripts": {
-    "start": "NODE_ENV=production node bin/www",
+    "start": "npm run serve-dev",
     "test": "node_modules/.bin/jasmine",
     "cover": "node_modules/.bin/istanbul cover --include-all-sources node_modules/.bin/jasmine",
     "coverage": "npm test --coverage",
-    "lint": "node_modules/.bin/eslint -c .eslintrc.json app.js models/ routes/ test/"
+    "lint": "node_modules/.bin/eslint -c .eslintrc.json app.js models/ routes/ test/",
+    "serve-dev": "NODE_ENV=development node bin/www",
+    "serve-prod": "NODE_ENV=production node bin/www"
   },
   "repository": {
     "type": "git",
