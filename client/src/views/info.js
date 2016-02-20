@@ -40,7 +40,7 @@ class InfoView extends ModalView {
       .done();
   }
 
-  _onUpdateSuccess() {
+  _onUpdateSuccess(result) {
     MapEvents.trigger('info-updated');
     this.hide();
   }
@@ -59,6 +59,8 @@ class InfoView extends ModalView {
 
   _onRemoveSuccess(result) {
     console.log(result);
+    MapEvents.trigger('info-removed');
+    this.hide();
   }
 
   _onRemoveError(error) {

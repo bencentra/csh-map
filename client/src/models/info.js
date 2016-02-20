@@ -34,6 +34,10 @@ class InfoModel extends Backbone.Model {
       .then(this._createMoveRecord.bind(this));
   }
 
+  removeFromMap() {
+    return this._removeMember();
+  }
+
   _geocodeAddress(address) {
     let defer = Q.defer();
     this.geocoder.geocode({address}, (results, status) => {
@@ -100,16 +104,20 @@ class InfoModel extends Backbone.Model {
       LocationId: this.updateData.location.get('id'),
       ReasonId: 1 // TODO - Implement reason selecting
     };
-    return this.get('map').get('records').addAndSync(record)
+    return this.get('map').get('records').addAndSync('create', record)
       .then(recordModel => {
         this.updateData = {};
       });
   }
 
-  removeFromMap() {
-    let defer = Q.defer();
-    defer.resolve();
-    return defer.promise;
+  _removeMember() {
+    let uid = this.get('member').get('uid');
+    let record = {
+      MemberUid: uid,
+      LocationId: -1,
+      ReasonId: 1 // "Other"
+    };
+    return this.get('map').get('records').addAndSync('create', record);
   }
 
   _setInfoProps() {

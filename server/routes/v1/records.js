@@ -24,15 +24,19 @@ router.post('/', function(req, res) {
   if (!locationId) {
     res.status(400).send({error: 'Missing LocationId parameter'});
     return;
+  } else {
+    if (locationId < 0) {
+      locationId = null;
+    }
   }
   var reasonId = req.body.ReasonId;
   if (!reasonId) {
     res.status(400).send({error: 'Missing ReasonId parameter'});
     return;
   }
-  models.Record.addRecord(memberUid, locationId, reasonId).then(function(location) {
-    models.Member.setUpdatedAt(memberUid, location.updatedAt).then(function() {
-      res.send(location);
+  models.Record.addRecord(memberUid, locationId, reasonId).then(function(record) {
+    models.Member.setUpdatedAt(memberUid, record.updatedAt).then(function() {
+      res.send(record);
     }).catch(function(error) {
       res.status(500).send(error);
     });

@@ -66,6 +66,7 @@ class CSHMap {
     MapEvents.on('search', this._showSearchModal, this);
     MapEvents.on('info', this._showInfoModal, this);
     MapEvents.on('info-updated', this._loadMapDataAndRender, this);
+    MapEvents.on('info-removed', this._loadMapDataAndRender, this);
   }
 
   _render() {

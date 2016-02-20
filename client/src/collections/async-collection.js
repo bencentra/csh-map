@@ -13,7 +13,6 @@ class AsyncCollection extends Backbone.Collection {
 
   init() {
     let defer = Q.defer();
-    // this.reset();
     this.fetch()
       .success(response => {
         defer.resolve();
@@ -24,10 +23,10 @@ class AsyncCollection extends Backbone.Collection {
     return defer.promise;
   }
 
-  addAndSync(model, options) {
+  addAndSync(method, model, options) {
     let newModel = this.add(model, options);
     let defer = Q.defer();
-    Backbone.sync('create', newModel)
+    Backbone.sync(method, newModel)
       .success(response => {
         defer.resolve(newModel);
       }).error(error => {
