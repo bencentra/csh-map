@@ -58,7 +58,6 @@ class InfoView extends ModalView {
   }
 
   _onRemoveSuccess(result) {
-    console.log(result);
     MapEvents.trigger('info-removed');
     this.hide();
   }

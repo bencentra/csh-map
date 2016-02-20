@@ -398,4 +398,4 @@ A Record is a saved record of a Member moving to a Location for a Reason.
 }
 ```
 
-NOTE: To "remove" a Member from the map, create a Record with a null Location. This can be done by POST-ing to /records with a LocationId of -1.
+**NOTE:** To remove a Member from the map, create a Record with a null Location for that Member. This can be done by POST-ing to /records with a LocationId of -1.

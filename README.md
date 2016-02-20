@@ -6,9 +6,13 @@ Visualizing the diaspora of CSHers out of Rochester, NY.
 
 A static BackboneJS app. Relies on a consuming page to provide Webauth info (e.g. uid).
 
+See [client/README.md](client/README.md).
+
 ## Server
 
-A RESTful API written in Express, backed by a MySQL database. 
+A JSON API written in Express, backed by a MySQL database. 
+
+See [server/README.md](server/README.md).
 
 ## Contributing
 

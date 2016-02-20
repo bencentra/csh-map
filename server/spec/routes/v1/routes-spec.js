@@ -222,6 +222,50 @@ describe('v1 API routes', function() {
         });
     });
 
+    it('POSTs to add a member to the map', function(done) {
+      body = {
+        MemberUid: 'bencentra',
+        LocationId: 1,
+        ReasonId: 1
+      };
+      request(app)
+        .post('/v1/records')
+        .send(body)
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Object));
+          expect(res.body.MemberUid).toEqual(body.MemberUid);
+          expect(res.body.LocationId).toEqual(body.LocationId);
+          expect(res.body.ReasonId).toEqual(body.ReasonId);
+          expect(res.body.createdAt).toBeDefined();
+          expect(res.body.updatedAt).toBeDefined();
+          done();
+        });
+    });
+
+    it('POSTs to remove a member from the map', function(done) {
+      body = {
+        MemberUid: 'bencentra',
+        LocationId: -1,
+        ReasonId: 1
+      };
+      request(app)
+        .post('/v1/records')
+        .send(body)
+        .expect(200)
+        .expect('Content-Type', jsonRegex)
+        .end(function(err, res) {
+          expect(res.body).toEqual(jasmine.any(Object));
+          expect(res.body.MemberUid).toEqual(body.MemberUid);
+          expect(res.body.LocationId).toEqual(null);
+          expect(res.body.ReasonId).toEqual(body.ReasonId);
+          expect(res.body.createdAt).toBeDefined();
+          expect(res.body.updatedAt).toBeDefined();
+          done();
+        });
+    });
+
   });
 
   describe('errors', function() {
