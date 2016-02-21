@@ -5,9 +5,10 @@ body {
   height: 100%;
 }
 
-#csh-map, {
+#csh-map {
   width: 100%;
   height: 100%;
+  z-index: 0;
 }
 
 #csh-map-canvas > div {
@@ -33,8 +34,14 @@ body {
 #csh-map-toolbar .navbar {
   border-radius: 0;
   box-shadow: 0 0 6px 0 rgba(0,0,0,0.2);
+  margin-bottom: 10px;
 }
 
-.hide {
-  display: none;
+#csh-map-alert {
+  margin: 6px;
+}
+
+#csh-map-alert .alert {
+  transform: translateZ(1px);
+  box-shadow: 0 0 6px 0 rgba(0,0,0,0.2);
 }

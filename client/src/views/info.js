@@ -47,33 +47,32 @@ class InfoView extends ModalView {
   _onClickUpdate(e) {
     this.model.updateAddress()
       .then(this._onUpdateSuccess.bind(this))
-      .catch(this._onUpdateError.bind(this))
+      .catch(this._onError.bind(this))
       .done();
   }
 
   _onUpdateSuccess(result) {
-    MapEvents.trigger('info-updated');
+    MapEvents.trigger('update');
+    MapEvents.trigger('alert', 'success', 'Your location has been updated successfully.');
     this.hide();
-  }
-
-  _onUpdateError(error) {
-    console.error(error);
   }
 
   _onClickRemove(e) {
     this.model.removeFromMap()
       .then(this._onRemoveSuccess.bind(this))
-      .catch(this._onRemoveError.bind(this))
+      .catch(this._onError.bind(this))
       .done();
   }
 
   _onRemoveSuccess(result) {
-    MapEvents.trigger('info-removed');
+    MapEvents.trigger('update');
+    MapEvents.trigger('alert', 'success', 'You have been removed from the map.');
     this.hide();
   }
 
-  _onRemoveError(error) {
-    console.error(error);
+  _onError(error) {
+    MapEvents.trigger('alert', 'danger', error.toString());
+    this.hide();
   }
 
 }

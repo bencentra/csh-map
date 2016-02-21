@@ -11,11 +11,13 @@ import MapView from './views/map';
 import ToolbarView from './views/toolbar';
 import SearchView from './views/search';
 import InfoView from './views/info';
+import AlertView from './views/alert';
 
 const SELECTORS = {
   WRAPPER: '#csh-map',
   MAP: '#csh-map-canvas',
   TOOLBAR: '#csh-map-toolbar',
+  ALERT: '#csh-map-alert',
   SEARCH_MODAL: '#csh-map-search-modal',
   INFO_MODAL: '#csh-map-info-modal'
 };
@@ -53,6 +55,7 @@ class CSHMap {
       model: this.mapModel
     });
     this.toolbarView = new ToolbarView();
+    this.alertView = new AlertView();
     this.searchView = new SearchView({
       model: this.searchModel
     });
@@ -62,11 +65,10 @@ class CSHMap {
   }
 
   _initEvents() {
-    // MapEvents.on('ready', this._render, this);
     MapEvents.on('search', this._showSearchModal, this);
     MapEvents.on('info', this._showInfoModal, this);
-    MapEvents.on('info-updated', this._loadMapDataAndRender, this);
-    MapEvents.on('info-removed', this._loadMapDataAndRender, this);
+    MapEvents.on('update', this._loadMapDataAndRender, this);
+    MapEvents.on('alert', this._showAlert, this);
   }
 
   _render() {
@@ -106,6 +108,12 @@ class CSHMap {
 
   _showInfoModal() {
     this.infoView.render().show();
+  }
+
+  _showAlert(type, message) {
+    console.log('_showAlert');
+    this.alertView.setData(type, message);
+    $(SELECTORS.ALERT).html(this.alertView.render().el);
   }
 
 }

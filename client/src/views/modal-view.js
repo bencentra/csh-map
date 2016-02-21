@@ -14,7 +14,6 @@ class ModalView extends Backbone.View {
     this.el.innerHTML = this.template(vars);
     this.$modal = this.$('.modal');
     this.$modal.modal({show: false});
-    // this.$alert = this.$('.alert');
     this.delegateEvents();
     return this;
   }
@@ -30,12 +29,6 @@ class ModalView extends Backbone.View {
   toggle() {
     this.$modal.modal('toggle');
   }
-
-  // alert(type, message) {
-  //   this.$alert.removeClass('hide');
-  //   this.$alert.addClass(`alert-${type}`);
-  //   this.$alert.find('.message').text(message);
-  // }
 
 }
 
