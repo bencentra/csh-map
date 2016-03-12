@@ -1,5 +1,3 @@
-import Backbone from 'backbone';
-import _ from 'underscore';
 import $ from 'jquery';
 import Config from './config';
 import mainTemplate from './templates/main.html';
@@ -22,6 +20,9 @@ const SELECTORS = {
   INFO_MODAL: '#csh-map-info-modal'
 };
 
+/*
+* Primary CSHMap "controller" class
+*/
 class CSHMap {
 
   constructor(config) {
@@ -111,7 +112,6 @@ class CSHMap {
   }
 
   _showAlert(type, message) {
-    console.log('_showAlert');
     this.alertView.setData(type, message);
     $(SELECTORS.ALERT).html(this.alertView.render().el);
   }
@@ -122,3 +122,4 @@ class CSHMap {
 window.$ = window.jQuery = $;
 // "Export" CSHMap to global namespace
 window.CSHMap = CSHMap;
+export default CSHMap;

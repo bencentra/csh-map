@@ -1,7 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
 
-let MapEvents = {};
-_.extend(MapEvents, Backbone.Events);
+const MapEvents = _.extend({}, Backbone.Events);
 
 export default MapEvents;

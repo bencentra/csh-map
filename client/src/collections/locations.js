@@ -1,6 +1,4 @@
 import Backbone from 'backbone';
-import _ from 'underscore';
-import $ from 'jquery';
 import AsyncCollection from './async-collection';
 
 class LocationCollection extends AsyncCollection {
@@ -9,7 +7,7 @@ class LocationCollection extends AsyncCollection {
     super(options);
     this.name = 'LocationCollection';
     this.model = Backbone.Model;
-    this.url = this.config.apiUrl + '/locations';
+    this.url = `${this.config.apiUrl}/locations`;
   }
 
 }

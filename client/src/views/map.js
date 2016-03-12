@@ -1,6 +1,5 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
-import $ from 'jquery';
 import infoWindowTemplate from '../templates/info-window.html';
 
 class MapView extends Backbone.View {
@@ -24,25 +23,31 @@ class MapView extends Backbone.View {
   }
 
   _createGoogleMapsMarkers() {
-    let locationId = null;
-    for (locationId in this.model.get('markers')) {
-      let marker = this.model.get('markers')[locationId];
-      this._createGoogleMapsMarker(marker);
-    }
+    const markers = this.model.get('markers');
+    _.each(markers, marker => {
+      const decorator = this._createGoogleMapsDecorator(marker);
+      _.extend(marker, decorator);
+    });
   }
 
-  _createGoogleMapsMarker(marker) {
-    marker.googleMarker = new google.maps.Marker({
+  _createGoogleMapsDecorator(marker) {
+    const decorator = {};
+    decorator.googleMarker = new google.maps.Marker({
       position: new google.maps.LatLng(marker.location.latitude, marker.location.longitude),
       title: marker.location.address,
       map: this.gmap
     });
-    marker.infoWindow = new google.maps.InfoWindow({
+    decorator.infoWindow = new google.maps.InfoWindow({
       content: this._infoWindowTemplate(marker)
     });
-    marker.googleMarker.addListener('click', () => {
-      marker.infoWindow.open(this.gmap, marker.googleMarker);
-    }.bind(this));
+    decorator.googleMarker.addListener('click', () => {
+      decorator.infoWindow.open(this.gmap, decorator.googleMarker);
+    });
+    decorator.unset = function unset() {
+      this.googleMarker.setMap(null);
+      this.googleMarker = null;
+    };
+    return decorator;
   }
 
 }

@@ -27,7 +27,7 @@ module.exports = function(grunt) {
     browserify: {
       src: {
         files: {
-          'dist/csh-map-ui.js': ['src/index.js']
+          'dist/csh-map-ui.js': ['src/csh-map.js']
         },
         options: {
           transform: ['stringify', 'babelify']

@@ -1,13 +1,12 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
-import $ from 'jquery';
 import Q from 'q';
-import MapEvents from '../events';
 import LocationCollection from '../collections/locations';
 import MemberCollection from '../collections/members';
 import RecordCollection from '../collections/records';
 
-let start = null, end = null;
+let start = null;
+let end = null;
 
 class MapModel extends Backbone.Model {
 
@@ -18,7 +17,6 @@ class MapModel extends Backbone.Model {
     this.set('members', new MemberCollection());
     this.set('records', new RecordCollection());
     this.set('markers', {});
-    // this.init();
   }
 
   init() {
@@ -37,37 +35,33 @@ class MapModel extends Backbone.Model {
 
   _ready() {
     this._createMarkers();
-    // MapEvents.trigger('ready');
     end = Date.now();
     console.log(`Time: ${end - start}ms`);
   }
 
   _createMarkers() {
-    let markers = {};
+    const markers = {};
     this._destroyMarkers();
     this.get('records').each(record => {
-      this._addMarker(record, markers);
+      const locationId = record.get('LocationId');
+      const memberUid = record.get('MemberUid');
+      const member = this.get('members').findWhere({ uid: memberUid }).toJSON();
+      const location = this.get('locations').findWhere({ id: locationId }).toJSON();
+      if (!markers[locationId]) {
+        markers[locationId] = {
+          location,
+          members: [member]
+        };
+      } else {
+        markers[locationId].members.push(member);
+      }
     });
     this.set('markers', markers);
   }
 
-  _addMarker(record, markers) {
-    let member = this.get('members').findWhere({uid: record.get('MemberUid')}).toJSON();
-    let location = this.get('locations').findWhere({id: record.get('LocationId')}).toJSON();
-    if (!markers[record.get('LocationId')]) {
-      markers[record.get('LocationId')] = {
-        location: location,
-        members: [member]
-      };
-    } else {
-      markers[record.get('LocationId')].members.push(member);
-    }
-  }
-
   _destroyMarkers() {
-    _.each(this.get('markers'), (marker) => {
-      marker.googleMarker.setMap(null);
-      marker.googleMarker = null;
+    _.each(this.get('markers'), marker => {
+      marker.unset();
     });
     this.unset('markers');
   }

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var Record = sequelize.define('Record', {
     id: {
       type: DataTypes.INTEGER,
@@ -9,12 +9,12 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     classMethods: {
-      associate: function(models) {
+      associate: function (models) {
         Record.belongsTo(models.Member);
         Record.belongsTo(models.Location);
         Record.belongsTo(models.Reason);
       },
-      getHistory: function(limit, offset) {
+      getHistory: function (limit, offset) {
         var options = {
           order: 'id DESC'
           // include: [{ all: true }]
@@ -27,14 +27,15 @@ module.exports = function(sequelize, DataTypes) {
         }
         return Record.findAll(options);
       },
-      getPresent: function() {
+      getPresent: function () {
         // http://ask.metafilter.com/51482/How-do-I-get-the-record-with-the-most-current-date-by-a-key-field
         return sequelize.query(
-          'SELECT * from Records a WHERE createdAt = (SELECT MAX(createdAt) from Records b WHERE a.MemberUid = b.MemberUid) AND LocationId IS NOT NULL',
+          'SELECT * from Records a WHERE createdAt = (SELECT MAX(createdAt) from Records b ' +
+          'WHERE a.MemberUid = b.MemberUid) AND LocationId IS NOT NULL',
           { model: Record }
         );
       },
-      addRecord: function(memberUid, locationId, reasonId) {
+      addRecord: function (memberUid, locationId, reasonId) {
         return Record.create({
           MemberUid: memberUid,
           LocationId: locationId || null,

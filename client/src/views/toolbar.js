@@ -1,6 +1,5 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
-import $ from 'jquery';
 import MapEvents from '../events';
 import toolbarTemplate from '../templates/toolbar.html';
 

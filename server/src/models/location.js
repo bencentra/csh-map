@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var Location = sequelize.define('Location', {
     id: {
       type: DataTypes.INTEGER,
@@ -22,18 +22,18 @@ module.exports = function(sequelize, DataTypes) {
       // associate: function(models) {
       //   Location.belongsToMany(models.Member, { through: models.Record, unique: false });
       // },
-      addLocation: function(address, latitude, longitude) {
+      addLocation: function (address, latitude, longitude) {
         return Location.findOrCreate({
           where: {
             address: address
           },
           defaults: {
-            latitude: latitude, 
+            latitude: latitude,
             longitude: longitude
           }
         });
       }
     }
-  }); 
+  });
   return Location;
 };

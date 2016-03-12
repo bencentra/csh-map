@@ -1,15 +1,7 @@
-import Backbone from 'backbone';
 import _ from 'underscore';
-import $ from 'jquery';
 import MapEvents from '../events';
 import ModalView from './modal-view';
 import infoModalTemplate from '../templates/info-modal.html';
-
-const SELECTORS = {
-  CITY: '.city-input',
-  STATE: '.state-input',
-  COUNTRY: '.country-input'
-};
 
 class InfoView extends ModalView {
 
@@ -27,7 +19,7 @@ class InfoView extends ModalView {
 
   render() {
     this.model.loadDataFromMap();
-    let data = this.model.toJSON();
+    const data = this.model.toJSON();
     super.render(data);
     return this;
   }
@@ -44,27 +36,27 @@ class InfoView extends ModalView {
     this.model.set('country', e.target.value);
   }
 
-  _onClickUpdate(e) {
+  _onClickUpdate() {
     this.model.updateAddress()
       .then(this._onUpdateSuccess.bind(this))
       .catch(this._onError.bind(this))
       .done();
   }
 
-  _onUpdateSuccess(result) {
+  _onUpdateSuccess() {
     MapEvents.trigger('update');
     MapEvents.trigger('alert', 'success', 'Your location has been updated successfully.');
     this.hide();
   }
 
-  _onClickRemove(e) {
+  _onClickRemove() {
     this.model.removeFromMap()
       .then(this._onRemoveSuccess.bind(this))
       .catch(this._onError.bind(this))
       .done();
   }
 
-  _onRemoveSuccess(result) {
+  _onRemoveSuccess() {
     MapEvents.trigger('update');
     MapEvents.trigger('alert', 'success', 'You have been removed from the map.');
     this.hide();

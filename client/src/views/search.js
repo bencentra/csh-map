@@ -1,6 +1,4 @@
-import Backbone from 'backbone';
 import _ from 'underscore';
-import $ from 'jquery';
 import ModalView from './modal-view';
 import searchModalTemplate from '../templates/search-modal.html';
 
@@ -15,7 +13,7 @@ class SearchView extends ModalView {
   }
 
   _onClickSearch(e) {
-    
+    e.preventDefault();
   }
 
 }

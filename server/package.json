@@ -9,7 +9,7 @@
     "test": "node_modules/.bin/jasmine",
     "cover": "node_modules/.bin/istanbul cover --include-all-sources node_modules/.bin/jasmine",
     "coverage": "npm test --coverage",
-    "lint": "node_modules/.bin/eslint -c .eslintrc.json app.js models/ routes/ test/",
+    "lint": "node_modules/.bin/eslint -c .eslintrc.json src/ spec/",
     "serve-dev": "NODE_ENV=development node bin/www",
     "serve-prod": "NODE_ENV=production node bin/www"
   },
@@ -40,7 +40,9 @@
     "sequelize-fixtures": "^0.4.8"
   },
   "devDependencies": {
-    "eslint": "^1.10.3",
+    "eslint": "^2.4.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "eslint-plugin-react": "^4.2.1",
     "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",
     "rewire": "^2.5.1",

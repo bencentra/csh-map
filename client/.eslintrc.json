@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb/base",
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "google": true
+  },
+  "rules": {
+    "comma-dangle": 0,
+    "no-useless-constructor": 1
+  }
+}

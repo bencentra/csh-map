@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   var Reason = sequelize.define('Reason', {
     id: {
       type: DataTypes.INTEGER,
@@ -16,6 +16,6 @@ module.exports = function(sequelize, DataTypes) {
       //   Reason.belongsToMany(models.Location, { through: models.Record, unique: false });
       // }
     }
-  });  
+  });
   return Reason;
 };

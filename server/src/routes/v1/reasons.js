@@ -2,25 +2,24 @@
 
 var models = require('../../models').models;
 var express = require('express');
-var router = express.Router();
+var router = express.Router(); // eslint-disable-line new-cap
 
-router.get('/:id?', function(req, res) {
+router.get('/:id?', function (req, res) {
   var id = req.params.id;
   if (id) {
     models.Reason.findOne({
       where: {
         id: id
       }
-    }).then(function(reason) {
+    }).then(function (reason) {
       res.send(reason || {});
-    }).catch(function(error) {
+    }).catch(function (error) {
       res.send(error);
     });
-  }
-  else {
-    models.Reason.findAll().then(function(reasons) {
+  } else {
+    models.Reason.findAll().then(function (reasons) {
       res.send(reasons || []);
-    }).catch(function(error) {
+    }).catch(function (error) {
       res.send(error);
     });
   }

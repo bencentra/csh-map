@@ -1,6 +1,4 @@
 import Backbone from 'backbone';
-import _ from 'underscore';
-import $ from 'jquery';
 import AsyncCollection from './async-collection';
 
 class RecordCollection extends AsyncCollection {
@@ -9,7 +7,7 @@ class RecordCollection extends AsyncCollection {
     super(options);
     this.name = 'RecordCollection';
     this.model = Backbone.Model;
-    this.url = this.config.apiUrl + '/records';
+    this.url = `${this.config.apiUrl}/records`;
   }
 
 }

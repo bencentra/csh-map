@@ -1,6 +1,5 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
-import $ from 'jquery';
 import alertTemplate from '../templates/alert.html';
 
 class AlertView extends Backbone.View {
