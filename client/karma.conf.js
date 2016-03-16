@@ -21,7 +21,8 @@ module.exports = function(config) {
       'node_modules/q/q.js',
       'src/**/*.js',
       'src/**/*.html',
-      'spec/**/*-spec.js'
+      'spec/**/*-spec.js',
+      'spec/**/*-helper.js'
     ],
 
 
@@ -34,7 +35,8 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'src/**/*.js': ['browserify'],
-      'src/**/*.html': ['browserify']
+      'src/**/*.html': ['browserify'],
+      'spec/**/*.js': ['browserify']
     },
 
 
@@ -48,7 +50,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots', 'progress'],
+    reporters: ['dots'],
 
 
     // web server port

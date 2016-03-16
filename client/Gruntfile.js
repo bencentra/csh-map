@@ -11,6 +11,10 @@ module.exports = function(grunt) {
       src: {
         files: ['src/**/*.js', 'src/**/*.html'],
         tasks: ['browserify', 'test']
+      },
+      spec: {
+        files: ['spec/**/*.js'],
+        tasks: ['test']
       }
     },
     // Launch a server to test locally
