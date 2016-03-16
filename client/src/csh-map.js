@@ -122,4 +122,5 @@ class CSHMap {
 window.$ = window.jQuery = $;
 // "Export" CSHMap to global namespace
 window.CSHMap = CSHMap;
+
 export default CSHMap;

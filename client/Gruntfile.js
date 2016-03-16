@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     watch: {
       src: {
         files: ['src/**/*.js', 'src/**/*.html'],
-        tasks: ['browserify:src'] 
+        tasks: ['browserify', 'test']
       }
     },
     // Launch a server to test locally
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         options: {
           port: 8888,
           keepalive: true,
-          open: 'http://localhost:8888/test/demo'
+          open: 'http://localhost:8888/demo'
         }
       }
     },
@@ -44,6 +44,12 @@ module.exports = function(grunt) {
           'dist/csh-map-ui.min.js': 'dist/csh-map-ui.js'
         }
       }
+    },
+    // Run unit tests
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js'
+      }
     }
   });
 
@@ -51,11 +57,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('dev', ['clean:dev', 'browserify', 'watch']);
-  grunt.registerTask('build', ['clean:dist', 'browserify', 'uglify']);
-  grunt.registerTask('serve', ['connect']);
+  grunt.registerTask('build', ['clean:dist', 'browserify', 'uglify', 'test']);
+  grunt.registerTask('test', ['karma'])
+  grunt.registerTask('demo', ['connect']);
 
 };
