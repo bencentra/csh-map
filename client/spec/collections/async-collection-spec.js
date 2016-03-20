@@ -5,7 +5,7 @@ import Q from 'q';
 describe('Async Collection', () => {
 
   let asyncCollection = null;
-  let mockSuccess = function(cb) {
+  const mockSuccess = function(cb) {
     cb();
     return {
       error: function(cb) {
