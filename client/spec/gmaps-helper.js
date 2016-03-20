@@ -11,6 +11,16 @@ window.google = {
     },
     LatLng: function() {
       return {};
+    },
+    Marker: function() {
+      return {
+        setMap: function() {}
+      };
+    },
+    InfoWindow: function() {
+      return {
+        open: function() {}
+      }
     }
   }
 }

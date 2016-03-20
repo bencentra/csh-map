@@ -9,7 +9,7 @@ describe('Async Collection', () => {
     cb();
     return {
       error: function(cb) {
-        cb();
+        // cb();
       }
     }
   };

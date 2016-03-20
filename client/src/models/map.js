@@ -61,7 +61,9 @@ class MapModel extends Backbone.Model {
 
   _destroyMarkers() {
     _.each(this.get('markers'), marker => {
-      marker.unset();
+      if (typeof marker.unset === 'function') {
+        marker.unset();
+      }
     });
     this.unset('markers');
   }
