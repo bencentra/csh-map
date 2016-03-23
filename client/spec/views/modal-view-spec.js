@@ -5,8 +5,8 @@ import Backbone from 'backbone';
 describe('Modal View', () => {
 
   let modalView = null;
-  let testData = null;
-  let testTemplate = null;
+  const testTemplate = '<div class="Modal">Test</div>';
+  const testData = {test: 'lol'};
   const mockConfig = new Config({
     uid: 'bencentra',
     cn: 'Ben Centra',
@@ -18,8 +18,6 @@ describe('Modal View', () => {
   });
 
   beforeEach(() => {
-    testTemplate = '<div class="Modal">Test</div>';
-    testData = {test: 'lol'};
     modalView = new ModalView({model: mockModel});
     modalView.template = jasmine.createSpy('template').and.returnValue(testTemplate);
   });
