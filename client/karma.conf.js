@@ -21,8 +21,8 @@ module.exports = function(config) {
       'node_modules/q/q.js',
       'src/**/*.js',
       'src/**/*.html',
-      'spec/**/*-spec.js',
-      'spec/**/*-helper.js'
+      'spec/**/*-helper.js',
+      'spec/**/*-spec.js'
     ],
 
 
