@@ -11,8 +11,8 @@ class InfoView extends ModalView {
       'keyup input.city-input': '_onEditCity',
       'keyup input.state-input': '_onEditState',
       'keyup input.country-input': '_onEditCountry',
-      'click button.submit-button': '_onClickUpdate',
-      'click button.remove-button': '_onClickRemove'
+      'click button.submit-button': '_onSubmit',
+      'click button.remove-button': '_onRemove'
     };
     this.template = _.template(infoModalTemplate);
   }
@@ -24,32 +24,40 @@ class InfoView extends ModalView {
     return this;
   }
 
-  _onEditCity(e) {
-    this.model.set('city', e.target.value);
+  _onEditCity(event) {
+    this._submitOrUpdate(event, 'city');
   }
 
-  _onEditState(e) {
-    this.model.set('state', e.target.value);
+  _onEditState(event) {
+    this._submitOrUpdate(event, 'state');
   }
 
-  _onEditCountry(e) {
-    this.model.set('country', e.target.value);
+  _onEditCountry(event) {
+    this._submitOrUpdate(event, 'country');
   }
 
-  _onClickUpdate() {
+  _submitOrUpdate(event, field) {
+    if (event.which === 13) {
+      this._onSubmit();
+    } else {
+      this.model.set(field, event.target.value);
+    }
+  }
+
+  _onSubmit() {
     this.model.updateAddress()
-      .then(this._onUpdateSuccess.bind(this))
+      .then(this._onSubmitSuccess.bind(this))
       .catch(this._onError.bind(this))
       .done();
   }
 
-  _onUpdateSuccess() {
+  _onSubmitSuccess() {
     MapEvents.trigger('update');
     MapEvents.trigger('alert', 'success', 'Your location has been updated successfully.');
     this.hide();
   }
 
-  _onClickRemove() {
+  _onRemove() {
     this.model.removeFromMap()
       .then(this._onRemoveSuccess.bind(this))
       .catch(this._onError.bind(this))

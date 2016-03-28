@@ -51,6 +51,7 @@ describe('MapView', () => {
       expect(mapView.gmap.spy).not.toHaveBeenCalled();
     });
 
+    // TODO: better spying on google.map components
     it('decorates the model\'s markers', () => {
       mapView.render();
       const markers = mapView.model.get('markers');

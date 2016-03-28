@@ -71,6 +71,9 @@ describe('ImportView', () => {
       expect(infoView.model.get('city')).toEqual('Boston');
       $cityInput.trigger('keyup');
       expect(infoView.model.get('city')).toEqual('Denver');
+      expect(infoView.model.updateAddress).not.toHaveBeenCalled();
+      $cityInput.trigger($.Event('keyup', {which: 13}));
+      expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
     it('listens for keyup events on the state text box', () => {
@@ -79,6 +82,9 @@ describe('ImportView', () => {
       expect(infoView.model.get('state')).toEqual('MA');
       $stateInput.trigger('keyup');
       expect(infoView.model.get('state')).toEqual('CO');
+      expect(infoView.model.updateAddress).not.toHaveBeenCalled();
+      $stateInput.trigger($.Event('keyup', {which: 13}));
+      expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
     it('listens for keyup events on the country text box', () => {
@@ -87,13 +93,18 @@ describe('ImportView', () => {
       expect(infoView.model.get('country')).toEqual('USA');
       $countryInput.trigger('keyup');
       expect(infoView.model.get('country')).toEqual('US');
+      expect(infoView.model.updateAddress).not.toHaveBeenCalled();
+      $countryInput.trigger($.Event('keyup', {which: 13}));
+      expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
+    // TODO: figure out promises, test eventual MapEvents calls
     it('listens for click events on the submit button', () => {
       infoView.$('.submit-button').trigger('click');
       expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
+    // TODO: figure out promises, test eventual MapEvents calls
     it('listens for click events on the remove button', () => {
       infoView.$('.remove-button').trigger('click');
       expect(infoView.model.removeFromMap).toHaveBeenCalled();
