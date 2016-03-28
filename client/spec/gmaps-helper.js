@@ -2,14 +2,14 @@ function MockMap(element, options) {
   this.elements = element;
   this.options = options;
   this.spy(element, options);
-};
+}
 MockMap.prototype.spy = jasmine.createSpy('MockMap');
 
 function MockGeocoder(params) {
   this.spy = jasmine.createSpy('MockGeocoder');
   this.spy(params);
-};
-MockGeocoder.prototype.geocode = function(options, callback) {};
+}
+MockGeocoder.prototype.geocode = function () {};
 
 const MockGeocoderStatus = {
   OK: 1,
@@ -20,7 +20,7 @@ function MockLatLng(latitude, longitude) {
   this.latitude = latitude;
   this.longitude = longitude;
   this.spy(latitude, longitude);
-};
+}
 MockLatLng.prototype.spy = jasmine.createSpy('MockLatLng');
 
 function MockMarker(params) {
@@ -28,17 +28,17 @@ function MockMarker(params) {
   this.title = params.title;
   this.map = this.map;
   this.spy(params);
-};
+}
 MockMarker.prototype.spy = jasmine.createSpy('MockMarker');
-MockMarker.prototype.setMap = function(map) {};
-MockMarker.prototype.addListener = function(type, callback) {};
+MockMarker.prototype.setMap = function () {};
+MockMarker.prototype.addListener = function () {};
 
 function MockInfoWindow(params) {
   this.content = params.content;
   this.spy(params);
-};
+}
 MockInfoWindow.prototype.spy = jasmine.createSpy('MockInfoWindow');
-MockInfoWindow.prototype.open = function(map, marker) {};
+MockInfoWindow.prototype.open = function () {};
 
 window.google = {
   maps: {

@@ -1,13 +1,18 @@
 {
   "extends": "airbnb/base",
   "env": {
-    "node": true
+    "node": true,
+    "jasmine": true,
+    "jquery": true
   },
   "globals": {
-    "google": true
+    "google": true,
+    "CSHMap": true
   },
   "rules": {
     "comma-dangle": 0,
-    "no-useless-constructor": 1
+    "new-cap": 1,
+    "no-useless-constructor": 1,
+    "padded-blocks": 0
   }
 }

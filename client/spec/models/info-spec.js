@@ -31,26 +31,26 @@ describe('InfoModel', () => {
     MemberUid: mockMember.get('uid'),
     LocationId: mockLocation.get('id')
   });
-  const mockSuccess = function(cb) {
-    cb();
+  const mockSuccess = function (successCallback) {
+    successCallback();
     return {
-      error: function(cb) {
-        // cb();
+      error(errorCallback) {
+        errorCallback();
       }
-    }
+    };
   };
   const mockGeocodeResults = [{
     formatted_address: mockAddress,
     geometry: {
       location: {
-        lat: function() { return 12; },
-        lng: function() { return 34; }
+        lat() { return 12; },
+        lng() { return 34; }
       }
     }
   }];
 
   beforeEach(() => {
-    mockMap = new MapModel({mockConfig});
+    mockMap = new MapModel({ mockConfig });
     mockAttributes = {
       config: mockConfig,
       map: mockMap
@@ -125,7 +125,10 @@ describe('InfoModel', () => {
     });
 
     it('kicks off a promise chain', (done) => {
-      const address = `${infoModel.get('city')}, ${infoModel.get('state')}, ${infoModel.get('country')}`;
+      const city = infoModel.get('city');
+      const state = infoModel.get('state');
+      const country = infoModel.get('country');
+      const address = `${city}, ${state}, ${country}`;
       const promise = infoModel.updateAddress().then(() => {
         expect(infoModel._geocodeAddress).toHaveBeenCalledWith(address);
         expect(infoModel._createOrGetMember).toHaveBeenCalled();
@@ -155,7 +158,7 @@ describe('InfoModel', () => {
       spyOn(infoModel.geocoder, 'geocode').and.callFake((data, cb) => {
         cb({}, window.google.maps.GeocoderStatus.NOT_OK);
       });
-      infoModel._geocodeAddress(mockAddress).catch((error) => {
+      infoModel._geocodeAddress(mockAddress).catch(() => {
         expect(infoModel.geocodeResult).toEqual({});
         done();
       });

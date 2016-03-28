@@ -27,7 +27,7 @@ describe('ImportView', () => {
   });
 
   beforeEach(() => {
-    infoView = new InfoView({model: mockModel});
+    infoView = new InfoView({ model: mockModel });
   });
 
   it('can be constructed', () => {
@@ -72,7 +72,7 @@ describe('ImportView', () => {
       $cityInput.trigger('keyup');
       expect(infoView.model.get('city')).toEqual('Denver');
       expect(infoView.model.updateAddress).not.toHaveBeenCalled();
-      $cityInput.trigger($.Event('keyup', {which: 13}));
+      $cityInput.trigger($.Event('keyup', { which: 13 }));
       expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
@@ -83,7 +83,7 @@ describe('ImportView', () => {
       $stateInput.trigger('keyup');
       expect(infoView.model.get('state')).toEqual('CO');
       expect(infoView.model.updateAddress).not.toHaveBeenCalled();
-      $stateInput.trigger($.Event('keyup', {which: 13}));
+      $stateInput.trigger($.Event('keyup', { which: 13 }));
       expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
@@ -94,7 +94,7 @@ describe('ImportView', () => {
       $countryInput.trigger('keyup');
       expect(infoView.model.get('country')).toEqual('US');
       expect(infoView.model.updateAddress).not.toHaveBeenCalled();
-      $countryInput.trigger($.Event('keyup', {which: 13}));
+      $countryInput.trigger($.Event('keyup', { which: 13 }));
       expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 

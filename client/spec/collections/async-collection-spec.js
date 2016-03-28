@@ -1,17 +1,16 @@
 import AsyncCollection from '../../src/collections/async-collection';
 import Backbone from 'backbone';
-import Q from 'q';
 
 describe('Async Collection', () => {
 
   let asyncCollection = null;
-  const mockSuccess = function(cb) {
-    cb();
+  const mockSuccess = function (successCallback) {
+    successCallback();
     return {
-      error: function(cb) {
-        // cb();
+      error(errorCallback) {
+        errorCallback();
       }
-    }
+    };
   };
 
   beforeEach(() => {
@@ -37,7 +36,7 @@ describe('Async Collection', () => {
     });
 
     it('returns a promise', () => {
-      var promise = asyncCollection.init();
+      const promise = asyncCollection.init();
       expect(typeof promise.then).toEqual('function');
     });
 
@@ -66,7 +65,7 @@ describe('Async Collection', () => {
     });
 
     it('returns a promise', () => {
-      var promise = asyncCollection.addAndSync('create', testModel, testOptions);
+      const promise = asyncCollection.addAndSync('create', testModel, testOptions);
       expect(typeof promise.then).toEqual('function');
     });
 

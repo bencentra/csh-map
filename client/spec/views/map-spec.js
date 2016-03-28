@@ -13,14 +13,14 @@ describe('MapView', () => {
           longitude: 34
         },
         members: [
-          {cn: 'Ben Centra', uid: 'bencentra'}
+          { cn: 'Ben Centra', uid: 'bencentra' }
         ]
       }
     }
   });
 
   beforeEach(() => {
-    mapView = new MapView({model: mockModel});
+    mapView = new MapView({ model: mockModel });
   });
 
   it('can be constructed', () => {

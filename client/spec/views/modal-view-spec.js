@@ -6,7 +6,7 @@ describe('Modal View', () => {
 
   let modalView = null;
   const testTemplate = '<div class="Modal">Test</div>';
-  const testData = {test: 'lol'};
+  const testData = { test: 'lol' };
   const mockConfig = new Config({
     uid: 'bencentra',
     cn: 'Ben Centra',
@@ -18,7 +18,7 @@ describe('Modal View', () => {
   });
 
   beforeEach(() => {
-    modalView = new ModalView({model: mockModel});
+    modalView = new ModalView({ model: mockModel });
     modalView.template = jasmine.createSpy('template').and.returnValue(testTemplate);
   });
 
@@ -43,7 +43,7 @@ describe('Modal View', () => {
     it('initializes the Bootstrap modal', () => {
       modalView.render(testData);
       expect(modalView.$modal).toBeDefined();
-      expect($.fn.modal).toHaveBeenCalledWith({show: false});
+      expect($.fn.modal).toHaveBeenCalledWith({ show: false });
     });
 
     it('returns the view for chaining', () => {
