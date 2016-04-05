@@ -1,13 +1,22 @@
 import InfoView from '../../src/views/info';
 import InfoModel from '../../src/models/info';
 import ModalView from '../../src/views/modal-view';
+import Config from '../../src/config';
 import Backbone from 'backbone';
 import Q from 'q';
 
 describe('ImportView', () => {
 
   let infoView = null;
-  const mockModel = new InfoModel();
+  const mockConfig = new Config({
+    uid: 'bencentra',
+    cn: 'Ben Centra',
+    hostUrl: 'http://localhost:8888',
+    apiUrl: 'http://localhost:3000/v1'
+  });
+  const mockModel = new InfoModel({
+    config: mockConfig
+  });
   mockModel.set({
     member: new Backbone.Model({
       uid: 'bencentra',

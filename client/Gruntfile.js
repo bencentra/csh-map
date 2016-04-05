@@ -12,6 +12,10 @@ module.exports = function(grunt) {
         files: ['src/**/*.js', 'src/**/*.html'],
         tasks: ['browserify', 'test']
       },
+      css: {
+        files: ['src/**/*.css'],
+        tasks: ['copy:css']
+      },
       spec: {
         files: ['spec/**/*.js'],
         tasks: ['test']
@@ -54,10 +58,18 @@ module.exports = function(grunt) {
       unit: {
         configFile: 'karma.conf.js'
       }
+    },
+    // Copy the CSS file
+    copy: {
+      css: {
+        src: 'src/css/main.css',
+        dest: 'dist/main.css'
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -65,8 +77,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['dev']);
-  grunt.registerTask('dev', ['clean:dev', 'browserify', 'watch']);
-  grunt.registerTask('build', ['clean:dist', 'browserify', 'uglify', 'test']);
+  grunt.registerTask('dev', ['clean:dev', 'copy:css', 'browserify', 'watch']);
+  grunt.registerTask('build', ['clean:dist', 'copy:css', 'browserify', 'uglify', 'test']);
   grunt.registerTask('test', ['karma'])
   grunt.registerTask('demo', ['connect']);
 
