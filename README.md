@@ -1,170 +1,23 @@
-CSH Map
-=======
+# CSH Alumni Map
 
-Map for locating CSHers and Alumni across the country and around the world! Uses the [Google Maps v3 JavaScript API](https://developers.google.com/maps/documentation/javascript/).
+Visualizing the diaspora of CSHers out of Rochester, NY.
 
-Members of CSH can access the map here: https://members.csh.rit.edu/~bencentra/csh-map/
+## `index.php`
 
-API
----
+The "loader" page to deploy to CSH systems. Pulls in the deployed JS and CSS and initializes the app.
 
-A simple JSON API for setting and retrieving addresses. Requests can be in the form of ~~either `/api/<request>` or~~ `/api/api.php?request=<request>`. Relies on Webauth for authentication.
+## Client
 
-The following API methods are available:
+A static BackboneJS app. Relies on a consuming page (i.e. `index.php`) to provide Webauth info (e.g. uid).
 
-### GET /locations
+See [client/README.md](client/README.md).
 
-__Description:__ Gets an array of all locations (address, latitude, and longitude)
+## Server
 
-__Parameters:__ None.
+A JSON API written in Express, backed by a MySQL database.
 
-__Sample Response:__
+See [server/README.md](server/README.md).
 
-```json
-{
-    "status": true,
-    "message": "",
-    "data": [
-        ...
-        {
-            "address": "1 Dorm Crescent, Rochester, NY 14623, USA",
-            "latitude": "43.0852629",
-            "longitude": "-77.6665976"
-        },
-        ...
-    ]
-}
-```
+## Contributing
 
-### GET /users
-
-__Description:__ Gets an array of all users and their addresses.
-
-__Parameters:__ None.
-
-__Sample Response:__
-
-```json
-{
-    "status": true,
-    "message": "",
-    "data": [
-        ...
-        {
-            "uid": "bencentra",
-            "cn": "Ben Centra",
-            "latitude": "42.376485",
-            "longitude": "-71.235611",
-            "address": "Waltham, MA, USA",
-            "date": "2014-07-22 23:12:52",
-            "email": "1"
-        },
-        ...
-    ]
-}
-```
-
-### GET /users/group_by/location
-
-__Description:__ Gets an object with all users grouped by location.
-
-__Parameters:__ None.
-
-__Sample Response:__
-
-```json
-{
-    "status": true,
-    "message": "",
-    "data": {
-        ...
-        "Rochester, NY, USA": [
-            ...
-            {
-                "uid": "rossdylan",
-                "cn": "Ross Delinger",
-                "latitude": "43.1610300",
-                "longitude": "-77.6109219",
-                "address": "Rochester, NY, USA",
-                "date": "2014-07-29 20:37:04"
-            },
-            ...
-        ],
-        ...
-    }
-}
-```
-
-### POST /users
-
-__Description:__ Set or update your own address.
-
-__Parameters:__ 
-
-param|description|required
----|---|---
-latitude|The user's latitude coordinate|true
-longitude|The user's longitude coordinate|true
-address|The user's address string|true
-
-__Sample Response:__
-
-```json
-{
-    "status": true,
-    "message": "",
-    "data": true
-}
-```
-
-### DELETE /users
-
-__Description:__ Delete your own address.
-
-__Parameters:__ None.
-
-__Sample Response:__
-
-```json
-{
-    "status": true,
-    "message": "",
-    "data": true
-}
-```
-
-### GET /email
-
-__Description:__ Get your current email notification setting (1 = on, 0 = off)
-
-__Parameters:__ None.
-
-__Sample Response:__
-
-```json
-{
-    "status": true,
-    "message": "",
-    "data": "1"
-}
-```
-
-### POST /email
-
-__Description:__ Update your current email notification setting
-
-__Parameters:__
-
-param|description|required
----|---|---
-can_email|The new email notification setting (1 = on, 0 = off)|true
-
-__Sample Response:__
-
-```json
-{
-    "status": true,
-    "message": "",
-    "data": "0"
-}
-```
+Fork. Clone. Code. Test. PR. +1. Merge.

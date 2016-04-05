@@ -1,0 +1,44 @@
+[
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Other",
+      "description": ""
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Back to School",
+      "description": "Moved to go (back) to school"
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Going Home",
+      "description": "Moved back home for the summer"
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Internship/Co-op",
+      "description": "Moved temporarily for an internship or co-op"
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Full-time Job",
+      "description": "Moved permanently for a full-time job"
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Family",
+      "description": "Moved due to family reasons"
+    }
+  }
+]

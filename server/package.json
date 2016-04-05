@@ -1,0 +1,51 @@
+{
+  "name": "csh-map-svc",
+  "private": true,
+  "version": "0.0.1",
+  "description": "ExpressJS API for the CSH Alumni Map",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npm run serve-dev",
+    "test": "node_modules/.bin/jasmine",
+    "cover": "node_modules/.bin/istanbul cover --include-all-sources node_modules/.bin/jasmine",
+    "coverage": "npm test --coverage",
+    "lint": "node_modules/.bin/eslint -c .eslintrc.json src/ spec/",
+    "serve-dev": "NODE_ENV=development node bin/www",
+    "serve-prod": "NODE_ENV=production node bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bencentra/csh-map"
+  },
+  "keywords": [
+    "csh",
+    "alumni",
+    "map"
+  ],
+  "author": "Ben Centra <blcentra@gmail.com> (http://bencentra.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bencentra/csh-map/issues"
+  },
+  "homepage": "https://github.com/bencentra/csh-map",
+  "dependencies": {
+    "bluebird": "^3.0.6",
+    "body-parser": "^1.14.1",
+    "cors": "^2.7.1",
+    "dotenv": "^1.2.0",
+    "express": "^4.13.3",
+    "jsonschema": "^1.0.2",
+    "mysql": "^2.9.0",
+    "sequelize": "^3.14.2",
+    "sequelize-fixtures": "^0.4.8"
+  },
+  "devDependencies": {
+    "eslint": "^2.4.0",
+    "eslint-config-airbnb": "^6.1.0",
+    "eslint-plugin-react": "^4.2.1",
+    "istanbul": "^0.4.1",
+    "jasmine": "^2.4.1",
+    "rewire": "^2.5.1",
+    "supertest": "^1.1.0"
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "bencentra",
+      "LocationId": 1,
+      "ReasonId": 4,
+      "createdAt": "2016-02-20T18:14:35.000Z",
+      "updatedAt": "2016-02-20T18:14:35.000Z"
+    }
+  },
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "mcsaucy",
+      "LocationId": 2,
+      "ReasonId": 4,
+      "createdAt": "2016-02-20T18:14:36.000Z",
+      "updatedAt": "2016-02-20T18:14:36.000Z"
+    }
+  },
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "cohoe",
+      "LocationId": 1,
+      "ReasonId": 4,
+      "createdAt": "2016-02-20T18:14:37.000Z",
+      "updatedAt": "2016-02-20T18:14:37.000Z"
+    }
+  },
+  {
+    "model": "Record",
+    "data": {
+      "MemberUid": "bencentra",
+      "LocationId": 2,
+      "ReasonId": 4,
+      "createdAt": "2016-02-20T18:14:38.000Z",
+      "updatedAt": "2016-02-20T18:14:38.000Z"
+    }
+  }
+]

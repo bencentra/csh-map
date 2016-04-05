@@ -1,0 +1,10 @@
+old/
+node_modules/
+.DS_Store
+npm-debug.log
+db.development.sqlite
+config.json
+*.sqlite
+.env
+postman.json
+coverage/
