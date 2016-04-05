@@ -2,6 +2,8 @@
 
 ExpressJS API for the CSH Alumni Map.
 
+Tested with Node v0.12.9 and v4.4.0.
+
 ## Installation
 
 1) Install dependencies:
@@ -73,7 +75,6 @@ Create a `.env` file with the following contents:
 ```bash
 NODE_ENV=production # "production" or "development"
 PORT=3000
-DOTENV_PATH=".env" # custom path to .env file
 ```
 
 ## API
