@@ -70,9 +70,10 @@ NODE_ENV=development node bin/www
 
 Create a `.env` file with the following contents:
 
-```
+```bash
 NODE_ENV=production # "production" or "development"
 PORT=3000
+DOTENV_PATH=".env" # custom path to .env file
 ```
 
 ## API
