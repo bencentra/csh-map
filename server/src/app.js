@@ -8,11 +8,24 @@ var Promise = require('bluebird');
 var fixtures = require('sequelize-fixtures');
 var path = require('path');
 
+function createRefererMiddleware(referer) {
+  return function(req, res, next) {
+    if (referer && referer !== req.get('Referer')) {
+      var err = new Error('Invalid Referer');
+      next(err);
+    } else {
+      next();
+    }
+  };
+}
+
 function MapAPI(options) {
   this.server = null;
   this.app = null;
   this.port = options.port;
   this.env = options.env;
+  this.origin = options.origin;
+  this.referer = options.referer;
   this.db = require('./models');
 }
 
@@ -33,9 +46,12 @@ MapAPI.prototype.start = function () {
 
 MapAPI.prototype._setupExpressInstance = function () {
   this.app = express();
-  this.app.use(cors());
+  this.app.use(cors({
+    origin: this.origin
+  }));
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
+  this.app.use(createRefererMiddleware(this.referer));
   this.app.set('port', this.port);
   this.app.set('env', this.env);
 };
