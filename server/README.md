@@ -73,8 +73,14 @@ NODE_ENV=development node bin/www
 Create a `.env` file with the following contents:
 
 ```bash
-NODE_ENV=production # "production" or "development"
+# Node environment ("development" or "production")
+NODE_ENV=development
+# Port the server should run on
 PORT=3000
+# Expected origin of incoming requests (for CORS)
+ORIGIN="http://localhost:8888"
+# Expected contents of the Referer header (optional)
+REFERER="http://localhost:8888/demo/"
 ```
 
 ## API
