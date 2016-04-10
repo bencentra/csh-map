@@ -1,11 +1,13 @@
 import InfoView from '../../src/views/info';
 import InfoModel from '../../src/models/info';
 import ModalView from '../../src/views/modal-view';
+import MapModel from '../../src/models/map';
+import ReasonCollection from '../../src/collections/reasons';
 import Config from '../../src/config';
 import Backbone from 'backbone';
 import Q from 'q';
 
-describe('ImportView', () => {
+describe('InfoView', () => {
 
   let infoView = null;
   const mockConfig = new Config({
@@ -14,8 +16,16 @@ describe('ImportView', () => {
     hostUrl: 'http://localhost:8888',
     apiUrl: 'http://localhost:3000/v1'
   });
-  const mockModel = new InfoModel({
+  const mockMap = new MapModel({
     config: mockConfig
+  });
+  mockMap.set('reasons', new ReasonCollection([
+    {id: 1, name: 'Not Specified', description: ''},
+    {id: 2, name: 'Specified!', description: ''}
+  ]));
+  const mockModel = new InfoModel({
+    config: mockConfig,
+    map: mockMap
   });
   mockModel.set({
     member: new Backbone.Model({
@@ -30,6 +40,7 @@ describe('ImportView', () => {
       LocationId: 1,
       MemberUid: 'bencentra'
     }),
+    reason: 1,
     city: 'Boston',
     state: 'MA',
     country: 'USA'
@@ -105,6 +116,14 @@ describe('ImportView', () => {
       expect(infoView.model.updateAddress).not.toHaveBeenCalled();
       $countryInput.trigger($.Event('keyup', { which: 13 }));
       expect(infoView.model.updateAddress).toHaveBeenCalled();
+    });
+
+    it('listens for change events on the reason select', () => {
+      const $reasonInput = infoView.$('.reason-input');
+      $reasonInput.val(2);
+      expect(infoView.model.get('reason')).toEqual(1);
+      $reasonInput.trigger('change');
+      expect(infoView.model.get('reason')).toEqual(2);
     });
 
     // TODO: figure out promises, test eventual MapEvents calls

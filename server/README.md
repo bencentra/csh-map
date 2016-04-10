@@ -252,7 +252,7 @@ Reasons are all pre-populated when the server is started (see `/fixtures/reasons
 [
     {
         "id": 1,
-        "name": "Other",
+        "name": "Not Specified",
         "description": "",
         "createdAt": "2016-02-04T01:57:58.000Z",
         "updatedAt": "2016-02-04T01:57:58.000Z"

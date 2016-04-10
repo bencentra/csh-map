@@ -15533,7 +15533,7 @@ var AsyncCollection = (function (_Backbone$Collection) {
 exports['default'] = AsyncCollection;
 module.exports = exports['default'];
 
-},{"../config":10,"backbone":1,"q":4}],7:[function(require,module,exports){
+},{"../config":11,"backbone":1,"q":4}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15638,6 +15638,47 @@ var _asyncCollection = require('./async-collection');
 
 var _asyncCollection2 = _interopRequireDefault(_asyncCollection);
 
+var ReasonCollection = (function (_AsyncCollection) {
+  _inherits(ReasonCollection, _AsyncCollection);
+
+  function ReasonCollection(options) {
+    _classCallCheck(this, ReasonCollection);
+
+    _get(Object.getPrototypeOf(ReasonCollection.prototype), 'constructor', this).call(this, options);
+    this.name = 'ReasonCollection';
+    this.model = _backbone2['default'].Model;
+    this.url = this.config.apiUrl + '/reasons';
+  }
+
+  return ReasonCollection;
+})(_asyncCollection2['default']);
+
+exports['default'] = ReasonCollection;
+module.exports = exports['default'];
+
+},{"./async-collection":6,"backbone":1}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+var _asyncCollection = require('./async-collection');
+
+var _asyncCollection2 = _interopRequireDefault(_asyncCollection);
+
 var RecordCollection = (function (_AsyncCollection) {
   _inherits(RecordCollection, _AsyncCollection);
 
@@ -15656,7 +15697,7 @@ var RecordCollection = (function (_AsyncCollection) {
 exports['default'] = RecordCollection;
 module.exports = exports['default'];
 
-},{"./async-collection":6,"backbone":1}],10:[function(require,module,exports){
+},{"./async-collection":6,"backbone":1}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15696,7 +15737,7 @@ var Config = (function () {
 exports["default"] = Config;
 module.exports = exports["default"];
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15886,7 +15927,7 @@ window.CSHMap = CSHMap;
 exports['default'] = CSHMap;
 module.exports = exports['default'];
 
-},{"./config":10,"./events":12,"./models/info":13,"./models/map":14,"./models/search":15,"./templates/main.html":19,"./views/alert":22,"./views/info":23,"./views/map":24,"./views/search":26,"./views/toolbar":27,"jquery":3}],12:[function(require,module,exports){
+},{"./config":11,"./events":13,"./models/info":14,"./models/map":15,"./models/search":16,"./templates/main.html":20,"./views/alert":23,"./views/info":24,"./views/map":25,"./views/search":27,"./views/toolbar":28,"jquery":3}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15908,7 +15949,7 @@ var MapEvents = _underscore2['default'].extend({}, _backbone2['default'].Events)
 exports['default'] = MapEvents;
 module.exports = exports['default'];
 
-},{"backbone":1,"underscore":5}],13:[function(require,module,exports){
+},{"backbone":1,"underscore":5}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15953,6 +15994,7 @@ var InfoModel = (function (_Backbone$Model) {
         member: null,
         record: null,
         location: null,
+        reason: 1, // "Not Specified"
         city: '',
         state: '',
         country: ''
@@ -16077,7 +16119,7 @@ var InfoModel = (function (_Backbone$Model) {
       var record = {
         MemberUid: this.updateData.member.get('uid'),
         LocationId: this.updateData.location.get('id'),
-        ReasonId: 1 // TODO - Implement reason selecting
+        ReasonId: this.get('reason')
       };
       return this.get('map').get('records').addAndSync('create', record).then(function () {
         _this4.updateData = {};
@@ -16090,7 +16132,7 @@ var InfoModel = (function (_Backbone$Model) {
       var record = {
         MemberUid: uid,
         LocationId: -1,
-        ReasonId: 1 // "Other"
+        ReasonId: this.get('reason')
       };
       return this.get('map').get('records').addAndSync('create', record);
     }
@@ -16102,7 +16144,7 @@ var InfoModel = (function (_Backbone$Model) {
 exports['default'] = InfoModel;
 module.exports = exports['default'];
 
-},{"backbone":1,"q":4}],14:[function(require,module,exports){
+},{"backbone":1,"q":4}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16143,6 +16185,10 @@ var _collectionsRecords = require('../collections/records');
 
 var _collectionsRecords2 = _interopRequireDefault(_collectionsRecords);
 
+var _collectionsReasons = require('../collections/reasons');
+
+var _collectionsReasons2 = _interopRequireDefault(_collectionsReasons);
+
 var start = null;
 var end = null;
 
@@ -16157,6 +16203,7 @@ var MapModel = (function (_Backbone$Model) {
     this.set('locations', new _collectionsLocations2['default']());
     this.set('members', new _collectionsMembers2['default']());
     this.set('records', new _collectionsRecords2['default']());
+    this.set('reasons', new _collectionsReasons2['default']());
     this.set('markers', {});
   }
 
@@ -16164,7 +16211,7 @@ var MapModel = (function (_Backbone$Model) {
     key: 'init',
     value: function init() {
       start = Date.now();
-      return _q2['default'].all([this.get('locations').init(), this.get('members').init(), this.get('records').init()]).then(this._ready.bind(this))['catch'](this._initError.bind(this));
+      return _q2['default'].all([this.get('locations').init(), this.get('members').init(), this.get('records').init(), this.get('reasons').init()]).then(this._ready.bind(this))['catch'](this._initError.bind(this));
     }
   }, {
     key: '_initError',
@@ -16219,7 +16266,7 @@ var MapModel = (function (_Backbone$Model) {
 exports['default'] = MapModel;
 module.exports = exports['default'];
 
-},{"../collections/locations":7,"../collections/members":8,"../collections/records":9,"backbone":1,"q":4,"underscore":5}],15:[function(require,module,exports){
+},{"../collections/locations":7,"../collections/members":8,"../collections/reasons":9,"../collections/records":10,"backbone":1,"q":4,"underscore":5}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16253,25 +16300,25 @@ var SearchModel = (function (_Backbone$Model) {
 exports['default'] = SearchModel;
 module.exports = exports['default'];
 
-},{"backbone":1}],16:[function(require,module,exports){
+},{"backbone":1}],17:[function(require,module,exports){
 module.exports = "<div class=\"alert alert-dismissable alert-<%= type %>\" role=\"alert\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <div><%= message %></div>\n</div>\n";
 
-},{}],17:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= cn %>'s Location</h4>\n      </div>\n      <div class=\"modal-body\">\n        <form>\n          <div class=\"form-group\">\n            <label>City</label>\n            <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\">\n          </div>\n          <div class=\"form-group\">\n            <label>State/Province</label>\n            <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\">\n          </div>\n          <div class=\"form-group\">\n            <label>Country</label>\n            <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\">\n          </div>\n        </form>\n        <button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary submit-button\">Update</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
-
 },{}],18:[function(require,module,exports){
-module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.address %></h4>\n  <ul>\n    <% _.each(members, function(member) { %>\n      <li><%= member.cn %> (<a href=\"https://profiles.csh.rit.edu/user/<%= member.uid %>\" target=\"_blank\"><%= member.uid %></a>)</li>\n    <% }); %>\n  </ul>\n</div>\n";
+module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= cn %>'s Location</h4>\n      </div>\n      <div class=\"modal-body\">\n        <form>\n          <div class=\"form-group\">\n            <label>City</label>\n            <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\">\n          </div>\n          <div class=\"form-group\">\n            <label>State/Province</label>\n            <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\">\n          </div>\n          <div class=\"form-group\">\n            <label>Country</label>\n            <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\">\n          </div>\n          <div class=\"form-group\">\n            <label>Reason</label>\n            <select class=\"form-control reason-input\">\n              <% _.each(map.get('reasons').toJSON(), function(reason) { %>\n                <option value=\"<%= reason.id %>\" data-description=\"<%= reason.description %>\"><%= reason.name %></option>\n              <% }); %>\n            </select>\n          </div>\n        </form>\n        <button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary submit-button\">Update</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"></div>\n<div id=\"csh-map-alert\"></div>\n<div id=\"csh-map-search-modal\"></div>\n<div id=\"csh-map-info-modal\"></div>\n";
+module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.address %></h4>\n  <ul>\n    <% _.each(members, function(member) { %>\n      <li><%= member.cn %> (<a href=\"https://profiles.csh.rit.edu/user/<%= member.uid %>\" target=\"_blank\"><%= member.uid %></a>)</li>\n    <% }); %>\n  </ul>\n</div>\n";
 
 },{}],20:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <h3>Search coming soon!</h3>\n        <!-- <form>\n          <div class=\"form-group\">\n            <label for=\"csh-map-search-type\">Type</label>\n            <select class=\"form-control\" id=\"csh-map-search-type\">\n              <option value=\"cn\">Name</option>\n              <option value=\"uid\">Username</option>\n              <option value=\"location\">Location</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"\">Search</label>\n            <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\">\n          </div>\n        </form> -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"></div>\n<div id=\"csh-map-alert\"></div>\n<div id=\"csh-map-search-modal\"></div>\n<div id=\"csh-map-info-modal\"></div>\n";
 
 },{}],21:[function(require,module,exports){
-module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
+module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <h3>Search coming soon!</h3>\n        <!-- <form>\n          <div class=\"form-group\">\n            <label for=\"csh-map-search-type\">Type</label>\n            <select class=\"form-control\" id=\"csh-map-search-type\">\n              <option value=\"cn\">Name</option>\n              <option value=\"uid\">Username</option>\n              <option value=\"location\">Location</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"\">Search</label>\n            <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\">\n          </div>\n        </form> -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],22:[function(require,module,exports){
+module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
+
+},{}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16333,7 +16380,7 @@ var AlertView = (function (_Backbone$View) {
 exports['default'] = AlertView;
 module.exports = exports['default'];
 
-},{"../templates/alert.html":16,"backbone":1,"underscore":5}],23:[function(require,module,exports){
+},{"../templates/alert.html":17,"backbone":1,"underscore":5}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16377,6 +16424,7 @@ var InfoView = (function (_ModalView) {
       'keyup input.city-input': '_onEditCity',
       'keyup input.state-input': '_onEditState',
       'keyup input.country-input': '_onEditCountry',
+      'change select.reason-input': '_onEditReason',
       'click button.submit-button': '_onSubmit',
       'click button.remove-button': '_onRemove'
     };
@@ -16405,6 +16453,11 @@ var InfoView = (function (_ModalView) {
     key: '_onEditCountry',
     value: function _onEditCountry(event) {
       this._submitOrUpdate(event, 'country');
+    }
+  }, {
+    key: '_onEditReason',
+    value: function _onEditReason(event) {
+      this.model.set('reason', parseInt(event.target.value));
     }
   }, {
     key: '_submitOrUpdate',
@@ -16453,7 +16506,7 @@ var InfoView = (function (_ModalView) {
 exports['default'] = InfoView;
 module.exports = exports['default'];
 
-},{"../events":12,"../templates/info-modal.html":17,"./modal-view":25,"underscore":5}],24:[function(require,module,exports){
+},{"../events":13,"../templates/info-modal.html":18,"./modal-view":26,"underscore":5}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16548,7 +16601,7 @@ var MapView = (function (_Backbone$View) {
 exports['default'] = MapView;
 module.exports = exports['default'];
 
-},{"../templates/info-window.html":18,"backbone":1,"underscore":5}],25:[function(require,module,exports){
+},{"../templates/info-window.html":19,"backbone":1,"underscore":5}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16616,7 +16669,7 @@ var ModalView = (function (_Backbone$View) {
 exports['default'] = ModalView;
 module.exports = exports['default'];
 
-},{"backbone":1,"underscore":5}],26:[function(require,module,exports){
+},{"backbone":1,"underscore":5}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16671,7 +16724,7 @@ var SearchView = (function (_ModalView) {
 exports['default'] = SearchView;
 module.exports = exports['default'];
 
-},{"../templates/search-modal.html":20,"./modal-view":25,"underscore":5}],27:[function(require,module,exports){
+},{"../templates/search-modal.html":21,"./modal-view":26,"underscore":5}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16745,4 +16798,4 @@ var ToolbarView = (function (_Backbone$View) {
 exports['default'] = ToolbarView;
 module.exports = exports['default'];
 
-},{"../events":12,"../templates/toolbar.html":21,"backbone":1,"underscore":5}]},{},[11]);
+},{"../events":13,"../templates/toolbar.html":22,"backbone":1,"underscore":5}]},{},[12]);

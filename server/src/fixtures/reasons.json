@@ -2,8 +2,8 @@
   {
     "model": "Reason",
     "data": {
-      "name": "Other",
-      "description": ""
+      "name": "Not Specified",
+      "description": "Chose not to specify"
     }
   },
   {
@@ -39,6 +39,13 @@
     "data": {
       "name": "Family",
       "description": "Moved due to family reasons"
+    }
+  },
+  {
+    "model": "Reason",
+    "data": {
+      "name": "Other",
+      "description": ""
     }
   }
 ]

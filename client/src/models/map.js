@@ -4,6 +4,7 @@ import Q from 'q';
 import LocationCollection from '../collections/locations';
 import MemberCollection from '../collections/members';
 import RecordCollection from '../collections/records';
+import ReasonCollection from '../collections/reasons';
 
 let start = null;
 let end = null;
@@ -16,6 +17,7 @@ class MapModel extends Backbone.Model {
     this.set('locations', new LocationCollection());
     this.set('members', new MemberCollection());
     this.set('records', new RecordCollection());
+    this.set('reasons', new ReasonCollection());
     this.set('markers', {});
   }
 
@@ -24,7 +26,8 @@ class MapModel extends Backbone.Model {
     return Q.all([
       this.get('locations').init(),
       this.get('members').init(),
-      this.get('records').init()
+      this.get('records').init(),
+      this.get('reasons').init()
     ]).then(this._ready.bind(this))
       .catch(this._initError.bind(this));
   }

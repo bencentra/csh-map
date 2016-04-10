@@ -19,6 +19,14 @@
             <label>Country</label>
             <input type="text" class="form-control country-input" value="<%= country %>" placeholder="USA">
           </div>
+          <div class="form-group">
+            <label>Reason</label>
+            <select class="form-control reason-input">
+              <% _.each(map.get('reasons').toJSON(), function(reason) { %>
+                <option value="<%= reason.id %>" data-description="<%= reason.description %>"><%= reason.name %></option>
+              <% }); %>
+            </select>
+          </div>
         </form>
         <button class="btn btn-link remove-button">Remove My Address from Map</button>
       </div>

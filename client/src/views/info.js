@@ -11,6 +11,7 @@ class InfoView extends ModalView {
       'keyup input.city-input': '_onEditCity',
       'keyup input.state-input': '_onEditState',
       'keyup input.country-input': '_onEditCountry',
+      'change select.reason-input': '_onEditReason',
       'click button.submit-button': '_onSubmit',
       'click button.remove-button': '_onRemove'
     };
@@ -34,6 +35,10 @@ class InfoView extends ModalView {
 
   _onEditCountry(event) {
     this._submitOrUpdate(event, 'country');
+  }
+
+  _onEditReason(event) {
+    this.model.set('reason', parseInt(event.target.value));
   }
 
   _submitOrUpdate(event, field) {

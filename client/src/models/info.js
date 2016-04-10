@@ -16,6 +16,7 @@ class InfoModel extends Backbone.Model {
       member: null,
       record: null,
       location: null,
+      reason: 1, // "Not Specified"
       city: '',
       state: '',
       country: ''
@@ -120,7 +121,7 @@ class InfoModel extends Backbone.Model {
     const record = {
       MemberUid: this.updateData.member.get('uid'),
       LocationId: this.updateData.location.get('id'),
-      ReasonId: 1 // TODO - Implement reason selecting
+      ReasonId: this.get('reason')
     };
     return this.get('map').get('records').addAndSync('create', record)
       .then(() => {
@@ -133,7 +134,7 @@ class InfoModel extends Backbone.Model {
     const record = {
       MemberUid: uid,
       LocationId: -1,
-      ReasonId: 1 // "Other"
+      ReasonId: this.get('reason')
     };
     return this.get('map').get('records').addAndSync('create', record);
   }
