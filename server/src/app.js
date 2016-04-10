@@ -8,17 +8,6 @@ var Promise = require('bluebird');
 var fixtures = require('sequelize-fixtures');
 var path = require('path');
 
-function createRefererMiddleware(referer) {
-  return function(req, res, next) {
-    if (referer && referer !== req.get('Referer')) {
-      var err = new Error('Invalid Referer');
-      next(err);
-    } else {
-      next();
-    }
-  };
-}
-
 function MapAPI(options) {
   this.server = null;
   this.app = null;
@@ -26,6 +15,7 @@ function MapAPI(options) {
   this.env = options.env;
   this.origin = options.origin;
   this.referer = options.referer;
+  this.secret = options.secret;
   this.db = require('./models');
 }
 
@@ -46,12 +36,13 @@ MapAPI.prototype.start = function () {
 
 MapAPI.prototype._setupExpressInstance = function () {
   this.app = express();
-  this.app.use(cors({
-    origin: this.origin
-  }));
+  // this.app.use(cors({
+  //   origin: this.origin
+  // }));
+  this.app.use(cors(this._corsOptionsDelegate.bind(this)));
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
-  this.app.use(createRefererMiddleware(this.referer));
+  this.app.use(this._createRefererMiddleware());
   this.app.set('port', this.port);
   this.app.set('env', this.env);
 };
@@ -105,5 +96,31 @@ MapAPI.prototype._seedData = function () {
     console.log('Done loading fixtures!');
   });
 };
+
+MapAPI.prototype._corsOptionsDelegate = function(req, callback) {
+  console.log('_corsOptionsDelegate', this.secret, req.get('Secret'));
+  var corsOptions = {}
+  if (this.secret && this.secret === req.get('Secret')) {
+    corsOptions.origin = false;
+  } else {
+    corsOptions.origin = this.origin;
+  }
+  callback(null, corsOptions);
+}
+
+MapAPI.prototype._createRefererMiddleware = function () {
+  var that = this;
+  return function(req, res, next) {
+    console.log('_createRefererMiddleware', that.secret, req.get('Secret'));
+    if (that.secret && that.secret === req.get('Secret')) {
+      next();
+    } else if (that.referer && that.referer !== req.get('Referer')) {
+      var err = new Error('Invalid Referer');
+      next(err);
+    } else {
+      next();
+    }
+  };
+}
 
 module.exports = MapAPI;
