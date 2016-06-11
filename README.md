@@ -1,5 +1,7 @@
 # CSH Alumni Map
 
+TEST LOL
+
 Visualizing the diaspora of CSHers out of Rochester, NY.
 
 ## `index.php`
