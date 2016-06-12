@@ -13,7 +13,6 @@ var app = new MapAPI({
 	secret: process.env.SECRET || false
 });
 
-app.init();
 app.start().catch(function(err) {
 	console.log(err);
 });

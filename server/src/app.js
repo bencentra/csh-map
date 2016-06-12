@@ -11,23 +11,16 @@ var path = require('path');
 function MapAPI(options) {
   this.server = null;
   this.app = null;
-  this.port = options.port;
-  this.env = options.env;
-  this.origin = options.origin;
-  this.referer = options.referer;
-  this.secret = options.secret;
+  this.options = options;
   this.db = require('./models');
-}
-
-MapAPI.prototype.init = function () {
   this._setupExpressInstance();
   this._configureRoutes();
   this._configureErrorHandlers();
-};
+}
 
 MapAPI.prototype.start = function () {
   var options = {
-    force: (this.env === 'development')
+    force: (this.options.env === 'development')
   };
   return this.db.sequelize.sync(options)
     .then(this._seedData.bind(this))
@@ -36,15 +29,12 @@ MapAPI.prototype.start = function () {
 
 MapAPI.prototype._setupExpressInstance = function () {
   this.app = express();
-  // this.app.use(cors({
-  //   origin: this.origin
-  // }));
   this.app.use(cors(this._corsOptionsDelegate.bind(this)));
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
   this.app.use(this._createRefererMiddleware());
-  this.app.set('port', this.port);
-  this.app.set('env', this.env);
+  this.app.set('port', this.options.port);
+  this.app.set('env', this.options.env);
 };
 
 MapAPI.prototype._configureRoutes = function () {
@@ -84,7 +74,7 @@ MapAPI.prototype._startServer = function () {
 MapAPI.prototype._seedData = function () {
   var that = this;
   var files = ['./fixtures/reasons.json'];
-  if (this.env === 'development') {
+  if (this.app.get('env') === 'development') {
     files.push('./fixtures/members.json');
     files.push('./fixtures/locations.json');
     files.push('./fixtures/records.json');
@@ -98,23 +88,25 @@ MapAPI.prototype._seedData = function () {
 };
 
 MapAPI.prototype._corsOptionsDelegate = function(req, callback) {
-  console.log('_corsOptionsDelegate', this.secret, req.get('Secret'));
-  var corsOptions = {}
-  if (this.secret && this.secret === req.get('Secret')) {
+  var corsOptions = {};
+  var secret = this.options.secret;
+  var origin = this.options.origin;
+  if (secret && secret === req.get('Secret')) {
     corsOptions.origin = false;
   } else {
-    corsOptions.origin = this.origin;
+    corsOptions.origin = origin;
   }
+  console.log(corsOptions.origin);
   callback(null, corsOptions);
 }
 
 MapAPI.prototype._createRefererMiddleware = function () {
-  var that = this;
+  var secret = this.options.secret;
+  var referer = this.options.referer;
   return function(req, res, next) {
-    console.log('_createRefererMiddleware', that.secret, req.get('Secret'));
-    if (that.secret && that.secret === req.get('Secret')) {
+    if (secret && secret === req.get('Secret')) {
       next();
-    } else if (that.referer && that.referer !== req.get('Referer')) {
+    } else if (referer && referer !== req.get('Referer')) {
       var err = new Error('Invalid Referer');
       next(err);
     } else {
