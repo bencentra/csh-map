@@ -38,7 +38,7 @@ class InfoView extends ModalView {
   }
 
   _onEditReason(event) {
-    this.model.set('reason', parseInt(event.target.value));
+    this.model.set('reason', parseInt(event.target.value, 10));
   }
 
   _submitOrUpdate(event, field) {

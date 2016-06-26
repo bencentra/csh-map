@@ -87,7 +87,7 @@ MapAPI.prototype._seedData = function () {
   });
 };
 
-MapAPI.prototype._corsOptionsDelegate = function(req, callback) {
+MapAPI.prototype._corsOptionsDelegate = function (req, callback) {
   var corsOptions = {};
   var secret = this.options.secret;
   var origin = this.options.origin;
@@ -98,21 +98,22 @@ MapAPI.prototype._corsOptionsDelegate = function(req, callback) {
   }
   console.log(corsOptions.origin);
   callback(null, corsOptions);
-}
+};
 
 MapAPI.prototype._createRefererMiddleware = function () {
   var secret = this.options.secret;
   var referer = this.options.referer;
-  return function(req, res, next) {
+  return function (req, res, next) {
+    var err;
     if (secret && secret === req.get('Secret')) {
       next();
     } else if (referer && referer !== req.get('Referer')) {
-      var err = new Error('Invalid Referer');
+      err = new Error('Invalid Referer');
       next(err);
     } else {
       next();
     }
   };
-}
+};
 
 module.exports = MapAPI;

@@ -3,7 +3,7 @@
 		"dialiect": "mysql",
 		"username": "csh_map",
 		"database": "csh_map_test",
-		"password": "",
+		"password": "password",
 		"host": "127.0.0.1"
 	},
   "production": {

@@ -20,8 +20,8 @@ describe('InfoView', () => {
     config: mockConfig
   });
   mockMap.set('reasons', new ReasonCollection([
-    {id: 1, name: 'Not Specified', description: ''},
-    {id: 2, name: 'Specified!', description: ''}
+    { id: 1, name: 'Not Specified', description: '' },
+    { id: 2, name: 'Specified!', description: '' }
   ]));
   const mockModel = new InfoModel({
     config: mockConfig,
