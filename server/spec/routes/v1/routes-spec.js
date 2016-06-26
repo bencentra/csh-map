@@ -12,12 +12,12 @@ describe('v1 API routes', function () {
   var membersLength = 0;
   var body = null;
 
-  function initializeMap (done, options) {
-    options = options || {};
+  function initializeMap(done, options) {
+    var opts = options || {};
     mapAPI = new MapAPI({
       port: 3001,
       env: 'development',
-      origin: options.origin || false
+      origin: opts.origin || false
     });
     mapAPI.start().then(done);
     app = mapAPI.app;
@@ -324,7 +324,7 @@ describe('v1 API routes', function () {
       request(app)
         .get('/v1/lol')
         .expect(404)
-        .end(function (err, res) {
+        .end(function (err) {
           expect(err).toBeFalsy();
           done();
         });
@@ -336,7 +336,7 @@ describe('v1 API routes', function () {
 
   });
 
-  describe('500 errors', function() {
+  describe('500 errors', function () {
 
     beforeEach(function (done) {
       initializeMap(done, {

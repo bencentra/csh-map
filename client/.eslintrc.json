@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb/base",
+  "extends": "airbnb-base",
   "env": {
     "node": true,
     "jasmine": true,
@@ -13,6 +13,7 @@
     "comma-dangle": 0,
     "new-cap": 1,
     "no-useless-constructor": 1,
+    "no-underscore-dangle": 0,
     "padded-blocks": 0
   }
 }

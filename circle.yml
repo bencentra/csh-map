@@ -5,6 +5,6 @@ machine:
 test:
   override:
     - npm install -g grunt grunt-cli
-    - cd client/ && npm install && npm test
+    - cd client/ && npm install && npm run lint && npm test
     - cp server/src/config/config_sample.json server/src/config/config.json
-    - cd server/ && npm install && mysql -u ubuntu < bin/db-setup.sql && npm test
+    - cd server/ && npm install && mysql -u ubuntu < bin/db-setup.sql && npm run lint && npm test

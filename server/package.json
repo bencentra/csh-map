@@ -40,9 +40,8 @@
     "sequelize-fixtures": "^0.4.8"
   },
   "devDependencies": {
-    "eslint": "^2.4.0",
-    "eslint-config-airbnb": "^6.1.0",
-    "eslint-plugin-react": "^4.2.1",
+    "eslint": "2.x",
+    "eslint-config-airbnb-base": "3.x",
     "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",
     "rewire": "^2.5.1",
