@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Spinner from 'spin.js';
 import Config from './config';
 import mainTemplate from './templates/main.html';
 import MapEvents from './events';
@@ -120,6 +121,8 @@ class CSHMap {
 
 // "Export" jQuery for Bootstrap
 window.$ = window.jQuery = $;
+// "Export" spin.js
+window.Spinner = Spinner;
 // "Export" CSHMap to global namespace
 window.CSHMap = CSHMap;
 

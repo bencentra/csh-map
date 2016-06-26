@@ -1922,7 +1922,7 @@
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jquery":3,"underscore":5}],2:[function(require,module,exports){
+},{"jquery":3,"underscore":6}],2:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -13912,6 +13912,385 @@ return Q;
 
 }).call(this,require('_process'))
 },{"_process":2}],5:[function(require,module,exports){
+/**
+ * Copyright (c) 2011-2014 Felix Gnass
+ * Licensed under the MIT license
+ * http://spin.js.org/
+ *
+ * Example:
+    var opts = {
+      lines: 12             // The number of lines to draw
+    , length: 7             // The length of each line
+    , width: 5              // The line thickness
+    , radius: 10            // The radius of the inner circle
+    , scale: 1.0            // Scales overall size of the spinner
+    , corners: 1            // Roundness (0..1)
+    , color: '#000'         // #rgb or #rrggbb
+    , opacity: 1/4          // Opacity of the lines
+    , rotate: 0             // Rotation offset
+    , direction: 1          // 1: clockwise, -1: counterclockwise
+    , speed: 1              // Rounds per second
+    , trail: 100            // Afterglow percentage
+    , fps: 20               // Frames per second when using setTimeout()
+    , zIndex: 2e9           // Use a high z-index by default
+    , className: 'spinner'  // CSS class to assign to the element
+    , top: '50%'            // center vertically
+    , left: '50%'           // center horizontally
+    , shadow: false         // Whether to render a shadow
+    , hwaccel: false        // Whether to use hardware acceleration (might be buggy)
+    , position: 'absolute'  // Element positioning
+    }
+    var target = document.getElementById('foo')
+    var spinner = new Spinner(opts).spin(target)
+ */
+;(function (root, factory) {
+
+  /* CommonJS */
+  if (typeof module == 'object' && module.exports) module.exports = factory()
+
+  /* AMD module */
+  else if (typeof define == 'function' && define.amd) define(factory)
+
+  /* Browser global */
+  else root.Spinner = factory()
+}(this, function () {
+  "use strict"
+
+  var prefixes = ['webkit', 'Moz', 'ms', 'O'] /* Vendor prefixes */
+    , animations = {} /* Animation rules keyed by their name */
+    , useCssAnimations /* Whether to use CSS animations or setTimeout */
+    , sheet /* A stylesheet to hold the @keyframe or VML rules. */
+
+  /**
+   * Utility function to create elements. If no tag name is given,
+   * a DIV is created. Optionally properties can be passed.
+   */
+  function createEl (tag, prop) {
+    var el = document.createElement(tag || 'div')
+      , n
+
+    for (n in prop) el[n] = prop[n]
+    return el
+  }
+
+  /**
+   * Appends children and returns the parent.
+   */
+  function ins (parent /* child1, child2, ...*/) {
+    for (var i = 1, n = arguments.length; i < n; i++) {
+      parent.appendChild(arguments[i])
+    }
+
+    return parent
+  }
+
+  /**
+   * Creates an opacity keyframe animation rule and returns its name.
+   * Since most mobile Webkits have timing issues with animation-delay,
+   * we create separate rules for each line/segment.
+   */
+  function addAnimation (alpha, trail, i, lines) {
+    var name = ['opacity', trail, ~~(alpha * 100), i, lines].join('-')
+      , start = 0.01 + i/lines * 100
+      , z = Math.max(1 - (1-alpha) / trail * (100-start), alpha)
+      , prefix = useCssAnimations.substring(0, useCssAnimations.indexOf('Animation')).toLowerCase()
+      , pre = prefix && '-' + prefix + '-' || ''
+
+    if (!animations[name]) {
+      sheet.insertRule(
+        '@' + pre + 'keyframes ' + name + '{' +
+        '0%{opacity:' + z + '}' +
+        start + '%{opacity:' + alpha + '}' +
+        (start+0.01) + '%{opacity:1}' +
+        (start+trail) % 100 + '%{opacity:' + alpha + '}' +
+        '100%{opacity:' + z + '}' +
+        '}', sheet.cssRules.length)
+
+      animations[name] = 1
+    }
+
+    return name
+  }
+
+  /**
+   * Tries various vendor prefixes and returns the first supported property.
+   */
+  function vendor (el, prop) {
+    var s = el.style
+      , pp
+      , i
+
+    prop = prop.charAt(0).toUpperCase() + prop.slice(1)
+    if (s[prop] !== undefined) return prop
+    for (i = 0; i < prefixes.length; i++) {
+      pp = prefixes[i]+prop
+      if (s[pp] !== undefined) return pp
+    }
+  }
+
+  /**
+   * Sets multiple style properties at once.
+   */
+  function css (el, prop) {
+    for (var n in prop) {
+      el.style[vendor(el, n) || n] = prop[n]
+    }
+
+    return el
+  }
+
+  /**
+   * Fills in default values.
+   */
+  function merge (obj) {
+    for (var i = 1; i < arguments.length; i++) {
+      var def = arguments[i]
+      for (var n in def) {
+        if (obj[n] === undefined) obj[n] = def[n]
+      }
+    }
+    return obj
+  }
+
+  /**
+   * Returns the line color from the given string or array.
+   */
+  function getColor (color, idx) {
+    return typeof color == 'string' ? color : color[idx % color.length]
+  }
+
+  // Built-in defaults
+
+  var defaults = {
+    lines: 12             // The number of lines to draw
+  , length: 7             // The length of each line
+  , width: 5              // The line thickness
+  , radius: 10            // The radius of the inner circle
+  , scale: 1.0            // Scales overall size of the spinner
+  , corners: 1            // Roundness (0..1)
+  , color: '#000'         // #rgb or #rrggbb
+  , opacity: 1/4          // Opacity of the lines
+  , rotate: 0             // Rotation offset
+  , direction: 1          // 1: clockwise, -1: counterclockwise
+  , speed: 1              // Rounds per second
+  , trail: 100            // Afterglow percentage
+  , fps: 20               // Frames per second when using setTimeout()
+  , zIndex: 2e9           // Use a high z-index by default
+  , className: 'spinner'  // CSS class to assign to the element
+  , top: '50%'            // center vertically
+  , left: '50%'           // center horizontally
+  , shadow: false         // Whether to render a shadow
+  , hwaccel: false        // Whether to use hardware acceleration (might be buggy)
+  , position: 'absolute'  // Element positioning
+  }
+
+  /** The constructor */
+  function Spinner (o) {
+    this.opts = merge(o || {}, Spinner.defaults, defaults)
+  }
+
+  // Global defaults that override the built-ins:
+  Spinner.defaults = {}
+
+  merge(Spinner.prototype, {
+    /**
+     * Adds the spinner to the given target element. If this instance is already
+     * spinning, it is automatically removed from its previous target b calling
+     * stop() internally.
+     */
+    spin: function (target) {
+      this.stop()
+
+      var self = this
+        , o = self.opts
+        , el = self.el = createEl(null, {className: o.className})
+
+      css(el, {
+        position: o.position
+      , width: 0
+      , zIndex: o.zIndex
+      , left: o.left
+      , top: o.top
+      })
+
+      if (target) {
+        target.insertBefore(el, target.firstChild || null)
+      }
+
+      el.setAttribute('role', 'progressbar')
+      self.lines(el, self.opts)
+
+      if (!useCssAnimations) {
+        // No CSS animation support, use setTimeout() instead
+        var i = 0
+          , start = (o.lines - 1) * (1 - o.direction) / 2
+          , alpha
+          , fps = o.fps
+          , f = fps / o.speed
+          , ostep = (1 - o.opacity) / (f * o.trail / 100)
+          , astep = f / o.lines
+
+        ;(function anim () {
+          i++
+          for (var j = 0; j < o.lines; j++) {
+            alpha = Math.max(1 - (i + (o.lines - j) * astep) % f * ostep, o.opacity)
+
+            self.opacity(el, j * o.direction + start, alpha, o)
+          }
+          self.timeout = self.el && setTimeout(anim, ~~(1000 / fps))
+        })()
+      }
+      return self
+    }
+
+    /**
+     * Stops and removes the Spinner.
+     */
+  , stop: function () {
+      var el = this.el
+      if (el) {
+        clearTimeout(this.timeout)
+        if (el.parentNode) el.parentNode.removeChild(el)
+        this.el = undefined
+      }
+      return this
+    }
+
+    /**
+     * Internal method that draws the individual lines. Will be overwritten
+     * in VML fallback mode below.
+     */
+  , lines: function (el, o) {
+      var i = 0
+        , start = (o.lines - 1) * (1 - o.direction) / 2
+        , seg
+
+      function fill (color, shadow) {
+        return css(createEl(), {
+          position: 'absolute'
+        , width: o.scale * (o.length + o.width) + 'px'
+        , height: o.scale * o.width + 'px'
+        , background: color
+        , boxShadow: shadow
+        , transformOrigin: 'left'
+        , transform: 'rotate(' + ~~(360/o.lines*i + o.rotate) + 'deg) translate(' + o.scale*o.radius + 'px' + ',0)'
+        , borderRadius: (o.corners * o.scale * o.width >> 1) + 'px'
+        })
+      }
+
+      for (; i < o.lines; i++) {
+        seg = css(createEl(), {
+          position: 'absolute'
+        , top: 1 + ~(o.scale * o.width / 2) + 'px'
+        , transform: o.hwaccel ? 'translate3d(0,0,0)' : ''
+        , opacity: o.opacity
+        , animation: useCssAnimations && addAnimation(o.opacity, o.trail, start + i * o.direction, o.lines) + ' ' + 1 / o.speed + 's linear infinite'
+        })
+
+        if (o.shadow) ins(seg, css(fill('#000', '0 0 4px #000'), {top: '2px'}))
+        ins(el, ins(seg, fill(getColor(o.color, i), '0 0 1px rgba(0,0,0,.1)')))
+      }
+      return el
+    }
+
+    /**
+     * Internal method that adjusts the opacity of a single line.
+     * Will be overwritten in VML fallback mode below.
+     */
+  , opacity: function (el, i, val) {
+      if (i < el.childNodes.length) el.childNodes[i].style.opacity = val
+    }
+
+  })
+
+
+  function initVML () {
+
+    /* Utility function to create a VML tag */
+    function vml (tag, attr) {
+      return createEl('<' + tag + ' xmlns="urn:schemas-microsoft.com:vml" class="spin-vml">', attr)
+    }
+
+    // No CSS transforms but VML support, add a CSS rule for VML elements:
+    sheet.addRule('.spin-vml', 'behavior:url(#default#VML)')
+
+    Spinner.prototype.lines = function (el, o) {
+      var r = o.scale * (o.length + o.width)
+        , s = o.scale * 2 * r
+
+      function grp () {
+        return css(
+          vml('group', {
+            coordsize: s + ' ' + s
+          , coordorigin: -r + ' ' + -r
+          })
+        , { width: s, height: s }
+        )
+      }
+
+      var margin = -(o.width + o.length) * o.scale * 2 + 'px'
+        , g = css(grp(), {position: 'absolute', top: margin, left: margin})
+        , i
+
+      function seg (i, dx, filter) {
+        ins(
+          g
+        , ins(
+            css(grp(), {rotation: 360 / o.lines * i + 'deg', left: ~~dx})
+          , ins(
+              css(
+                vml('roundrect', {arcsize: o.corners})
+              , { width: r
+                , height: o.scale * o.width
+                , left: o.scale * o.radius
+                , top: -o.scale * o.width >> 1
+                , filter: filter
+                }
+              )
+            , vml('fill', {color: getColor(o.color, i), opacity: o.opacity})
+            , vml('stroke', {opacity: 0}) // transparent stroke to fix color bleeding upon opacity change
+            )
+          )
+        )
+      }
+
+      if (o.shadow)
+        for (i = 1; i <= o.lines; i++) {
+          seg(i, -2, 'progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)')
+        }
+
+      for (i = 1; i <= o.lines; i++) seg(i)
+      return ins(el, g)
+    }
+
+    Spinner.prototype.opacity = function (el, i, val, o) {
+      var c = el.firstChild
+      o = o.shadow && o.lines || 0
+      if (c && i + o < c.childNodes.length) {
+        c = c.childNodes[i + o]; c = c && c.firstChild; c = c && c.firstChild
+        if (c) c.opacity = val
+      }
+    }
+  }
+
+  if (typeof document !== 'undefined') {
+    sheet = (function () {
+      var el = createEl('style', {type : 'text/css'})
+      ins(document.getElementsByTagName('head')[0], el)
+      return el.sheet || el.styleSheet
+    }())
+
+    var probe = css(createEl('group'), {behavior: 'url(#default#VML)'})
+
+    if (!vendor(probe, 'transform') && probe.adj) initVML()
+    else useCssAnimations = vendor(probe, 'animation')
+  }
+
+  return Spinner
+
+}));
+
+},{}],6:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -15461,7 +15840,7 @@ return Q;
   }
 }.call(this));
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15533,7 +15912,7 @@ var AsyncCollection = (function (_Backbone$Collection) {
 exports['default'] = AsyncCollection;
 module.exports = exports['default'];
 
-},{"../config":11,"backbone":1,"q":4}],7:[function(require,module,exports){
+},{"../config":12,"backbone":1,"q":4}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15574,7 +15953,7 @@ var LocationCollection = (function (_AsyncCollection) {
 exports['default'] = LocationCollection;
 module.exports = exports['default'];
 
-},{"./async-collection":6,"backbone":1}],8:[function(require,module,exports){
+},{"./async-collection":7,"backbone":1}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15615,7 +15994,7 @@ var MemberCollection = (function (_AsyncCollection) {
 exports['default'] = MemberCollection;
 module.exports = exports['default'];
 
-},{"./async-collection":6,"backbone":1}],9:[function(require,module,exports){
+},{"./async-collection":7,"backbone":1}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15656,7 +16035,7 @@ var ReasonCollection = (function (_AsyncCollection) {
 exports['default'] = ReasonCollection;
 module.exports = exports['default'];
 
-},{"./async-collection":6,"backbone":1}],10:[function(require,module,exports){
+},{"./async-collection":7,"backbone":1}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15697,7 +16076,7 @@ var RecordCollection = (function (_AsyncCollection) {
 exports['default'] = RecordCollection;
 module.exports = exports['default'];
 
-},{"./async-collection":6,"backbone":1}],11:[function(require,module,exports){
+},{"./async-collection":7,"backbone":1}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15737,7 +16116,7 @@ var Config = (function () {
 exports["default"] = Config;
 module.exports = exports["default"];
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15753,6 +16132,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
+
+var _spinJs = require('spin.js');
+
+var _spinJs2 = _interopRequireDefault(_spinJs);
 
 var _config = require('./config');
 
@@ -15921,13 +16304,15 @@ var CSHMap = (function () {
 })();
 
 window.$ = window.jQuery = _jquery2['default'];
+// "Export" spin.js
+window.Spinner = _spinJs2['default'];
 // "Export" CSHMap to global namespace
 window.CSHMap = CSHMap;
 
 exports['default'] = CSHMap;
 module.exports = exports['default'];
 
-},{"./config":11,"./events":13,"./models/info":14,"./models/map":15,"./models/search":16,"./templates/main.html":20,"./views/alert":23,"./views/info":24,"./views/map":25,"./views/search":27,"./views/toolbar":28,"jquery":3}],13:[function(require,module,exports){
+},{"./config":12,"./events":14,"./models/info":15,"./models/map":16,"./models/search":17,"./templates/main.html":21,"./views/alert":24,"./views/info":25,"./views/map":26,"./views/search":28,"./views/toolbar":29,"jquery":3,"spin.js":5}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -15949,7 +16334,7 @@ var MapEvents = _underscore2['default'].extend({}, _backbone2['default'].Events)
 exports['default'] = MapEvents;
 module.exports = exports['default'];
 
-},{"backbone":1,"underscore":5}],14:[function(require,module,exports){
+},{"backbone":1,"underscore":6}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16144,7 +16529,7 @@ var InfoModel = (function (_Backbone$Model) {
 exports['default'] = InfoModel;
 module.exports = exports['default'];
 
-},{"backbone":1,"q":4}],15:[function(require,module,exports){
+},{"backbone":1,"q":4}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16266,7 +16651,7 @@ var MapModel = (function (_Backbone$Model) {
 exports['default'] = MapModel;
 module.exports = exports['default'];
 
-},{"../collections/locations":7,"../collections/members":8,"../collections/reasons":9,"../collections/records":10,"backbone":1,"q":4,"underscore":5}],16:[function(require,module,exports){
+},{"../collections/locations":8,"../collections/members":9,"../collections/reasons":10,"../collections/records":11,"backbone":1,"q":4,"underscore":6}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16300,25 +16685,25 @@ var SearchModel = (function (_Backbone$Model) {
 exports['default'] = SearchModel;
 module.exports = exports['default'];
 
-},{"backbone":1}],17:[function(require,module,exports){
+},{"backbone":1}],18:[function(require,module,exports){
 module.exports = "<div class=\"alert alert-dismissable alert-<%= type %>\" role=\"alert\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <div><%= message %></div>\n</div>\n";
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= cn %>'s Location</h4>\n      </div>\n      <div class=\"modal-body\">\n        <form>\n          <div class=\"form-group\">\n            <label>City</label>\n            <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\">\n          </div>\n          <div class=\"form-group\">\n            <label>State/Province</label>\n            <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\">\n          </div>\n          <div class=\"form-group\">\n            <label>Country</label>\n            <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\">\n          </div>\n          <div class=\"form-group\">\n            <label>Reason</label>\n            <select class=\"form-control reason-input\">\n              <% _.each(map.get('reasons').toJSON(), function(reason) { %>\n                <option value=\"<%= reason.id %>\" data-description=\"<%= reason.description %>\"><%= reason.name %></option>\n              <% }); %>\n            </select>\n          </div>\n        </form>\n        <button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary submit-button\">Update</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.address %></h4>\n  <ul>\n    <% _.each(members, function(member) { %>\n      <li><%= member.cn %> (<a href=\"https://profiles.csh.rit.edu/user/<%= member.uid %>\" target=\"_blank\"><%= member.uid %></a>)</li>\n    <% }); %>\n  </ul>\n</div>\n";
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"></div>\n<div id=\"csh-map-alert\"></div>\n<div id=\"csh-map-search-modal\"></div>\n<div id=\"csh-map-info-modal\"></div>\n";
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <h3>Search coming soon!</h3>\n        <!-- <form>\n          <div class=\"form-group\">\n            <label for=\"csh-map-search-type\">Type</label>\n            <select class=\"form-control\" id=\"csh-map-search-type\">\n              <option value=\"cn\">Name</option>\n              <option value=\"uid\">Username</option>\n              <option value=\"location\">Location</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"\">Search</label>\n            <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\">\n          </div>\n        </form> -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16380,7 +16765,7 @@ var AlertView = (function (_Backbone$View) {
 exports['default'] = AlertView;
 module.exports = exports['default'];
 
-},{"../templates/alert.html":17,"backbone":1,"underscore":5}],24:[function(require,module,exports){
+},{"../templates/alert.html":18,"backbone":1,"underscore":6}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16506,7 +16891,7 @@ var InfoView = (function (_ModalView) {
 exports['default'] = InfoView;
 module.exports = exports['default'];
 
-},{"../events":13,"../templates/info-modal.html":18,"./modal-view":26,"underscore":5}],25:[function(require,module,exports){
+},{"../events":14,"../templates/info-modal.html":19,"./modal-view":27,"underscore":6}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16601,7 +16986,7 @@ var MapView = (function (_Backbone$View) {
 exports['default'] = MapView;
 module.exports = exports['default'];
 
-},{"../templates/info-window.html":19,"backbone":1,"underscore":5}],26:[function(require,module,exports){
+},{"../templates/info-window.html":20,"backbone":1,"underscore":6}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16669,7 +17054,7 @@ var ModalView = (function (_Backbone$View) {
 exports['default'] = ModalView;
 module.exports = exports['default'];
 
-},{"backbone":1,"underscore":5}],27:[function(require,module,exports){
+},{"backbone":1,"underscore":6}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16724,7 +17109,7 @@ var SearchView = (function (_ModalView) {
 exports['default'] = SearchView;
 module.exports = exports['default'];
 
-},{"../templates/search-modal.html":21,"./modal-view":26,"underscore":5}],28:[function(require,module,exports){
+},{"../templates/search-modal.html":22,"./modal-view":27,"underscore":6}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16798,4 +17183,4 @@ var ToolbarView = (function (_Backbone$View) {
 exports['default'] = ToolbarView;
 module.exports = exports['default'];
 
-},{"../events":13,"../templates/toolbar.html":22,"backbone":1,"underscore":5}]},{},[12]);
+},{"../events":14,"../templates/toolbar.html":23,"backbone":1,"underscore":6}]},{},[13]);
