@@ -1,0 +1,10 @@
+machine:
+  node:
+    version: 4.4.0
+
+test:
+  override:
+    - npm install -g grunt grunt-cli
+    - cd client/ && npm install && npm test
+    - cp server/src/config/config_sample.json server/src/config/config.json
+    - cd server/ && npm install && mysql -u ubuntu < bin/db-setup.sql && npm test
