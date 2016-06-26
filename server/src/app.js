@@ -8,36 +8,19 @@ var Promise = require('bluebird');
 var fixtures = require('sequelize-fixtures');
 var path = require('path');
 
-function createRefererMiddleware(referer) {
-  return function(req, res, next) {
-    if (referer && referer !== req.get('Referer')) {
-      var err = new Error('Invalid Referer');
-      next(err);
-    } else {
-      next();
-    }
-  };
-}
-
 function MapAPI(options) {
   this.server = null;
   this.app = null;
-  this.port = options.port;
-  this.env = options.env;
-  this.origin = options.origin;
-  this.referer = options.referer;
+  this.options = options;
   this.db = require('./models');
-}
-
-MapAPI.prototype.init = function () {
   this._setupExpressInstance();
   this._configureRoutes();
   this._configureErrorHandlers();
-};
+}
 
 MapAPI.prototype.start = function () {
   var options = {
-    force: (this.env === 'development')
+    force: (this.options.env === 'development')
   };
   return this.db.sequelize.sync(options)
     .then(this._seedData.bind(this))
@@ -46,14 +29,12 @@ MapAPI.prototype.start = function () {
 
 MapAPI.prototype._setupExpressInstance = function () {
   this.app = express();
-  this.app.use(cors({
-    origin: this.origin
-  }));
+  this.app.use(cors(this._corsOptionsDelegate.bind(this)));
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
-  this.app.use(createRefererMiddleware(this.referer));
-  this.app.set('port', this.port);
-  this.app.set('env', this.env);
+  this.app.use(this._createRefererMiddleware());
+  this.app.set('port', this.options.port);
+  this.app.set('env', this.options.env);
 };
 
 MapAPI.prototype._configureRoutes = function () {
@@ -93,7 +74,7 @@ MapAPI.prototype._startServer = function () {
 MapAPI.prototype._seedData = function () {
   var that = this;
   var files = ['./fixtures/reasons.json'];
-  if (this.env === 'development') {
+  if (this.app.get('env') === 'development') {
     files.push('./fixtures/members.json');
     files.push('./fixtures/locations.json');
     files.push('./fixtures/records.json');
@@ -105,5 +86,33 @@ MapAPI.prototype._seedData = function () {
     console.log('Done loading fixtures!');
   });
 };
+
+MapAPI.prototype._corsOptionsDelegate = function(req, callback) {
+  var corsOptions = {};
+  var secret = this.options.secret;
+  var origin = this.options.origin;
+  if (secret && secret === req.get('Secret')) {
+    corsOptions.origin = false;
+  } else {
+    corsOptions.origin = origin;
+  }
+  console.log(corsOptions.origin);
+  callback(null, corsOptions);
+}
+
+MapAPI.prototype._createRefererMiddleware = function () {
+  var secret = this.options.secret;
+  var referer = this.options.referer;
+  return function(req, res, next) {
+    if (secret && secret === req.get('Secret')) {
+      next();
+    } else if (referer && referer !== req.get('Referer')) {
+      var err = new Error('Invalid Referer');
+      next(err);
+    } else {
+      next();
+    }
+  };
+}
 
 module.exports = MapAPI;

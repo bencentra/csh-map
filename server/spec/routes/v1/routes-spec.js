@@ -2,6 +2,8 @@ var request = require('supertest');
 var rewire = require('rewire');
 var MapAPI = rewire('../../../src/app');
 
+process.env.TESTING = true;
+
 describe('v1 API routes', function () {
 
   var mapAPI = null;  // MapAPI instance
@@ -10,17 +12,22 @@ describe('v1 API routes', function () {
   var membersLength = 0;
   var body = null;
 
-  beforeEach(function (done) {
+  function initializeMap (done, options) {
+    options = options || {};
     mapAPI = new MapAPI({
       port: 3001,
-      env: 'development'
+      env: 'development',
+      origin: options.origin || false
     });
-    mapAPI.init();
     mapAPI.start().then(done);
     app = mapAPI.app;
-  });
+  }
 
   describe('/', function () {
+
+    beforeEach(function (done) {
+      initializeMap(done);
+    });
 
     it('GETs a welcome message', function (done) {
       request(app)
@@ -34,9 +41,17 @@ describe('v1 API routes', function () {
         });
     });
 
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
+
   });
 
   describe('/locations', function () {
+
+    beforeEach(function (done) {
+      initializeMap(done);
+    });
 
     it('GETs a list of locations', function (done) {
       request(app)
@@ -89,9 +104,17 @@ describe('v1 API routes', function () {
         });
     });
 
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
+
   });
 
   describe('/members', function () {
+
+    beforeEach(function (done) {
+      initializeMap(done);
+    });
 
     it('GETs a list of members', function (done) {
       request(app)
@@ -160,9 +183,17 @@ describe('v1 API routes', function () {
         });
     });
 
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
+
   });
 
   describe('/reasons', function () {
+
+    beforeEach(function (done) {
+      initializeMap(done);
+    });
 
     it('GETs a list of reasons', function (done) {
       request(app)
@@ -193,9 +224,17 @@ describe('v1 API routes', function () {
         });
     });
 
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
+
   });
 
   describe('/records', function () {
+
+    beforeEach(function (done) {
+      initializeMap(done);
+    });
 
     it('GETs the most recent record for each user', function (done) {
       request(app)
@@ -241,6 +280,7 @@ describe('v1 API routes', function () {
           expect(res.body.ReasonId).toEqual(body.ReasonId);
           expect(res.body.createdAt).toBeDefined();
           expect(res.body.updatedAt).toBeDefined();
+          expect(err).toBeFalsy();
           done();
         });
     });
@@ -263,28 +303,68 @@ describe('v1 API routes', function () {
           expect(res.body.ReasonId).toEqual(body.ReasonId);
           expect(res.body.createdAt).toBeDefined();
           expect(res.body.updatedAt).toBeDefined();
+          expect(err).toBeFalsy();
           done();
         });
     });
 
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
+
   });
 
-  describe('errors', function () {
+  describe('400 errors', function () {
+
+    beforeEach(function (done) {
+      initializeMap(done);
+    });
 
     it('404s for unknown routes', function (done) {
       request(app)
         .get('/v1/lol')
-        .expect(404, done);
+        .expect(404)
+        .end(function (err, res) {
+          expect(err).toBeFalsy();
+          done();
+        });
+    });
+
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
+
+  });
+
+  describe('500 errors', function() {
+
+    beforeEach(function (done) {
+      initializeMap(done, {
+        origin: 'https://members.csh.rit.edu'
+      });
+    });
+
+    // TODO: This returns a 200 even though the origin headers are different...
+    xit('500s on an invalid origin header', function (done) {
+      request(app)
+        .get('/v1/members')
+        .set('Origin', 'http://wrongorigin.biz')
+        .expect(500)
+        .end(function (err, res) {
+          console.log(res.req._headers);
+          expect(err).toBeFalsy();
+          done();
+        });
     });
 
     xit('500s on error', function () {
 
     });
 
-  });
+    afterEach(function (done) {
+      mapAPI.server.close(done);
+    });
 
-  afterEach(function (done) {
-    mapAPI.server.close(done);
   });
 
 });

@@ -9,10 +9,10 @@ var app = new MapAPI({
 	port: process.env.PORT || 3000,
 	env: process.env.NODE_ENV || 'development',
 	origin: process.env.ORIGIN || '*',
-	referer: process.env.REFERER || false
+	referer: process.env.REFERER || false,
+	secret: process.env.SECRET || false
 });
 
-app.init();
 app.start().catch(function(err) {
 	console.log(err);
 });

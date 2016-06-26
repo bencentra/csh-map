@@ -9,7 +9,6 @@
 <body>
 <div id="spin"></div>
 <div id="csh-map"></div>
-<script type="text/javascript" src="http://fgnass.github.io/spin.js/spin.min.js"></script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMg7g6Cq-D_y-jVmnvX3XNfcYZc5lPu_8&v=3.22"></script>
 <script type="text/javascript" src="http://localhost:8888/dist/csh-map-ui.js"></script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -27,10 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
   };
   // Create and initialize the map
   map = new CSHMap(config);
-  map.init().then(function() {
-    clearTimeout(timeout);
-    if (spinner) spinner.stop();
-  });
+  setTimeout(function() { // Simulate some load time to test the spinner
+    map.init().then(function() {
+      clearTimeout(timeout);
+      if (spinner) spinner.stop();
+    });
+  }, 1000);
   // Start a spinner if things are taking a while
   timeout = setTimeout(function() {
     spinner = new Spinner().spin(document.querySelector('#spin'));

@@ -10,7 +10,7 @@ var sequelize = null;
 var db = null;
 
 // Logging
-if (env !== 'development') {
+if (env === 'production' || process.env.TESTING) {
   // TODO - Implement logging to file
   logFn = function noop() {};
 }

@@ -21,33 +21,23 @@ describe('MapAPI', function () {
 
   describe('constructor', function () {
 
+    beforeEach(function () {
+      spyOn(MapAPI.prototype, '_setupExpressInstance');
+      spyOn(MapAPI.prototype, '_configureRoutes');
+      spyOn(MapAPI.prototype, '_configureErrorHandlers');
+      apiInstance = new MapAPI(options);
+    });
+
     it('is a function', function () {
       expect(typeof MapAPI).toBe('function');
     });
 
     it('sets instance vars using options', function () {
-      apiInstance = new MapAPI(options);
-      expect(apiInstance.port).toBe(options.port);
-      expect(apiInstance.env).toBe(options.env);
-    });
-
-  });
-
-  describe('init()', function () {
-
-    beforeEach(function () {
-      apiInstance = new MapAPI(options);
-      spyOn(apiInstance, '_setupExpressInstance');
-      spyOn(apiInstance, '_configureRoutes');
-      spyOn(apiInstance, '_configureErrorHandlers');
-    });
-
-    it('is defined', function () {
-      expect(apiInstance.init).toBeDefined();
+      expect(apiInstance.options.port).toBe(options.port);
+      expect(apiInstance.options.env).toBe(options.env);
     });
 
     it('creates the express instance', function () {
-      apiInstance.init();
       expect(apiInstance._setupExpressInstance).toHaveBeenCalled();
       expect(apiInstance._configureRoutes).toHaveBeenCalled();
       expect(apiInstance._configureErrorHandlers).toHaveBeenCalled();
@@ -63,7 +53,6 @@ describe('MapAPI', function () {
       spyOn(apiInstance, '_startServer');
       spyOn(apiInstance, '_seedData').and.callFake(instaResolve);
       spyOn(apiInstance.db.sequelize, 'sync').and.callFake(instaResolve);
-      apiInstance.init();
     });
 
     it('syncs the database', function (done) {
