@@ -1924,14 +1924,55 @@
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"jquery":3,"underscore":6}],2:[function(require,module,exports){
 // shim for using process in browser
-
 var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+    try {
+        cachedSetTimeout = setTimeout;
+    } catch (e) {
+        cachedSetTimeout = function () {
+            throw new Error('setTimeout is not defined');
+        }
+    }
+    try {
+        cachedClearTimeout = clearTimeout;
+    } catch (e) {
+        cachedClearTimeout = function () {
+            throw new Error('clearTimeout is not defined');
+        }
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        return setTimeout(fun, 0);
+    } else {
+        return cachedSetTimeout.call(null, fun, 0);
+    }
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        clearTimeout(marker);
+    } else {
+        cachedClearTimeout.call(null, marker);
+    }
+}
 var queue = [];
 var draining = false;
 var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -1947,7 +1988,7 @@ function drainQueue() {
     if (draining) {
         return;
     }
-    var timeout = setTimeout(cleanUpNextTick);
+    var timeout = runTimeout(cleanUpNextTick);
     draining = true;
 
     var len = queue.length;
@@ -1964,7 +2005,7 @@ function drainQueue() {
     }
     currentQueue = null;
     draining = false;
-    clearTimeout(timeout);
+    runClearTimeout(timeout);
 }
 
 process.nextTick = function (fun) {
@@ -1976,7 +2017,7 @@ process.nextTick = function (fun) {
     }
     queue.push(new Item(fun, args));
     if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
+        runTimeout(drainQueue);
     }
 };
 
@@ -2017,7 +2058,7 @@ process.umask = function() { return 0; };
 
 },{}],3:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.2.3
+ * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -2027,7 +2068,7 @@ process.umask = function() { return 0; };
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2016-04-05T19:26Z
+ * Date: 2016-05-20T17:23Z
  */
 
 (function( global, factory ) {
@@ -2083,7 +2124,7 @@ var support = {};
 
 
 var
-	version = "2.2.3",
+	version = "2.2.4",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -7024,13 +7065,14 @@ jQuery.Event.prototype = {
 	isDefaultPrevented: returnFalse,
 	isPropagationStopped: returnFalse,
 	isImmediatePropagationStopped: returnFalse,
+	isSimulated: false,
 
 	preventDefault: function() {
 		var e = this.originalEvent;
 
 		this.isDefaultPrevented = returnTrue;
 
-		if ( e ) {
+		if ( e && !this.isSimulated ) {
 			e.preventDefault();
 		}
 	},
@@ -7039,7 +7081,7 @@ jQuery.Event.prototype = {
 
 		this.isPropagationStopped = returnTrue;
 
-		if ( e ) {
+		if ( e && !this.isSimulated ) {
 			e.stopPropagation();
 		}
 	},
@@ -7048,7 +7090,7 @@ jQuery.Event.prototype = {
 
 		this.isImmediatePropagationStopped = returnTrue;
 
-		if ( e ) {
+		if ( e && !this.isSimulated ) {
 			e.stopImmediatePropagation();
 		}
 
@@ -7978,19 +8020,6 @@ function getWidthOrHeight( elem, name, extra ) {
 		val = name === "width" ? elem.offsetWidth : elem.offsetHeight,
 		styles = getStyles( elem ),
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
-
-	// Support: IE11 only
-	// In IE 11 fullscreen elements inside of an iframe have
-	// 100x too small dimensions (gh-1764).
-	if ( document.msFullscreenElement && window.top !== window ) {
-
-		// Support: IE11 only
-		// Running getBoundingClientRect on a disconnected node
-		// in IE throws an error.
-		if ( elem.getClientRects().length ) {
-			val = Math.round( elem.getBoundingClientRect()[ name ] * 100 );
-		}
-	}
 
 	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
 	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
@@ -9882,6 +9911,7 @@ jQuery.extend( jQuery.event, {
 	},
 
 	// Piggyback on a donor event to simulate a different one
+	// Used only for `focus(in | out)` events
 	simulate: function( type, elem, event ) {
 		var e = jQuery.extend(
 			new jQuery.Event(),
@@ -9889,27 +9919,10 @@ jQuery.extend( jQuery.event, {
 			{
 				type: type,
 				isSimulated: true
-
-				// Previously, `originalEvent: {}` was set here, so stopPropagation call
-				// would not be triggered on donor event, since in our own
-				// jQuery.event.stopPropagation function we had a check for existence of
-				// originalEvent.stopPropagation method, so, consequently it would be a noop.
-				//
-				// But now, this "simulate" function is used only for events
-				// for which stopPropagation() is noop, so there is no need for that anymore.
-				//
-				// For the 1.x branch though, guard for "click" and "submit"
-				// events is still used, but was moved to jQuery.event.stopPropagation function
-				// because `originalEvent` should point to the original event for the constancy
-				// with other events and for more focused logic
 			}
 		);
 
 		jQuery.event.trigger( e, null, elem );
-
-		if ( e.isDefaultPrevented() ) {
-			event.preventDefault();
-		}
 	}
 
 } );
@@ -16658,6 +16671,8 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -16670,6 +16685,20 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
+var _collectionsLocations = require('../collections/locations');
+
+var _collectionsLocations2 = _interopRequireDefault(_collectionsLocations);
+
+var _collectionsMembers = require('../collections/members');
+
+var _collectionsMembers2 = _interopRequireDefault(_collectionsMembers);
+
+var SEARCH_TYPES = {
+  NAME: 'cn',
+  USERNAME: 'uid',
+  LOCATION: 'address'
+};
+
 var SearchModel = (function (_Backbone$Model) {
   _inherits(SearchModel, _Backbone$Model);
 
@@ -16677,7 +16706,52 @@ var SearchModel = (function (_Backbone$Model) {
     _classCallCheck(this, SearchModel);
 
     _get(Object.getPrototypeOf(SearchModel.prototype), 'constructor', this).call(this, attributes, options);
+    this.set('types', SEARCH_TYPES);
+    this.set('type', SEARCH_TYPES.NAME);
   }
+
+  _createClass(SearchModel, [{
+    key: 'search',
+    value: function search(query) {
+      var type = this.get('type');
+      var formattedQuery = query.toLowerCase();
+      var results = [];
+      if (type === SEARCH_TYPES.NAME) {
+        results = this._searchByName(formattedQuery);
+      } else if (type === SEARCH_TYPES.USERNAME) {
+        results = this._searchByUid(formattedQuery);
+      } else if (type === SEARCH_TYPES.LOCATION) {
+        results = this._searchByAddress(formattedQuery);
+      } else {
+        console.log('invalid search type');
+      }
+      console.log(results);
+      return results;
+    }
+  }, {
+    key: '_searchByName',
+    value: function _searchByName(query) {
+      return this._search(_collectionsMembers2['default'], 'cn', query);
+    }
+  }, {
+    key: '_searchByUid',
+    value: function _searchByUid(query) {
+      return this._search(_collectionsMembers2['default'], 'uid', query);
+    }
+  }, {
+    key: '_searchByAddress',
+    value: function _searchByAddress(query) {
+      return this._search(_collectionsLocations2['default'], 'address', query);
+    }
+  }, {
+    key: '_search',
+    value: function _search(collection, field, query) {
+      return collection.filter(function (item) {
+        var formattedField = item.get(field).toLowerCase();
+        return formattedField.indexOf(query) > -1;
+      });
+    }
+  }]);
 
   return SearchModel;
 })(_backbone2['default'].Model);
@@ -16685,11 +16759,11 @@ var SearchModel = (function (_Backbone$Model) {
 exports['default'] = SearchModel;
 module.exports = exports['default'];
 
-},{"backbone":1}],18:[function(require,module,exports){
+},{"../collections/locations":8,"../collections/members":9,"backbone":1}],18:[function(require,module,exports){
 module.exports = "<div class=\"alert alert-dismissable alert-<%= type %>\" role=\"alert\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <div><%= message %></div>\n</div>\n";
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= cn %>'s Location</h4>\n      </div>\n      <div class=\"modal-body\">\n        <form>\n          <div class=\"form-group\">\n            <label>City</label>\n            <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\">\n          </div>\n          <div class=\"form-group\">\n            <label>State/Province</label>\n            <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\">\n          </div>\n          <div class=\"form-group\">\n            <label>Country</label>\n            <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\">\n          </div>\n          <div class=\"form-group\">\n            <label>Reason</label>\n            <select class=\"form-control reason-input\">\n              <% _.each(map.get('reasons').toJSON(), function(reason) { %>\n                <option value=\"<%= reason.id %>\" data-description=\"<%= reason.description %>\"><%= reason.name %></option>\n              <% }); %>\n            </select>\n          </div>\n        </form>\n        <button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary submit-button\">Update</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= cn %>'s Location</h4>\n      </div>\n      <div class=\"modal-body\">\n        <form>\n          <div class=\"form-group\">\n            <label>City</label>\n            <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\" autocomplete=\"false\">\n          </div>\n          <div class=\"form-group\">\n            <label>State/Province</label>\n            <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\" autocomplete=\"false\">\n          </div>\n          <div class=\"form-group\">\n            <label>Country</label>\n            <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\" autocomplete=\"false\">\n          </div>\n          <div class=\"form-group\">\n            <label>Reason</label>\n            <select class=\"form-control reason-input\">\n              <% _.each(map.get('reasons').toJSON(), function(reason) { %>\n                <option value=\"<%= reason.id %>\" data-description=\"<%= reason.description %>\"><%= reason.name %></option>\n              <% }); %>\n            </select>\n          </div>\n        </form>\n        <button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary submit-button\">Update</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],20:[function(require,module,exports){
 module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.address %></h4>\n  <ul>\n    <% _.each(members, function(member) { %>\n      <li><%= member.cn %> (<a href=\"https://profiles.csh.rit.edu/user/<%= member.uid %>\" target=\"_blank\"><%= member.uid %></a>)</li>\n    <% }); %>\n  </ul>\n</div>\n";
@@ -16698,7 +16772,7 @@ module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.addres
 module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"></div>\n<div id=\"csh-map-alert\"></div>\n<div id=\"csh-map-search-modal\"></div>\n<div id=\"csh-map-info-modal\"></div>\n";
 
 },{}],22:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <h3>Search coming soon!</h3>\n        <!-- <form>\n          <div class=\"form-group\">\n            <label for=\"csh-map-search-type\">Type</label>\n            <select class=\"form-control\" id=\"csh-map-search-type\">\n              <option value=\"cn\">Name</option>\n              <option value=\"uid\">Username</option>\n              <option value=\"location\">Location</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"\">Search</label>\n            <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\">\n          </div>\n        </form> -->\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <!-- <h3>Search coming soon!</h3> -->\n        <!-- <form>\n          <div class=\"form-group\">\n            <label for=\"csh-map-search-type\">Type</label>\n            <select class=\"form-control\" id=\"csh-map-search-type\">\n              <option value=\"cn\">Name</option>\n              <option value=\"uid\">Username</option>\n              <option value=\"location\">Location</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"\">Search</label>\n            <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\">\n          </div>\n        </form> -->\n        <div class=\"form-group\">\n          <label for=\"csh-map-search-type\">Search by:</label><br>\n          <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n            <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Location</button>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\"/>\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],23:[function(require,module,exports){
 module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
@@ -16842,7 +16916,7 @@ var InfoView = (function (_ModalView) {
   }, {
     key: '_onEditReason',
     value: function _onEditReason(event) {
-      this.model.set('reason', parseInt(event.target.value));
+      this.model.set('reason', parseInt(event.target.value, 10));
     }
   }, {
     key: '_submitOrUpdate',
@@ -17075,6 +17149,10 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
+var _modelsSearch = require('../models/search');
+
+var _modelsSearch2 = _interopRequireDefault(_modelsSearch);
+
 var _modalView = require('./modal-view');
 
 var _modalView2 = _interopRequireDefault(_modalView);
@@ -17089,17 +17167,38 @@ var SearchView = (function (_ModalView) {
   function SearchView(options) {
     _classCallCheck(this, SearchView);
 
+    _underscore2['default'].extend(options, {
+      events: {
+        'click .csh-map-search-type-btn': '_changeType',
+        'keyup #csh-map-search-input': '_search'
+      }
+    });
     _get(Object.getPrototypeOf(SearchView.prototype), 'constructor', this).call(this, options);
-    this.events = {
-      'click button.submit-button': '_onClickSearch'
-    };
     this.template = _underscore2['default'].template(_templatesSearchModalHtml2['default']);
   }
 
   _createClass(SearchView, [{
-    key: '_onClickSearch',
-    value: function _onClickSearch(e) {
-      e.preventDefault();
+    key: 'render',
+    value: function render() {
+      var data = this.model.toJSON();
+      _get(Object.getPrototypeOf(SearchView.prototype), 'render', this).call(this, data);
+      return this;
+    }
+  }, {
+    key: '_changeType',
+    value: function _changeType(e) {
+      var $target = $(e.target);
+      var type = $target.data('value');
+      this.$('.csh-map-search-type-btn').removeClass('btn-primary').addClass('btn-default');
+      $target.removeClass('btn-default').addClass('btn-primary');
+      this.model.set('type', type);
+    }
+  }, {
+    key: '_search',
+    value: function _search(e) {
+      var query = $(e.target).val();
+      console.log(query);
+      console.log(e);
     }
   }]);
 
@@ -17109,7 +17208,7 @@ var SearchView = (function (_ModalView) {
 exports['default'] = SearchView;
 module.exports = exports['default'];
 
-},{"../templates/search-modal.html":22,"./modal-view":27,"underscore":6}],29:[function(require,module,exports){
+},{"../models/search":17,"../templates/search-modal.html":22,"./modal-view":27,"underscore":6}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

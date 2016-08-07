@@ -10,7 +10,6 @@
     "CSHMap": true
   },
   "rules": {
-    "comma-dangle": 0,
     "new-cap": 1,
     "no-useless-constructor": 1,
     "no-underscore-dangle": 0,
