@@ -16685,18 +16685,10 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
-var _collectionsLocations = require('../collections/locations');
-
-var _collectionsLocations2 = _interopRequireDefault(_collectionsLocations);
-
-var _collectionsMembers = require('../collections/members');
-
-var _collectionsMembers2 = _interopRequireDefault(_collectionsMembers);
-
 var SEARCH_TYPES = {
   NAME: 'cn',
   USERNAME: 'uid',
-  LOCATION: 'address'
+  ADDRESS: 'address'
 };
 
 var SearchModel = (function (_Backbone$Model) {
@@ -16716,32 +16708,37 @@ var SearchModel = (function (_Backbone$Model) {
       var type = this.get('type');
       var formattedQuery = query.toLowerCase();
       var results = [];
-      if (type === SEARCH_TYPES.NAME) {
-        results = this._searchByName(formattedQuery);
-      } else if (type === SEARCH_TYPES.USERNAME) {
-        results = this._searchByUid(formattedQuery);
-      } else if (type === SEARCH_TYPES.LOCATION) {
-        results = this._searchByAddress(formattedQuery);
-      } else {
-        console.log('invalid search type');
-      }
+      if (query.length === 0) {
+        // Nope
+      } else if (type === SEARCH_TYPES.NAME) {
+          results = this._searchByName(formattedQuery);
+        } else if (type === SEARCH_TYPES.USERNAME) {
+          results = this._searchByUid(formattedQuery);
+        } else if (type === SEARCH_TYPES.ADDRESS) {
+          results = this._searchByAddress(formattedQuery);
+        } else {
+          console.log('invalid search type');
+        }
       console.log(results);
       return results;
     }
   }, {
     key: '_searchByName',
     value: function _searchByName(query) {
-      return this._search(_collectionsMembers2['default'], 'cn', query);
+      var members = this.get('map').get('members');
+      return this._search(members, 'cn', query);
     }
   }, {
     key: '_searchByUid',
     value: function _searchByUid(query) {
-      return this._search(_collectionsMembers2['default'], 'uid', query);
+      var members = this.get('map').get('members');
+      return this._search(members, 'uid', query);
     }
   }, {
     key: '_searchByAddress',
     value: function _searchByAddress(query) {
-      return this._search(_collectionsLocations2['default'], 'address', query);
+      var locations = this.get('map').get('locations');
+      return this._search(locations, 'address', query);
     }
   }, {
     key: '_search',
@@ -16749,6 +16746,8 @@ var SearchModel = (function (_Backbone$Model) {
       return collection.filter(function (item) {
         var formattedField = item.get(field).toLowerCase();
         return formattedField.indexOf(query) > -1;
+      }).map(function (item) {
+        return item.get(field);
       });
     }
   }]);
@@ -16759,7 +16758,7 @@ var SearchModel = (function (_Backbone$Model) {
 exports['default'] = SearchModel;
 module.exports = exports['default'];
 
-},{"../collections/locations":8,"../collections/members":9,"backbone":1}],18:[function(require,module,exports){
+},{"backbone":1}],18:[function(require,module,exports){
 module.exports = "<div class=\"alert alert-dismissable alert-<%= type %>\" role=\"alert\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <div><%= message %></div>\n</div>\n";
 
 },{}],19:[function(require,module,exports){
@@ -16772,7 +16771,7 @@ module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.addres
 module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"></div>\n<div id=\"csh-map-alert\"></div>\n<div id=\"csh-map-search-modal\"></div>\n<div id=\"csh-map-info-modal\"></div>\n";
 
 },{}],22:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <!-- <h3>Search coming soon!</h3> -->\n        <!-- <form>\n          <div class=\"form-group\">\n            <label for=\"csh-map-search-type\">Type</label>\n            <select class=\"form-control\" id=\"csh-map-search-type\">\n              <option value=\"cn\">Name</option>\n              <option value=\"uid\">Username</option>\n              <option value=\"location\">Location</option>\n            </select>\n          </div>\n          <div class=\"form-group\">\n            <label for=\"\">Search</label>\n            <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\">\n          </div>\n        </form> -->\n        <div class=\"form-group\">\n          <label for=\"csh-map-search-type\">Search by:</label><br>\n          <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n            <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Location</button>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\"/>\n        </div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"form-group\">\n          <label for=\"csh-map-search-type\">Search by:</label><br>\n          <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n            <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Address</button>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\"/>\n        </div>\n        <div id=\"csh-map-search-results\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <!-- <button type=\"button\" class=\"btn btn-primary submit-button\">Go!</button> -->\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],23:[function(require,module,exports){
 module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
@@ -17137,7 +17136,7 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -17148,10 +17147,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
-
-var _modelsSearch = require('../models/search');
-
-var _modelsSearch2 = _interopRequireDefault(_modelsSearch);
 
 var _modalView = require('./modal-view');
 
@@ -17170,11 +17165,12 @@ var SearchView = (function (_ModalView) {
     _underscore2['default'].extend(options, {
       events: {
         'click .csh-map-search-type-btn': '_changeType',
-        'keyup #csh-map-search-input': '_search'
+        'keyup #csh-map-search-input': '_debounceSearch'
       }
     });
     _get(Object.getPrototypeOf(SearchView.prototype), 'constructor', this).call(this, options);
     this.template = _underscore2['default'].template(_templatesSearchModalHtml2['default']);
+    this.searchTimeout = null;
   }
 
   _createClass(SearchView, [{
@@ -17182,6 +17178,7 @@ var SearchView = (function (_ModalView) {
     value: function render() {
       var data = this.model.toJSON();
       _get(Object.getPrototypeOf(SearchView.prototype), 'render', this).call(this, data);
+      this._showResults();
       return this;
     }
   }, {
@@ -17192,13 +17189,41 @@ var SearchView = (function (_ModalView) {
       this.$('.csh-map-search-type-btn').removeClass('btn-primary').addClass('btn-default');
       $target.removeClass('btn-default').addClass('btn-primary');
       this.model.set('type', type);
+      this._showResults();
+    }
+  }, {
+    key: '_debounceSearch',
+    value: function _debounceSearch(e) {
+      var _this = this;
+
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(function () {
+        return _this._search(e);
+      }, 200);
     }
   }, {
     key: '_search',
     value: function _search(e) {
       var query = $(e.target).val();
-      console.log(query);
-      console.log(e);
+      var results = this.model.search(query);
+      this._showResults(results);
+    }
+
+    // TODO: Make $results it's own sub-view
+  }, {
+    key: '_showResults',
+    value: function _showResults() {
+      var results = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+      var $results = this.$('#csh-map-search-results');
+      $results.html('');
+      if (results.length > 0) {
+        results.forEach(function (result) {
+          $results.append('<div class="result">' + result + '</div>');
+        });
+      } else {
+        $results.html('<div class="no-result">No results found</div>');
+      }
     }
   }]);
 
@@ -17208,7 +17233,7 @@ var SearchView = (function (_ModalView) {
 exports['default'] = SearchView;
 module.exports = exports['default'];
 
-},{"../models/search":17,"../templates/search-modal.html":22,"./modal-view":27,"underscore":6}],29:[function(require,module,exports){
+},{"../templates/search-modal.html":22,"./modal-view":27,"underscore":6}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

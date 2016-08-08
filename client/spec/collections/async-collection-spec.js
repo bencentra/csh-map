@@ -9,7 +9,7 @@ describe('Async Collection', () => {
     return {
       error(errorCallback) {
         errorCallback();
-      }
+      },
     };
   };
 
@@ -26,7 +26,7 @@ describe('Async Collection', () => {
 
     beforeEach(() => {
       spyOn(asyncCollection, 'fetch').and.returnValue({
-        success: mockSuccess
+        success: mockSuccess,
       });
     });
 
@@ -50,7 +50,7 @@ describe('Async Collection', () => {
     beforeEach(() => {
       spyOn(asyncCollection, 'add').and.returnValue(testModel);
       spyOn(Backbone, 'sync').and.returnValue({
-        success: mockSuccess
+        success: mockSuccess,
       });
     });
 

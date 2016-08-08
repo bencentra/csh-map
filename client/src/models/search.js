@@ -1,11 +1,9 @@
 import Backbone from 'backbone';
-import LocationCollection from '../collections/locations';
-import MemberCollection from '../collections/members';
 
 const SEARCH_TYPES = {
   NAME: 'cn',
   USERNAME: 'uid',
-  LOCATION: 'address'
+  ADDRESS: 'address',
 };
 
 class SearchModel extends Backbone.Model {
@@ -20,16 +18,15 @@ class SearchModel extends Backbone.Model {
     const type = this.get('type');
     const formattedQuery = query.toLowerCase();
     let results = [];
-    if (type === SEARCH_TYPES.NAME) {
+    if (query.length === 0) {
+      // Nope
+    } else if (type === SEARCH_TYPES.NAME) {
       results = this._searchByName(formattedQuery);
-    }
-    else if (type === SEARCH_TYPES.USERNAME) {
+    } else if (type === SEARCH_TYPES.USERNAME) {
       results = this._searchByUid(formattedQuery);
-    }
-    else if (type === SEARCH_TYPES.LOCATION){
+    } else if (type === SEARCH_TYPES.ADDRESS) {
       results = this._searchByAddress(formattedQuery);
-    }
-    else {
+    } else {
       console.log('invalid search type');
     }
     console.log(results);
@@ -37,22 +34,25 @@ class SearchModel extends Backbone.Model {
   }
 
   _searchByName(query) {
-    return this._search(MemberCollection, 'cn', query);
+    const members = this.get('map').get('members');
+    return this._search(members, 'cn', query);
   }
 
   _searchByUid(query) {
-    return this._search(MemberCollection, 'uid', query);
+    const members = this.get('map').get('members');
+    return this._search(members, 'uid', query);
   }
 
   _searchByAddress(query) {
-    return this._search(LocationCollection, 'address', query);
+    const locations = this.get('map').get('locations');
+    return this._search(locations, 'address', query);
   }
 
   _search(collection, field, query) {
     return collection.filter(item => {
       const formattedField = item.get(field).toLowerCase();
       return formattedField.indexOf(query) > -1;
-    });
+    }).map(item => item.get(field));
   }
 
 }

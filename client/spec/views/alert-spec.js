@@ -5,7 +5,7 @@ describe('AlertView', () => {
   let alertView = null;
   const testData = {
     type: 'success',
-    message: 'Test Message LOL!'
+    message: 'Test Message LOL!',
   };
 
   beforeEach(() => {

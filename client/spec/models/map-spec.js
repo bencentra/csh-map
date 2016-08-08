@@ -10,32 +10,32 @@ describe('MapModel', () => {
     uid: 'bencentra',
     cn: 'Ben Centra',
     hostUrl: 'http://localhost:8888',
-    apiUrl: 'http://localhost:3000/v1'
+    apiUrl: 'http://localhost:3000/v1',
   });
   const testLocations = [
     { id: 1, address: 'Boston, MA, USA', latitude: 12, longitude: 34 },
-    { id: 2, address: 'San Fransisco, CA, USA', latitude: 43, longitude: 21 }
+    { id: 2, address: 'San Fransisco, CA, USA', latitude: 43, longitude: 21 },
   ];
   const testMembers = [
     { uid: 'bencentra', cn: 'Ben Centra' },
     { uid: 'mcsaucy', cn: 'Josh McSaveney' },
-    { uid: 'cohoe', cn: 'Grant Cohoe' }
+    { uid: 'cohoe', cn: 'Grant Cohoe' },
   ];
   const testRecords = [
     { LocationId: 2, MemberUid: 'mcsaucy', ReasonId: 1 },
     { LocationId: 1, MemberUid: 'cohoe', ReasonId: 1 },
-    { LocationId: 2, MemberUid: 'bencentra', ReasonId: 1 }
+    { LocationId: 2, MemberUid: 'bencentra', ReasonId: 1 },
   ];
   const junkMarkers = {
     10: {
       location: {},
-      members: []
-    }
+      members: [],
+    },
   };
 
   beforeEach(() => {
     mapModel = new MapModel({
-      config: mockConfig
+      config: mockConfig,
     });
   });
 

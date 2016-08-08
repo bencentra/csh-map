@@ -45,3 +45,26 @@ body {
   transform: translateZ(1px);
   box-shadow: 0 0 6px 0 rgba(0,0,0,0.2);
 }
+
+#csh-map-search-results {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 100px;
+  overflow-y: scroll;
+  padding-top: 3px;
+}
+
+#csh-map-search-results .result {
+  width: 100%;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+#csh-map-search-results .no-result {
+  color: #ccc;
+  text-align: center;
+}
+
+#csh-map-search-results .result:nth-child(even) {
+  background-color: #ddd;
+}

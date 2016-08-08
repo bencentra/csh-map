@@ -6,32 +6,18 @@
         <h4 class="modal-title">Search</h4>
       </div>
       <div class="modal-body">
-        <!-- <h3>Search coming soon!</h3> -->
-        <!-- <form>
-          <div class="form-group">
-            <label for="csh-map-search-type">Type</label>
-            <select class="form-control" id="csh-map-search-type">
-              <option value="cn">Name</option>
-              <option value="uid">Username</option>
-              <option value="location">Location</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="">Search</label>
-            <input type="text" class="form-control" id="csh-map-search-input" placeholder="Search">
-          </div>
-        </form> -->
         <div class="form-group">
           <label for="csh-map-search-type">Search by:</label><br>
           <div class="btn-group" role="group" aria-label="search-type">
             <button type="button" class="btn btn-primary csh-map-search-type-btn" data-value="<%= types.NAME %>">Name</button>
             <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.USERNAME %>">Username</button>
-            <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.ADDRESS %>">Location</button>
+            <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.ADDRESS %>">Address</button>
           </div>
         </div>
         <div class="form-group">
           <input type="text" class="form-control" id="csh-map-search-input" placeholder="Search" autocomplete="false"/>
         </div>
+        <div id="csh-map-search-results"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

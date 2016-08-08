@@ -13,7 +13,7 @@ MockGeocoder.prototype.geocode = function () {};
 
 const MockGeocoderStatus = {
   OK: 1,
-  NOT_OK: 2
+  NOT_OK: 2,
 };
 
 function MockLatLng(latitude, longitude) {
@@ -47,6 +47,6 @@ window.google = {
     GeocoderStatus: MockGeocoderStatus,
     LatLng: MockLatLng,
     Marker: MockMarker,
-    InfoWindow: MockInfoWindow
-  }
+    InfoWindow: MockInfoWindow,
+  },
 };

@@ -18,7 +18,7 @@ const SELECTORS = {
   TOOLBAR: '#csh-map-toolbar',
   ALERT: '#csh-map-alert',
   SEARCH_MODAL: '#csh-map-search-modal',
-  INFO_MODAL: '#csh-map-info-modal'
+  INFO_MODAL: '#csh-map-info-modal',
 };
 
 /*
@@ -39,30 +39,30 @@ class CSHMap {
 
   _initModels() {
     this.mapModel = new MapModel({
-      config: this.config
+      config: this.config,
     });
     this.searchModel = new SearchModel({
       config: this.config,
-      map: this.mapModel
+      map: this.mapModel,
     });
     this.infoModel = new InfoModel({
       config: this.config,
-      map: this.mapModel
+      map: this.mapModel,
     });
   }
 
   _initViews() {
     $(SELECTORS.WRAPPER).html(mainTemplate);
     this.mapView = new MapView({
-      model: this.mapModel
+      model: this.mapModel,
     });
     this.toolbarView = new ToolbarView();
     this.alertView = new AlertView();
     this.searchView = new SearchView({
-      model: this.searchModel
+      model: this.searchModel,
     });
     this.infoView = new InfoView({
-      model: this.infoModel
+      model: this.infoModel,
     });
   }
 

@@ -11,10 +11,10 @@ describe('Modal View', () => {
     uid: 'bencentra',
     cn: 'Ben Centra',
     hostUrl: 'http://localhost:8888',
-    apiUrl: 'http://localhost:3000/v1'
+    apiUrl: 'http://localhost:3000/v1',
   });
   const mockModel = new Backbone.Model({
-    config: mockConfig
+    config: mockConfig,
   });
 
   beforeEach(() => {

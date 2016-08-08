@@ -9,7 +9,7 @@ class ToolbarView extends Backbone.View {
     super(options);
     this.events = {
       'click a.toolbar-search': '_onClickSearch',
-      'click a.toolbar-info': '_onClickInfo'
+      'click a.toolbar-info': '_onClickInfo',
     };
     this.template = _.template(toolbarTemplate);
   }

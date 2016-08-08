@@ -14,36 +14,36 @@ describe('InfoView', () => {
     uid: 'bencentra',
     cn: 'Ben Centra',
     hostUrl: 'http://localhost:8888',
-    apiUrl: 'http://localhost:3000/v1'
+    apiUrl: 'http://localhost:3000/v1',
   });
   const mockMap = new MapModel({
-    config: mockConfig
+    config: mockConfig,
   });
   mockMap.set('reasons', new ReasonCollection([
     { id: 1, name: 'Not Specified', description: '' },
-    { id: 2, name: 'Specified!', description: '' }
+    { id: 2, name: 'Specified!', description: '' },
   ]));
   const mockModel = new InfoModel({
     config: mockConfig,
-    map: mockMap
+    map: mockMap,
   });
   mockModel.set({
     member: new Backbone.Model({
       uid: 'bencentra',
-      cn: 'Ben Centra'
+      cn: 'Ben Centra',
     }),
     location: new Backbone.Model({
       id: 1,
-      address: 'Boston, MA, USA'
+      address: 'Boston, MA, USA',
     }),
     record: new Backbone.Model({
       LocationId: 1,
-      MemberUid: 'bencentra'
+      MemberUid: 'bencentra',
     }),
     reason: 1,
     city: 'Boston',
     state: 'MA',
-    country: 'USA'
+    country: 'USA',
   });
 
   beforeEach(() => {

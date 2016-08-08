@@ -13,7 +13,7 @@ class InfoView extends ModalView {
       'keyup input.country-input': '_onEditCountry',
       'change select.reason-input': '_onEditReason',
       'click button.submit-button': '_onSubmit',
-      'click button.remove-button': '_onRemove'
+      'click button.remove-button': '_onRemove',
     };
     this.template = _.template(infoModalTemplate);
   }

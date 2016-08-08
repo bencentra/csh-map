@@ -19,7 +19,7 @@ class InfoModel extends Backbone.Model {
       reason: 1, // "Not Specified"
       city: '',
       state: '',
-      country: ''
+      country: '',
     });
   }
 
@@ -37,7 +37,7 @@ class InfoModel extends Backbone.Model {
       location,
       city: parts[0],
       state: parts[1],
-      country: parts[2]
+      country: parts[2],
     });
   }
 
@@ -74,7 +74,7 @@ class InfoModel extends Backbone.Model {
       const defer = Q.defer();
       member = {
         uid: this.get('config').uid,
-        cn: this.get('config').cn
+        cn: this.get('config').cn,
       };
       member = this.get('map').get('members').add(member);
       member.sync('create', member)
@@ -93,14 +93,14 @@ class InfoModel extends Backbone.Model {
 
   _createOrGetLocation() {
     let location = this.get('map').get('locations').findWhere({
-      address: this.geocodeResult.formatted_address
+      address: this.geocodeResult.formatted_address,
     });
     if (!location) {
       const defer = Q.defer();
       location = {
         address: this.geocodeResult.formatted_address,
         latitude: this.geocodeResult.geometry.location.lat(),
-        longitude: this.geocodeResult.geometry.location.lng()
+        longitude: this.geocodeResult.geometry.location.lng(),
       };
       location = this.get('map').get('locations').add(location);
       location.sync('create', location)
@@ -121,7 +121,7 @@ class InfoModel extends Backbone.Model {
     const record = {
       MemberUid: this.updateData.member.get('uid'),
       LocationId: this.updateData.location.get('id'),
-      ReasonId: this.get('reason')
+      ReasonId: this.get('reason'),
     };
     return this.get('map').get('records').addAndSync('create', record)
       .then(() => {
@@ -134,7 +134,7 @@ class InfoModel extends Backbone.Model {
     const record = {
       MemberUid: uid,
       LocationId: -1,
-      ReasonId: this.get('reason')
+      ReasonId: this.get('reason'),
     };
     return this.get('map').get('records').addAndSync('create', record);
   }

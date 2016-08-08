@@ -9,7 +9,7 @@ class MapView extends Backbone.View {
     this.gmapOptions = {
       zoom: 4,
       center: new google.maps.LatLng(37, -97), // Somewhere in Kansas
-      disableDefaultUI: true
+      disableDefaultUI: true,
     };
     this.gmap = null;
     this._infoWindowTemplate = _.template(infoWindowTemplate);
@@ -35,10 +35,10 @@ class MapView extends Backbone.View {
     decorator.googleMarker = new google.maps.Marker({
       position: new google.maps.LatLng(marker.location.latitude, marker.location.longitude),
       title: marker.location.address,
-      map: this.gmap
+      map: this.gmap,
     });
     decorator.infoWindow = new google.maps.InfoWindow({
-      content: this._infoWindowTemplate(marker)
+      content: this._infoWindowTemplate(marker),
     });
     decorator.googleMarker.addListener('click', () => {
       decorator.infoWindow.open(this.gmap, decorator.googleMarker);

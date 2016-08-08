@@ -9,7 +9,7 @@ describe('CSH Map', () => {
       hostUrl: 'http://localhost:8888',
       apiUrl: 'http://localhost:3000/v1',
       uid: 'bencentra',
-      cn: 'Ben Centra'
+      cn: 'Ben Centra',
     };
   });
 
