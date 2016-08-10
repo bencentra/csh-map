@@ -55,9 +55,16 @@ body {
 }
 
 #csh-map-search-results .result {
+  display: block;
   width: 100%;
   padding-left: 3px;
   padding-right: 3px;
+  color: #333;
+  text-decoration: none;
+}
+
+#csh-map-search-results .result:link, #csh-map-search-results .result:visited {
+  text-decoration: none;
 }
 
 #csh-map-search-results .no-result {
@@ -66,5 +73,11 @@ body {
 }
 
 #csh-map-search-results .result:nth-child(even) {
-  background-color: #ddd;
+  background-color: #eee;
+}
+
+#csh-map-search-results .result:hover, #csh-map-search-results .result:active {
+  background-color: #d9edf7;
+  cursor: pointer;
+  text-decoration: none;
 }

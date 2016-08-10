@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import ModalView from './modal-view';
+import SearchResultsView from './search-results';
 import searchModalTemplate from '../templates/search-modal.html';
 
 class SearchView extends ModalView {
@@ -13,12 +14,14 @@ class SearchView extends ModalView {
     });
     super(options);
     this.template = _.template(searchModalTemplate);
+    this.resultsView = new SearchResultsView();
     this.searchTimeout = null;
   }
 
   render() {
     const data = this.model.toJSON();
     super.render(data);
+    this.$el.find('#csh-map-search-results').html(this.resultsView.render().el);
     this._showResults();
     return this;
   }
@@ -26,34 +29,27 @@ class SearchView extends ModalView {
   _changeType(e) {
     const $target = $(e.target);
     const type = $target.data('value');
+    this.model.set('activeType', type);
     this.$('.csh-map-search-type-btn').removeClass('btn-primary').addClass('btn-default');
     $target.removeClass('btn-default').addClass('btn-primary');
-    this.model.set('type', type);
-    this._showResults();
+    // TODO: This view also needs to be a child view of the Modal to re-render properly
+    // this.render();
+    this._search($('#csh-map-search-input').val());
   }
 
   _debounceSearch(e) {
     clearTimeout(this.searchTimeout);
-    this.searchTimeout = setTimeout(() => this._search(e), 200);
+    this.searchTimeout = setTimeout(() => this._search($(e.target).val()), 200);
   }
 
-  _search(e) {
-    const query = $(e.target).val();
+  _search(query) {
     const results = this.model.search(query);
     this._showResults(results);
   }
 
-  // TODO: Make $results it's own sub-view
   _showResults(results = []) {
-    const $results = this.$('#csh-map-search-results');
-    $results.html('');
-    if (results.length > 0) {
-      results.forEach(result => {
-        $results.append(`<div class="result">${result}</div>`);
-      });
-    } else {
-      $results.html('<div class="no-result">No results found</div>');
-    }
+    this.resultsView.setResults(results);
+    this.resultsView.render();
   }
 
 }
