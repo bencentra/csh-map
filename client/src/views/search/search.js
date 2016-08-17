@@ -1,10 +1,9 @@
 import _ from 'underscore';
-import Backbone from 'backbone';
-// import ModalView from './modal-view';
+import ModalContentView from '../modals/modal-content';
 import SearchResultsView from './search-results';
-import searchModalTemplate from '../templates/search-modal.html';
+import searchModalTemplate from '../../templates/search-modal.html';
 
-class SearchView extends Backbone.View {
+class SearchView extends ModalContentView {
 
   constructor(options) {
     super(options);
@@ -15,8 +14,6 @@ class SearchView extends Backbone.View {
     this.template = _.template(searchModalTemplate);
     this.resultsView = new SearchResultsView();
     this.searchTimeout = null;
-    this.parentModal = options.parentModal;
-    this.parentModal.setChildView(this);
   }
 
   render() {
@@ -28,24 +25,28 @@ class SearchView extends Backbone.View {
     return this;
   }
 
+  close() {
+    this.model.set('query', '');
+  }
+
   _changeType(e) {
     const $target = $(e.target);
     const type = $target.data('value');
     this.model.set('activeType', type);
-    this.$('.csh-map-search-type-btn').removeClass('btn-primary').addClass('btn-default');
-    $target.removeClass('btn-default').addClass('btn-primary');
-    // TODO: This view also needs to be a child view of the Modal to re-render properly
-    // this.render();
-    this._search($('#csh-map-search-input').val());
+    this.render();
+    this._search();
   }
 
   _debounceSearch(e) {
     clearTimeout(this.searchTimeout);
-    this.searchTimeout = setTimeout(() => this._search($(e.target).val()), 200);
+    this.searchTimeout = setTimeout(() => {
+      this.model.set('query', $(e.target).val());
+      this._search();
+    }, 200);
   }
 
-  _search(query) {
-    const results = this.model.search(query);
+  _search() {
+    const results = this.model.search();
     this._showResults(results);
   }
 

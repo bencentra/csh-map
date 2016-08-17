@@ -8,8 +8,8 @@ import SearchModel from './models/search';
 import InfoModel from './models/info';
 import MapView from './views/map';
 import ToolbarView from './views/toolbar';
-import ModalView from './views/modal-view';
-import SearchView from './views/search';
+import ModalView from './views/modals/modal';
+import SearchView from './views/search/search';
 import InfoView from './views/info';
 import AlertView from './views/alert';
 
@@ -69,7 +69,7 @@ class CSHMap {
     this.infoModalView = new ModalView({
       title: `${this.config.cn}'s Location`,
       buttons: {
-        submit: 'Update'
+        submit: 'Update',
       },
     });
     this.infoView = new InfoView({
@@ -117,7 +117,6 @@ class CSHMap {
   }
 
   _showSearchModal() {
-    console.log('lol');
     this.searchModalView.render().show();
   }
 

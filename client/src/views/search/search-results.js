@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
-import searchResultsTemplate from '../templates/search-results.html';
+import searchResultsTemplate from '../../templates/search-results.html';
 
 class SearchResultsView extends Backbone.View {
 

@@ -1,4 +1,5 @@
-import ModalView from '../../src/views/modal-view';
+import ModalView from '../../src/views/modals/modal';
+import ModalContentView from '../../src/views/modals/modal-content';
 import Config from '../../src/config';
 import Backbone from 'backbone';
 
@@ -19,6 +20,10 @@ describe('Modal View', () => {
 
   beforeEach(() => {
     modalView = new ModalView({ model: mockModel });
+    modalView.setContentView(new ModalContentView({
+      model: new Backbone.Model(),
+      parentModal: modalView,
+    }));
     modalView.template = jasmine.createSpy('template').and.returnValue(testTemplate);
   });
 

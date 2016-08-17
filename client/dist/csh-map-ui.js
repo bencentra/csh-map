@@ -16182,13 +16182,13 @@ var _viewsToolbar = require('./views/toolbar');
 
 var _viewsToolbar2 = _interopRequireDefault(_viewsToolbar);
 
-var _viewsModalView = require('./views/modal-view');
+var _viewsModalsModal = require('./views/modals/modal');
 
-var _viewsModalView2 = _interopRequireDefault(_viewsModalView);
+var _viewsModalsModal2 = _interopRequireDefault(_viewsModalsModal);
 
-var _viewsSearch = require('./views/search');
+var _viewsSearchSearch = require('./views/search/search');
 
-var _viewsSearch2 = _interopRequireDefault(_viewsSearch);
+var _viewsSearchSearch2 = _interopRequireDefault(_viewsSearchSearch);
 
 var _viewsInfo = require('./views/info');
 
@@ -16252,14 +16252,14 @@ var CSHMap = (function () {
       });
       this.toolbarView = new _viewsToolbar2['default']();
       this.alertView = new _viewsAlert2['default']();
-      this.searchModalView = new _viewsModalView2['default']({
+      this.searchModalView = new _viewsModalsModal2['default']({
         title: 'Search'
       });
-      this.searchView = new _viewsSearch2['default']({
+      this.searchView = new _viewsSearchSearch2['default']({
         model: this.searchModel,
         parentModal: this.searchModalView
       });
-      this.infoModalView = new _viewsModalView2['default']({
+      this.infoModalView = new _viewsModalsModal2['default']({
         title: this.config.cn + '\'s Location',
         buttons: {
           submit: 'Update'
@@ -16313,7 +16313,6 @@ var CSHMap = (function () {
   }, {
     key: '_showSearchModal',
     value: function _showSearchModal() {
-      console.log('lol');
       this.searchModalView.render().show();
     }
   }, {
@@ -16341,7 +16340,7 @@ window.CSHMap = CSHMap;
 exports['default'] = CSHMap;
 module.exports = exports['default'];
 
-},{"./config":12,"./events":14,"./models/info":15,"./models/map":16,"./models/search":17,"./templates/main.html":21,"./views/alert":26,"./views/info":27,"./views/map":28,"./views/modal-view":29,"./views/search":31,"./views/toolbar":32,"jquery":3,"spin.js":5}],14:[function(require,module,exports){
+},{"./config":12,"./events":14,"./models/info":15,"./models/map":16,"./models/search":17,"./templates/main.html":21,"./views/alert":26,"./views/info":27,"./views/map":28,"./views/modals/modal":30,"./views/search/search":32,"./views/toolbar":33,"jquery":3,"spin.js":5}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16716,15 +16715,16 @@ var SearchModel = (function (_Backbone$Model) {
     _get(Object.getPrototypeOf(SearchModel.prototype), 'constructor', this).call(this, attributes, options);
     this.set('types', searchTypes);
     this.set('activeType', searchTypes.cn);
+    this.set('query', '');
   }
 
   _createClass(SearchModel, [{
     key: 'search',
-    value: function search(query) {
+    value: function search() {
       var activeType = this.get('activeType');
-      var formattedQuery = query.toLowerCase();
+      var formattedQuery = this.get('query').toLowerCase();
       var results = [];
-      if (query.length === 0) {
+      if (formattedQuery.length === 0) {
         // Nope
       } else if (activeType === searchTypes.cn) {
           results = this._searchByName(formattedQuery);
@@ -16735,7 +16735,6 @@ var SearchModel = (function (_Backbone$Model) {
         } else {
           console.log('invalid search type');
         }
-      console.log(results);
       return results;
     }
   }, {
@@ -16790,7 +16789,7 @@ module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"
 module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= title %></h4>\n      </div>\n      <div class=\"modal-body\"></div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default close-button\" data-dismiss=\"modal\"><%= buttons.close %></button>\n        <% if (buttons.submit) { %>\n        <button type=\"button\" class=\"btn btn-primary submit-button\"><%= buttons.submit %></button>\n        <% } %>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],23:[function(require,module,exports){
-module.exports = "<div class=\"form-group\">\n  <label for=\"csh-map-search-type\">Search by:</label><br>\n  <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n    <!-- <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Address</button> -->\n    <% Object.keys(types).forEach(function(type) { %>\n    <button type=\"button\"\n            class=\"btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>\"\n            data-value=\"<%= types[type] %>\">\n      <%= types[type] %>\n    </button>\n    <% }); %>\n  </div>\n</div>\n<div class=\"form-group\">\n  <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\"/>\n</div>\n<div id=\"csh-map-search-results\"></div>\n";
+module.exports = "<div class=\"form-group\">\n  <label for=\"csh-map-search-type\">Search by:</label><br>\n  <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n    <!-- <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Address</button> -->\n    <% Object.keys(types).forEach(function(type) { %>\n    <button type=\"button\"\n            class=\"btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>\"\n            data-value=\"<%= types[type] %>\">\n      <%= types[type] %>\n    </button>\n    <% }); %>\n  </div>\n</div>\n<div class=\"form-group\">\n  <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\" value=\"<%= query %>\"/>\n</div>\n<div id=\"csh-map-search-results\"></div>\n";
 
 },{}],24:[function(require,module,exports){
 module.exports = "<% if (results.length)  { %>\n  <% results.forEach(function(result) { %>\n  <a href=\"#\" class=\"result\"><%= result %></a>\n  <% }); %>\n<% } else { %>\n  <div class=\"no-result\">No results found</div>\n<% } %>\n";
@@ -16881,22 +16880,20 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _backbone = require('backbone');
-
-var _backbone2 = _interopRequireDefault(_backbone);
-
 var _events = require('../events');
 
 var _events2 = _interopRequireDefault(_events);
 
-// import ModalView from './modal-view';
+var _viewsModalsModalContent = require('../views/modals/modal-content');
+
+var _viewsModalsModalContent2 = _interopRequireDefault(_viewsModalsModalContent);
 
 var _templatesInfoModalHtml = require('../templates/info-modal.html');
 
 var _templatesInfoModalHtml2 = _interopRequireDefault(_templatesInfoModalHtml);
 
-var InfoView = (function (_Backbone$View) {
-  _inherits(InfoView, _Backbone$View);
+var InfoView = (function (_ModalContentView) {
+  _inherits(InfoView, _ModalContentView);
 
   function InfoView(options) {
     _classCallCheck(this, InfoView);
@@ -16910,8 +16907,6 @@ var InfoView = (function (_Backbone$View) {
       'click button.remove-button': '_onRemove'
     };
     this.template = _underscore2['default'].template(_templatesInfoModalHtml2['default']);
-    this.parentModal = options.parentModal;
-    this.parentModal.setChildView(this);
   }
 
   _createClass(InfoView, [{
@@ -16952,7 +16947,7 @@ var InfoView = (function (_Backbone$View) {
     key: '_submitOrUpdate',
     value: function _submitOrUpdate(event, field) {
       if (event.which === 13) {
-        this._onSubmit();
+        this.submit();
       } else {
         this.model.set(field, event.target.value);
       }
@@ -16967,7 +16962,6 @@ var InfoView = (function (_Backbone$View) {
     value: function _onSubmitSuccess() {
       _events2['default'].trigger('update');
       _events2['default'].trigger('alert', 'success', 'Your location has been updated successfully.');
-      // this.hide();
       this.parentModal.hide();
     }
   }, {
@@ -16980,25 +16974,23 @@ var InfoView = (function (_Backbone$View) {
     value: function _onRemoveSuccess() {
       _events2['default'].trigger('update');
       _events2['default'].trigger('alert', 'success', 'You have been removed from the map.');
-      // this.hide();
       this.parentModal.hide();
     }
   }, {
     key: '_onError',
     value: function _onError(error) {
       _events2['default'].trigger('alert', 'danger', error.toString());
-      // this.hide();
       this.parentModal.hide();
     }
   }]);
 
   return InfoView;
-})(_backbone2['default'].View);
+})(_viewsModalsModalContent2['default']);
 
 exports['default'] = InfoView;
 module.exports = exports['default'];
 
-},{"../events":14,"../templates/info-modal.html":19,"backbone":1,"underscore":6}],28:[function(require,module,exports){
+},{"../events":14,"../templates/info-modal.html":19,"../views/modals/modal-content":29,"underscore":6}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17114,22 +17106,76 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
+var ModalContentView = (function (_Backbone$View) {
+  _inherits(ModalContentView, _Backbone$View);
+
+  function ModalContentView(options) {
+    _classCallCheck(this, ModalContentView);
+
+    _get(Object.getPrototypeOf(ModalContentView.prototype), 'constructor', this).call(this, options);
+    this.parentModal = options.parentModal;
+    this.parentModal.setContentView(this);
+  }
+
+  _createClass(ModalContentView, [{
+    key: 'render',
+    value: function render() {
+      this.$el.html('Modal Content');
+      return this;
+    }
+  }, {
+    key: 'submit',
+    value: function submit() {}
+  }, {
+    key: 'close',
+    value: function close() {}
+  }]);
+
+  return ModalContentView;
+})(_backbone2['default'].View);
+
+exports['default'] = ModalContentView;
+module.exports = exports['default'];
+
+},{"backbone":1}],30:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
 var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _templatesModalHtml = require('../templates/modal.html');
+var _templatesModalHtml = require('../../templates/modal.html');
 
 var _templatesModalHtml2 = _interopRequireDefault(_templatesModalHtml);
 
 var ModalView = (function (_Backbone$View) {
   _inherits(ModalView, _Backbone$View);
 
-  function ModalView(options) {
+  function ModalView() {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
     _classCallCheck(this, ModalView);
 
     _get(Object.getPrototypeOf(ModalView.prototype), 'constructor', this).call(this, options);
-    this.title = options.title;
+    this.title = options.title || 'Modal';
     this.template = _underscore2['default'].template(_templatesModalHtml2['default']);
     this.events = {
       'click .submit-button': '_onSubmit',
@@ -17143,12 +17189,11 @@ var ModalView = (function (_Backbone$View) {
   _createClass(ModalView, [{
     key: 'render',
     value: function render() {
-      // const vars = _.extend({}, this.model.get('config'), data);
       this.$el.html(this.template({
         title: this.title,
         buttons: this.buttons
       }));
-      this.$('.modal-body').html(this.childView.render().$el);
+      this.$('.modal-body').html(this.contentView.render().$el);
       this.$modal = this.$('.modal');
       this.$modal.modal({ show: false });
       this.delegateEvents();
@@ -17157,7 +17202,6 @@ var ModalView = (function (_Backbone$View) {
   }, {
     key: 'show',
     value: function show() {
-      console.log('show');
       this.$modal.modal('show');
     }
   }, {
@@ -17171,23 +17215,19 @@ var ModalView = (function (_Backbone$View) {
       this.$modal.modal('toggle');
     }
   }, {
-    key: 'setChildView',
-    value: function setChildView(childView) {
-      this.childView = childView;
+    key: 'setContentView',
+    value: function setContentView(contentView) {
+      this.contentView = contentView;
     }
   }, {
     key: '_onSubmit',
     value: function _onSubmit(e) {
-      if (typeof this.childView.submit === 'function') {
-        this.childView.submit(e);
-      }
+      this.contentView.submit(e);
     }
   }, {
     key: '_onClose',
     value: function _onClose(e) {
-      if (typeof this.childView.close === 'function') {
-        this.childView.close(e);
-      }
+      this.contentView.close(e);
     }
   }]);
 
@@ -17197,7 +17237,7 @@ var ModalView = (function (_Backbone$View) {
 exports['default'] = ModalView;
 module.exports = exports['default'];
 
-},{"../templates/modal.html":22,"backbone":1,"underscore":6}],30:[function(require,module,exports){
+},{"../../templates/modal.html":22,"backbone":1,"underscore":6}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17222,7 +17262,7 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _templatesSearchResultsHtml = require('../templates/search-results.html');
+var _templatesSearchResultsHtml = require('../../templates/search-results.html');
 
 var _templatesSearchResultsHtml2 = _interopRequireDefault(_templatesSearchResultsHtml);
 
@@ -17267,7 +17307,7 @@ var SearchResultsView = (function (_Backbone$View) {
 exports['default'] = SearchResultsView;
 module.exports = exports['default'];
 
-},{"../templates/search-results.html":24,"backbone":1,"underscore":6}],31:[function(require,module,exports){
+},{"../../templates/search-results.html":24,"backbone":1,"underscore":6}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17288,22 +17328,20 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _backbone = require('backbone');
+var _modalsModalContent = require('../modals/modal-content');
 
-var _backbone2 = _interopRequireDefault(_backbone);
-
-// import ModalView from './modal-view';
+var _modalsModalContent2 = _interopRequireDefault(_modalsModalContent);
 
 var _searchResults = require('./search-results');
 
 var _searchResults2 = _interopRequireDefault(_searchResults);
 
-var _templatesSearchModalHtml = require('../templates/search-modal.html');
+var _templatesSearchModalHtml = require('../../templates/search-modal.html');
 
 var _templatesSearchModalHtml2 = _interopRequireDefault(_templatesSearchModalHtml);
 
-var SearchView = (function (_Backbone$View) {
-  _inherits(SearchView, _Backbone$View);
+var SearchView = (function (_ModalContentView) {
+  _inherits(SearchView, _ModalContentView);
 
   function SearchView(options) {
     _classCallCheck(this, SearchView);
@@ -17316,8 +17354,6 @@ var SearchView = (function (_Backbone$View) {
     this.template = _underscore2['default'].template(_templatesSearchModalHtml2['default']);
     this.resultsView = new _searchResults2['default']();
     this.searchTimeout = null;
-    this.parentModal = options.parentModal;
-    this.parentModal.setChildView(this);
   }
 
   _createClass(SearchView, [{
@@ -17331,16 +17367,18 @@ var SearchView = (function (_Backbone$View) {
       return this;
     }
   }, {
+    key: 'close',
+    value: function close() {
+      this.model.set('query', '');
+    }
+  }, {
     key: '_changeType',
     value: function _changeType(e) {
       var $target = $(e.target);
       var type = $target.data('value');
       this.model.set('activeType', type);
-      this.$('.csh-map-search-type-btn').removeClass('btn-primary').addClass('btn-default');
-      $target.removeClass('btn-default').addClass('btn-primary');
-      // TODO: This view also needs to be a child view of the Modal to re-render properly
-      // this.render();
-      this._search($('#csh-map-search-input').val());
+      this.render();
+      this._search();
     }
   }, {
     key: '_debounceSearch',
@@ -17349,13 +17387,14 @@ var SearchView = (function (_Backbone$View) {
 
       clearTimeout(this.searchTimeout);
       this.searchTimeout = setTimeout(function () {
-        return _this._search($(e.target).val());
+        _this.model.set('query', $(e.target).val());
+        _this._search();
       }, 200);
     }
   }, {
     key: '_search',
-    value: function _search(query) {
-      var results = this.model.search(query);
+    value: function _search() {
+      var results = this.model.search();
       this._showResults(results);
     }
   }, {
@@ -17369,12 +17408,12 @@ var SearchView = (function (_Backbone$View) {
   }]);
 
   return SearchView;
-})(_backbone2['default'].View);
+})(_modalsModalContent2['default']);
 
 exports['default'] = SearchView;
 module.exports = exports['default'];
 
-},{"../templates/search-modal.html":23,"./search-results":30,"backbone":1,"underscore":6}],32:[function(require,module,exports){
+},{"../../templates/search-modal.html":23,"../modals/modal-content":29,"./search-results":31,"underscore":6}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

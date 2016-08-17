@@ -1,10 +1,9 @@
 import _ from 'underscore';
-import Backbone from 'backbone';
 import MapEvents from '../events';
-// import ModalView from './modal-view';
+import ModalContentView from '../views/modals/modal-content';
 import infoModalTemplate from '../templates/info-modal.html';
 
-class InfoView extends Backbone.View {
+class InfoView extends ModalContentView {
 
   constructor(options) {
     super(options);
@@ -16,8 +15,6 @@ class InfoView extends Backbone.View {
       'click button.remove-button': '_onRemove',
     };
     this.template = _.template(infoModalTemplate);
-    this.parentModal = options.parentModal;
-    this.parentModal.setChildView(this);
   }
 
   render() {
@@ -50,7 +47,7 @@ class InfoView extends Backbone.View {
 
   _submitOrUpdate(event, field) {
     if (event.which === 13) {
-      this._onSubmit();
+      this.submit();
     } else {
       this.model.set(field, event.target.value);
     }
@@ -66,7 +63,6 @@ class InfoView extends Backbone.View {
   _onSubmitSuccess() {
     MapEvents.trigger('update');
     MapEvents.trigger('alert', 'success', 'Your location has been updated successfully.');
-    // this.hide();
     this.parentModal.hide();
   }
 
@@ -80,13 +76,11 @@ class InfoView extends Backbone.View {
   _onRemoveSuccess() {
     MapEvents.trigger('update');
     MapEvents.trigger('alert', 'success', 'You have been removed from the map.');
-    // this.hide();
     this.parentModal.hide();
   }
 
   _onError(error) {
     MapEvents.trigger('alert', 'danger', error.toString());
-    // this.hide();
     this.parentModal.hide();
   }
 

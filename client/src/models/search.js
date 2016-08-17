@@ -12,13 +12,14 @@ class SearchModel extends Backbone.Model {
     super(attributes, options);
     this.set('types', searchTypes);
     this.set('activeType', searchTypes.cn);
+    this.set('query', '');
   }
 
-  search(query) {
+  search() {
     const activeType = this.get('activeType');
-    const formattedQuery = query.toLowerCase();
+    const formattedQuery = this.get('query').toLowerCase();
     let results = [];
-    if (query.length === 0) {
+    if (formattedQuery.length === 0) {
       // Nope
     } else if (activeType === searchTypes.cn) {
       results = this._searchByName(formattedQuery);
@@ -29,7 +30,6 @@ class SearchModel extends Backbone.Model {
     } else {
       console.log('invalid search type');
     }
-    console.log(results);
     return results;
   }
 
