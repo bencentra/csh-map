@@ -8,6 +8,7 @@ import SearchModel from './models/search';
 import InfoModel from './models/info';
 import MapView from './views/map';
 import ToolbarView from './views/toolbar';
+import ModalView from './views/modal-view';
 import SearchView from './views/search';
 import InfoView from './views/info';
 import AlertView from './views/alert';
@@ -58,11 +59,22 @@ class CSHMap {
     });
     this.toolbarView = new ToolbarView();
     this.alertView = new AlertView();
+    this.searchModalView = new ModalView({
+      title: 'Search',
+    });
     this.searchView = new SearchView({
       model: this.searchModel,
+      parentModal: this.searchModalView,
+    });
+    this.infoModalView = new ModalView({
+      title: `${this.config.cn}'s Location`,
+      buttons: {
+        submit: 'Update'
+      },
     });
     this.infoView = new InfoView({
       model: this.infoModel,
+      parentModal: this.infoModalView,
     });
   }
 
@@ -97,19 +109,20 @@ class CSHMap {
   }
 
   _renderSearchModal() {
-    $(SELECTORS.SEARCH_MODAL).html(this.searchView.render().el);
+    $(SELECTORS.SEARCH_MODAL).html(this.searchModalView.render().el);
   }
 
   _renderInfoModal() {
-    $(SELECTORS.INFO_MODAL).html(this.infoView.render().el);
+    $(SELECTORS.INFO_MODAL).html(this.infoModalView.render().el);
   }
 
   _showSearchModal() {
-    this.searchView.render().show();
+    console.log('lol');
+    this.searchModalView.render().show();
   }
 
   _showInfoModal() {
-    this.infoView.render().show();
+    this.infoModalView.render().show();
   }
 
   _showAlert(type, message) {

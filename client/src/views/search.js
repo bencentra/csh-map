@@ -1,28 +1,30 @@
 import _ from 'underscore';
-import ModalView from './modal-view';
+import Backbone from 'backbone';
+// import ModalView from './modal-view';
 import SearchResultsView from './search-results';
 import searchModalTemplate from '../templates/search-modal.html';
 
-class SearchView extends ModalView {
+class SearchView extends Backbone.View {
 
   constructor(options) {
-    _.extend(options, {
-      events: {
-        'click .csh-map-search-type-btn': '_changeType',
-        'keyup #csh-map-search-input': '_debounceSearch',
-      },
-    });
     super(options);
+    this.events = {
+      'click .csh-map-search-type-btn': '_changeType',
+      'keyup #csh-map-search-input': '_debounceSearch',
+    };
     this.template = _.template(searchModalTemplate);
     this.resultsView = new SearchResultsView();
     this.searchTimeout = null;
+    this.parentModal = options.parentModal;
+    this.parentModal.setChildView(this);
   }
 
   render() {
     const data = this.model.toJSON();
-    super.render(data);
-    this.$el.find('#csh-map-search-results').html(this.resultsView.render().el);
+    this.$el.html(this.template(data));
+    this.$('#csh-map-search-results').html(this.resultsView.render().el);
     this._showResults();
+    this.delegateEvents();
     return this;
   }
 

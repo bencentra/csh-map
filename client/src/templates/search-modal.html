@@ -1,34 +1,19 @@
-<div class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Search</h4>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="csh-map-search-type">Search by:</label><br>
-          <div class="btn-group" role="group" aria-label="search-type">
-            <!-- <button type="button" class="btn btn-primary csh-map-search-type-btn" data-value="<%= types.NAME %>">Name</button>
-            <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.USERNAME %>">Username</button>
-            <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.ADDRESS %>">Address</button> -->
-            <% Object.keys(types).forEach(function(type) { %>
-            <button type="button"
-                    class="btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>"
-                    data-value="<%= types[type] %>">
-              <%= types[type] %>
-            </button>
-            <% }); %>
-          </div>
-        </div>
-        <div class="form-group">
-          <input type="text" class="form-control" id="csh-map-search-input" placeholder="Search" autocomplete="false"/>
-        </div>
-        <div id="csh-map-search-results"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
+<div class="form-group">
+  <label for="csh-map-search-type">Search by:</label><br>
+  <div class="btn-group" role="group" aria-label="search-type">
+    <!-- <button type="button" class="btn btn-primary csh-map-search-type-btn" data-value="<%= types.NAME %>">Name</button>
+    <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.USERNAME %>">Username</button>
+    <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.ADDRESS %>">Address</button> -->
+    <% Object.keys(types).forEach(function(type) { %>
+    <button type="button"
+            class="btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>"
+            data-value="<%= types[type] %>">
+      <%= types[type] %>
+    </button>
+    <% }); %>
   </div>
 </div>
+<div class="form-group">
+  <input type="text" class="form-control" id="csh-map-search-input" placeholder="Search" autocomplete="false"/>
+</div>
+<div id="csh-map-search-results"></div>

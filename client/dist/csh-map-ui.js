@@ -16182,6 +16182,10 @@ var _viewsToolbar = require('./views/toolbar');
 
 var _viewsToolbar2 = _interopRequireDefault(_viewsToolbar);
 
+var _viewsModalView = require('./views/modal-view');
+
+var _viewsModalView2 = _interopRequireDefault(_viewsModalView);
+
 var _viewsSearch = require('./views/search');
 
 var _viewsSearch2 = _interopRequireDefault(_viewsSearch);
@@ -16248,11 +16252,22 @@ var CSHMap = (function () {
       });
       this.toolbarView = new _viewsToolbar2['default']();
       this.alertView = new _viewsAlert2['default']();
+      this.searchModalView = new _viewsModalView2['default']({
+        title: 'Search'
+      });
       this.searchView = new _viewsSearch2['default']({
-        model: this.searchModel
+        model: this.searchModel,
+        parentModal: this.searchModalView
+      });
+      this.infoModalView = new _viewsModalView2['default']({
+        title: this.config.cn + '\'s Location',
+        buttons: {
+          submit: 'Update'
+        }
       });
       this.infoView = new _viewsInfo2['default']({
-        model: this.infoModel
+        model: this.infoModel,
+        parentModal: this.infoModalView
       });
     }
   }, {
@@ -16288,22 +16303,23 @@ var CSHMap = (function () {
   }, {
     key: '_renderSearchModal',
     value: function _renderSearchModal() {
-      (0, _jquery2['default'])(SELECTORS.SEARCH_MODAL).html(this.searchView.render().el);
+      (0, _jquery2['default'])(SELECTORS.SEARCH_MODAL).html(this.searchModalView.render().el);
     }
   }, {
     key: '_renderInfoModal',
     value: function _renderInfoModal() {
-      (0, _jquery2['default'])(SELECTORS.INFO_MODAL).html(this.infoView.render().el);
+      (0, _jquery2['default'])(SELECTORS.INFO_MODAL).html(this.infoModalView.render().el);
     }
   }, {
     key: '_showSearchModal',
     value: function _showSearchModal() {
-      this.searchView.render().show();
+      console.log('lol');
+      this.searchModalView.render().show();
     }
   }, {
     key: '_showInfoModal',
     value: function _showInfoModal() {
-      this.infoView.render().show();
+      this.infoModalView.render().show();
     }
   }, {
     key: '_showAlert',
@@ -16325,7 +16341,7 @@ window.CSHMap = CSHMap;
 exports['default'] = CSHMap;
 module.exports = exports['default'];
 
-},{"./config":12,"./events":14,"./models/info":15,"./models/map":16,"./models/search":17,"./templates/main.html":21,"./views/alert":25,"./views/info":26,"./views/map":27,"./views/search":30,"./views/toolbar":31,"jquery":3,"spin.js":5}],14:[function(require,module,exports){
+},{"./config":12,"./events":14,"./models/info":15,"./models/map":16,"./models/search":17,"./templates/main.html":21,"./views/alert":26,"./views/info":27,"./views/map":28,"./views/modal-view":29,"./views/search":31,"./views/toolbar":32,"jquery":3,"spin.js":5}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16762,7 +16778,7 @@ module.exports = exports['default'];
 module.exports = "<div class=\"alert alert-dismissable alert-<%= type %>\" role=\"alert\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <div><%= message %></div>\n</div>\n";
 
 },{}],19:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= cn %>'s Location</h4>\n      </div>\n      <div class=\"modal-body\">\n        <form>\n          <div class=\"form-group\">\n            <label>City</label>\n            <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\" autocomplete=\"false\">\n          </div>\n          <div class=\"form-group\">\n            <label>State/Province</label>\n            <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\" autocomplete=\"false\">\n          </div>\n          <div class=\"form-group\">\n            <label>Country</label>\n            <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\" autocomplete=\"false\">\n          </div>\n          <div class=\"form-group\">\n            <label>Reason</label>\n            <select class=\"form-control reason-input\">\n              <% _.each(map.get('reasons').toJSON(), function(reason) { %>\n                <option value=\"<%= reason.id %>\" data-description=\"<%= reason.description %>\"><%= reason.name %></option>\n              <% }); %>\n            </select>\n          </div>\n        </form>\n        <button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" class=\"btn btn-primary submit-button\">Update</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<form>\n  <div class=\"form-group\">\n    <label>City</label>\n    <input type=\"text\" class=\"form-control city-input\" value=\"<%= city %>\" placeholder=\"Rochester\" autocomplete=\"false\">\n  </div>\n  <div class=\"form-group\">\n    <label>State/Province</label>\n    <input type=\"text\" class=\"form-control state-input\" value=\"<%= state %>\" placeholder=\"NY\" autocomplete=\"false\">\n  </div>\n  <div class=\"form-group\">\n    <label>Country</label>\n    <input type=\"text\" class=\"form-control country-input\" value=\"<%= country %>\" placeholder=\"USA\" autocomplete=\"false\">\n  </div>\n  <div class=\"form-group\">\n    <label>Reason</label>\n    <select class=\"form-control reason-input\">\n      <% _.each(map.get('reasons').toJSON(), function(reason) { %>\n        <option value=\"<%= reason.id %>\" data-description=\"<%= reason.description %>\"><%= reason.name %></option>\n      <% }); %>\n    </select>\n  </div>\n</form>\n<button class=\"btn btn-link remove-button\">Remove My Address from Map</button>\n";
 
 },{}],20:[function(require,module,exports){
 module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.address %></h4>\n  <ul>\n    <% _.each(members, function(member) { %>\n      <li><%= member.cn %> (<a href=\"https://profiles.csh.rit.edu/user/<%= member.uid %>\" target=\"_blank\"><%= member.uid %></a>)</li>\n    <% }); %>\n  </ul>\n</div>\n";
@@ -16771,15 +16787,18 @@ module.exports = "<div class=\"csh-map-info-window\">\n  <h4><%= location.addres
 module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"></div>\n<div id=\"csh-map-alert\"></div>\n<div id=\"csh-map-search-modal\"></div>\n<div id=\"csh-map-info-modal\"></div>\n";
 
 },{}],22:[function(require,module,exports){
-module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\">Search</h4>\n      </div>\n      <div class=\"modal-body\">\n        <div class=\"form-group\">\n          <label for=\"csh-map-search-type\">Search by:</label><br>\n          <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n            <!-- <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n            <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Address</button> -->\n            <% Object.keys(types).forEach(function(type) { %>\n            <button type=\"button\"\n                    class=\"btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>\"\n                    data-value=\"<%= types[type] %>\">\n              <%= types[type] %>\n            </button>\n            <% }); %>\n          </div>\n        </div>\n        <div class=\"form-group\">\n          <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\"/>\n        </div>\n        <div id=\"csh-map-search-results\"></div>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>\n      </div>\n    </div>\n  </div>\n</div>\n";
+module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= title %></h4>\n      </div>\n      <div class=\"modal-body\"></div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default close-button\" data-dismiss=\"modal\"><%= buttons.close %></button>\n        <% if (buttons.submit) { %>\n        <button type=\"button\" class=\"btn btn-primary submit-button\"><%= buttons.submit %></button>\n        <% } %>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],23:[function(require,module,exports){
-module.exports = "<% if (results.length)  { %>\n  <% results.forEach(function(result) { %>\n  <a href=\"#\" class=\"result\"><%= result %></a>\n  <% }); %>\n<% } else { %>\n  <div class=\"no-result\">No results found</div>\n<% } %>\n";
+module.exports = "<div class=\"form-group\">\n  <label for=\"csh-map-search-type\">Search by:</label><br>\n  <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n    <!-- <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Address</button> -->\n    <% Object.keys(types).forEach(function(type) { %>\n    <button type=\"button\"\n            class=\"btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>\"\n            data-value=\"<%= types[type] %>\">\n      <%= types[type] %>\n    </button>\n    <% }); %>\n  </div>\n</div>\n<div class=\"form-group\">\n  <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\"/>\n</div>\n<div id=\"csh-map-search-results\"></div>\n";
 
 },{}],24:[function(require,module,exports){
-module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
+module.exports = "<% if (results.length)  { %>\n  <% results.forEach(function(result) { %>\n  <a href=\"#\" class=\"result\"><%= result %></a>\n  <% }); %>\n<% } else { %>\n  <div class=\"no-result\">No results found</div>\n<% } %>\n";
 
 },{}],25:[function(require,module,exports){
+module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
+
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16841,7 +16860,7 @@ var AlertView = (function (_Backbone$View) {
 exports['default'] = AlertView;
 module.exports = exports['default'];
 
-},{"../templates/alert.html":18,"backbone":1,"underscore":6}],26:[function(require,module,exports){
+},{"../templates/alert.html":18,"backbone":1,"underscore":6}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -16862,20 +16881,22 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
 var _events = require('../events');
 
 var _events2 = _interopRequireDefault(_events);
 
-var _modalView = require('./modal-view');
-
-var _modalView2 = _interopRequireDefault(_modalView);
+// import ModalView from './modal-view';
 
 var _templatesInfoModalHtml = require('../templates/info-modal.html');
 
 var _templatesInfoModalHtml2 = _interopRequireDefault(_templatesInfoModalHtml);
 
-var InfoView = (function (_ModalView) {
-  _inherits(InfoView, _ModalView);
+var InfoView = (function (_Backbone$View) {
+  _inherits(InfoView, _Backbone$View);
 
   function InfoView(options) {
     _classCallCheck(this, InfoView);
@@ -16886,10 +16907,11 @@ var InfoView = (function (_ModalView) {
       'keyup input.state-input': '_onEditState',
       'keyup input.country-input': '_onEditCountry',
       'change select.reason-input': '_onEditReason',
-      'click button.submit-button': '_onSubmit',
       'click button.remove-button': '_onRemove'
     };
     this.template = _underscore2['default'].template(_templatesInfoModalHtml2['default']);
+    this.parentModal = options.parentModal;
+    this.parentModal.setChildView(this);
   }
 
   _createClass(InfoView, [{
@@ -16897,8 +16919,14 @@ var InfoView = (function (_ModalView) {
     value: function render() {
       this.model.loadDataFromMap();
       var data = this.model.toJSON();
-      _get(Object.getPrototypeOf(InfoView.prototype), 'render', this).call(this, data);
+      this.$el.html(this.template(data));
+      this.delegateEvents();
       return this;
+    }
+  }, {
+    key: 'submit',
+    value: function submit(e) {
+      this._onSubmit(e);
     }
   }, {
     key: '_onEditCity',
@@ -16939,7 +16967,8 @@ var InfoView = (function (_ModalView) {
     value: function _onSubmitSuccess() {
       _events2['default'].trigger('update');
       _events2['default'].trigger('alert', 'success', 'Your location has been updated successfully.');
-      this.hide();
+      // this.hide();
+      this.parentModal.hide();
     }
   }, {
     key: '_onRemove',
@@ -16951,23 +16980,25 @@ var InfoView = (function (_ModalView) {
     value: function _onRemoveSuccess() {
       _events2['default'].trigger('update');
       _events2['default'].trigger('alert', 'success', 'You have been removed from the map.');
-      this.hide();
+      // this.hide();
+      this.parentModal.hide();
     }
   }, {
     key: '_onError',
     value: function _onError(error) {
       _events2['default'].trigger('alert', 'danger', error.toString());
-      this.hide();
+      // this.hide();
+      this.parentModal.hide();
     }
   }]);
 
   return InfoView;
-})(_modalView2['default']);
+})(_backbone2['default'].View);
 
 exports['default'] = InfoView;
 module.exports = exports['default'];
 
-},{"../events":14,"../templates/info-modal.html":19,"./modal-view":28,"underscore":6}],27:[function(require,module,exports){
+},{"../events":14,"../templates/info-modal.html":19,"backbone":1,"underscore":6}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17062,7 +17093,7 @@ var MapView = (function (_Backbone$View) {
 exports['default'] = MapView;
 module.exports = exports['default'];
 
-},{"../templates/info-window.html":20,"backbone":1,"underscore":6}],28:[function(require,module,exports){
+},{"../templates/info-window.html":20,"backbone":1,"underscore":6}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17087,6 +17118,10 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
+var _templatesModalHtml = require('../templates/modal.html');
+
+var _templatesModalHtml2 = _interopRequireDefault(_templatesModalHtml);
+
 var ModalView = (function (_Backbone$View) {
   _inherits(ModalView, _Backbone$View);
 
@@ -17094,14 +17129,26 @@ var ModalView = (function (_Backbone$View) {
     _classCallCheck(this, ModalView);
 
     _get(Object.getPrototypeOf(ModalView.prototype), 'constructor', this).call(this, options);
-    this.model = options.model;
+    this.title = options.title;
+    this.template = _underscore2['default'].template(_templatesModalHtml2['default']);
+    this.events = {
+      'click .submit-button': '_onSubmit',
+      'click .close-button': '_onClose'
+    };
+    this.buttons = _underscore2['default'].extend({}, options.buttons, {
+      close: 'Close'
+    });
   }
 
   _createClass(ModalView, [{
     key: 'render',
-    value: function render(data) {
-      var vars = _underscore2['default'].extend({}, this.model.get('config'), data);
-      this.el.innerHTML = this.template(vars);
+    value: function render() {
+      // const vars = _.extend({}, this.model.get('config'), data);
+      this.$el.html(this.template({
+        title: this.title,
+        buttons: this.buttons
+      }));
+      this.$('.modal-body').html(this.childView.render().$el);
       this.$modal = this.$('.modal');
       this.$modal.modal({ show: false });
       this.delegateEvents();
@@ -17110,6 +17157,7 @@ var ModalView = (function (_Backbone$View) {
   }, {
     key: 'show',
     value: function show() {
+      console.log('show');
       this.$modal.modal('show');
     }
   }, {
@@ -17122,6 +17170,25 @@ var ModalView = (function (_Backbone$View) {
     value: function toggle() {
       this.$modal.modal('toggle');
     }
+  }, {
+    key: 'setChildView',
+    value: function setChildView(childView) {
+      this.childView = childView;
+    }
+  }, {
+    key: '_onSubmit',
+    value: function _onSubmit(e) {
+      if (typeof this.childView.submit === 'function') {
+        this.childView.submit(e);
+      }
+    }
+  }, {
+    key: '_onClose',
+    value: function _onClose(e) {
+      if (typeof this.childView.close === 'function') {
+        this.childView.close(e);
+      }
+    }
   }]);
 
   return ModalView;
@@ -17130,7 +17197,7 @@ var ModalView = (function (_Backbone$View) {
 exports['default'] = ModalView;
 module.exports = exports['default'];
 
-},{"backbone":1,"underscore":6}],29:[function(require,module,exports){
+},{"../templates/modal.html":22,"backbone":1,"underscore":6}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17200,7 +17267,7 @@ var SearchResultsView = (function (_Backbone$View) {
 exports['default'] = SearchResultsView;
 module.exports = exports['default'];
 
-},{"../templates/search-results.html":23,"backbone":1,"underscore":6}],30:[function(require,module,exports){
+},{"../templates/search-results.html":24,"backbone":1,"underscore":6}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17221,9 +17288,11 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
-var _modalView = require('./modal-view');
+var _backbone = require('backbone');
 
-var _modalView2 = _interopRequireDefault(_modalView);
+var _backbone2 = _interopRequireDefault(_backbone);
+
+// import ModalView from './modal-view';
 
 var _searchResults = require('./search-results');
 
@@ -17233,31 +17302,32 @@ var _templatesSearchModalHtml = require('../templates/search-modal.html');
 
 var _templatesSearchModalHtml2 = _interopRequireDefault(_templatesSearchModalHtml);
 
-var SearchView = (function (_ModalView) {
-  _inherits(SearchView, _ModalView);
+var SearchView = (function (_Backbone$View) {
+  _inherits(SearchView, _Backbone$View);
 
   function SearchView(options) {
     _classCallCheck(this, SearchView);
 
-    _underscore2['default'].extend(options, {
-      events: {
-        'click .csh-map-search-type-btn': '_changeType',
-        'keyup #csh-map-search-input': '_debounceSearch'
-      }
-    });
     _get(Object.getPrototypeOf(SearchView.prototype), 'constructor', this).call(this, options);
+    this.events = {
+      'click .csh-map-search-type-btn': '_changeType',
+      'keyup #csh-map-search-input': '_debounceSearch'
+    };
     this.template = _underscore2['default'].template(_templatesSearchModalHtml2['default']);
     this.resultsView = new _searchResults2['default']();
     this.searchTimeout = null;
+    this.parentModal = options.parentModal;
+    this.parentModal.setChildView(this);
   }
 
   _createClass(SearchView, [{
     key: 'render',
     value: function render() {
       var data = this.model.toJSON();
-      _get(Object.getPrototypeOf(SearchView.prototype), 'render', this).call(this, data);
-      this.$el.find('#csh-map-search-results').html(this.resultsView.render().el);
+      this.$el.html(this.template(data));
+      this.$('#csh-map-search-results').html(this.resultsView.render().el);
       this._showResults();
+      this.delegateEvents();
       return this;
     }
   }, {
@@ -17299,12 +17369,12 @@ var SearchView = (function (_ModalView) {
   }]);
 
   return SearchView;
-})(_modalView2['default']);
+})(_backbone2['default'].View);
 
 exports['default'] = SearchView;
 module.exports = exports['default'];
 
-},{"../templates/search-modal.html":22,"./modal-view":28,"./search-results":29,"underscore":6}],31:[function(require,module,exports){
+},{"../templates/search-modal.html":23,"./search-results":30,"backbone":1,"underscore":6}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17378,4 +17448,4 @@ var ToolbarView = (function (_Backbone$View) {
 exports['default'] = ToolbarView;
 module.exports = exports['default'];
 
-},{"../events":14,"../templates/toolbar.html":24,"backbone":1,"underscore":6}]},{},[13]);
+},{"../events":14,"../templates/toolbar.html":25,"backbone":1,"underscore":6}]},{},[13]);
