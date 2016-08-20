@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import _ from 'underscore';
 
 const searchTypes = {
   cn: 'Name',
@@ -34,25 +35,49 @@ class SearchModel extends Backbone.Model {
   }
 
   _searchByName(query) {
-    const members = this.get('map').get('members');
-    return this._search(members, 'cn', query);
+    const results = [];
+    const markers = _.clone(this.get('map').get('markers'));
+    _.each(markers, marker => {
+      _.each(marker.members, member => {
+        if (member.cn.toLowerCase().indexOf(query) > -1) {
+          results.push({
+            label: member.cn,
+            marker,
+          });
+        }
+      });
+    });
+    return results;
   }
 
   _searchByUid(query) {
-    const members = this.get('map').get('members');
-    return this._search(members, 'uid', query);
+    const results = [];
+    const markers = _.clone(this.get('map').get('markers'));
+    _.each(markers, marker => {
+      _.each(marker.members, member => {
+        if (member.uid.toLowerCase().indexOf(query) > -1) {
+          results.push({
+            label: member.uid,
+            marker,
+          });
+        }
+      });
+    });
+    return results;
   }
 
   _searchByAddress(query) {
-    const locations = this.get('map').get('locations');
-    return this._search(locations, 'address', query);
-  }
-
-  _search(collection, field, query) {
-    return collection.filter(item => {
-      const formattedField = item.get(field).toLowerCase();
-      return formattedField.indexOf(query) > -1;
-    }).map(item => item.get(field));
+    const results = [];
+    const markers = _.clone(this.get('map').get('markers'));
+    _.each(markers, marker => {
+      if (marker.location.address.toLowerCase().indexOf(query) > -1) {
+        results.push({
+          label: marker.location.address,
+          marker,
+        });
+      }
+    });
+    return results;
   }
 
 }

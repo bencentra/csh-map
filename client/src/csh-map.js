@@ -79,7 +79,9 @@ class CSHMap {
   }
 
   _initEvents() {
+    MapEvents.on('center', this._centerMap, this);
     MapEvents.on('search', this._showSearchModal, this);
+    MapEvents.on('search-result', this._showSearchResult, this);
     MapEvents.on('info', this._showInfoModal, this);
     MapEvents.on('update', this._loadMapDataAndRender, this);
     MapEvents.on('alert', this._showAlert, this);
@@ -116,8 +118,19 @@ class CSHMap {
     $(SELECTORS.INFO_MODAL).html(this.infoModalView.render().el);
   }
 
+  _centerMap() {
+    const options = this.mapView.gmapOptions;
+    this.mapView.gmap.setCenter(options.center);
+    this.mapView.gmap.setZoom(options.zoom);
+  }
+
   _showSearchModal() {
     this.searchModalView.render().show();
+  }
+
+  _showSearchResult(marker) {
+    this.searchModalView.hide();
+    google.maps.event.trigger(marker.googleMarker, 'click', {});
   }
 
   _showInfoModal() {

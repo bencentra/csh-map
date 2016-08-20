@@ -42,6 +42,8 @@ class MapView extends Backbone.View {
     });
     decorator.googleMarker.addListener('click', () => {
       decorator.infoWindow.open(this.gmap, decorator.googleMarker);
+      this.gmap.setCenter(decorator.googleMarker.position);
+      this.gmap.setZoom(6);
     });
     decorator.unset = function unset() {
       this.googleMarker.setMap(null);

@@ -1,6 +1,6 @@
 <% if (results.length)  { %>
-  <% results.forEach(function(result) { %>
-  <a href="#" class="result"><%= result %></a>
+  <% results.forEach(function(result, index) { %>
+  <a href="#" class="result" data-id="<%= index %>"><%= result.label %></a>
   <% }); %>
 <% } else { %>
   <div class="no-result">No results found</div>

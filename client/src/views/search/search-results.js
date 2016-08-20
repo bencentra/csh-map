@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
+import MapEvents from '../../events';
 import searchResultsTemplate from '../../templates/search-results.html';
 
 class SearchResultsView extends Backbone.View {
@@ -26,7 +27,9 @@ class SearchResultsView extends Backbone.View {
   }
 
   _handleClick(e) {
-    console.log(e);
+    const index = $(e.target).data('id');
+    const marker = this.results[index].marker;
+    MapEvents.trigger('search-result', marker);
   }
 
 }

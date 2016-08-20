@@ -1,9 +1,6 @@
 <div class="form-group">
   <label for="csh-map-search-type">Search by:</label><br>
   <div class="btn-group" role="group" aria-label="search-type">
-    <!-- <button type="button" class="btn btn-primary csh-map-search-type-btn" data-value="<%= types.NAME %>">Name</button>
-    <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.USERNAME %>">Username</button>
-    <button type="button" class="btn btn-default csh-map-search-type-btn" data-value="<%= types.ADDRESS %>">Address</button> -->
     <% Object.keys(types).forEach(function(type) { %>
     <button type="button"
             class="btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>"

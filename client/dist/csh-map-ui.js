@@ -16273,7 +16273,9 @@ var CSHMap = (function () {
   }, {
     key: '_initEvents',
     value: function _initEvents() {
+      _events2['default'].on('center', this._centerMap, this);
       _events2['default'].on('search', this._showSearchModal, this);
+      _events2['default'].on('search-result', this._showSearchResult, this);
       _events2['default'].on('info', this._showInfoModal, this);
       _events2['default'].on('update', this._loadMapDataAndRender, this);
       _events2['default'].on('alert', this._showAlert, this);
@@ -16311,9 +16313,22 @@ var CSHMap = (function () {
       (0, _jquery2['default'])(SELECTORS.INFO_MODAL).html(this.infoModalView.render().el);
     }
   }, {
+    key: '_centerMap',
+    value: function _centerMap() {
+      var options = this.mapView.gmapOptions;
+      this.mapView.gmap.setCenter(options.center);
+      this.mapView.gmap.setZoom(options.zoom);
+    }
+  }, {
     key: '_showSearchModal',
     value: function _showSearchModal() {
       this.searchModalView.render().show();
+    }
+  }, {
+    key: '_showSearchResult',
+    value: function _showSearchResult(marker) {
+      this.searchModalView.hide();
+      google.maps.event.trigger(marker.googleMarker, 'click', {});
     }
   }, {
     key: '_showInfoModal',
@@ -16700,6 +16715,10 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
+var _underscore = require('underscore');
+
+var _underscore2 = _interopRequireDefault(_underscore);
+
 var searchTypes = {
   cn: 'Name',
   uid: 'Username',
@@ -16740,30 +16759,51 @@ var SearchModel = (function (_Backbone$Model) {
   }, {
     key: '_searchByName',
     value: function _searchByName(query) {
-      var members = this.get('map').get('members');
-      return this._search(members, 'cn', query);
+      var results = [];
+      var markers = _underscore2['default'].clone(this.get('map').get('markers'));
+      _underscore2['default'].each(markers, function (marker) {
+        _underscore2['default'].each(marker.members, function (member) {
+          if (member.cn.toLowerCase().indexOf(query) > -1) {
+            results.push({
+              label: member.cn,
+              marker: marker
+            });
+          }
+        });
+      });
+      return results;
     }
   }, {
     key: '_searchByUid',
     value: function _searchByUid(query) {
-      var members = this.get('map').get('members');
-      return this._search(members, 'uid', query);
+      var results = [];
+      var markers = _underscore2['default'].clone(this.get('map').get('markers'));
+      _underscore2['default'].each(markers, function (marker) {
+        _underscore2['default'].each(marker.members, function (member) {
+          if (member.uid.toLowerCase().indexOf(query) > -1) {
+            results.push({
+              label: member.uid,
+              marker: marker
+            });
+          }
+        });
+      });
+      return results;
     }
   }, {
     key: '_searchByAddress',
     value: function _searchByAddress(query) {
-      var locations = this.get('map').get('locations');
-      return this._search(locations, 'address', query);
-    }
-  }, {
-    key: '_search',
-    value: function _search(collection, field, query) {
-      return collection.filter(function (item) {
-        var formattedField = item.get(field).toLowerCase();
-        return formattedField.indexOf(query) > -1;
-      }).map(function (item) {
-        return item.get(field);
+      var results = [];
+      var markers = _underscore2['default'].clone(this.get('map').get('markers'));
+      _underscore2['default'].each(markers, function (marker) {
+        if (marker.location.address.toLowerCase().indexOf(query) > -1) {
+          results.push({
+            label: marker.location.address,
+            marker: marker
+          });
+        }
       });
+      return results;
     }
   }]);
 
@@ -16773,7 +16813,7 @@ var SearchModel = (function (_Backbone$Model) {
 exports['default'] = SearchModel;
 module.exports = exports['default'];
 
-},{"backbone":1}],18:[function(require,module,exports){
+},{"backbone":1,"underscore":6}],18:[function(require,module,exports){
 module.exports = "<div class=\"alert alert-dismissable alert-<%= type %>\" role=\"alert\">\n  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n  <div><%= message %></div>\n</div>\n";
 
 },{}],19:[function(require,module,exports){
@@ -16789,13 +16829,13 @@ module.exports = "<div id=\"csh-map-canvas\"></div>\n<div id=\"csh-map-toolbar\"
 module.exports = "<div class=\"modal fade\" tabindex=\"-1\" role=\"dialog\">\n  <div class=\"modal-dialog\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n        <h4 class=\"modal-title\"><%= title %></h4>\n      </div>\n      <div class=\"modal-body\"></div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-default close-button\" data-dismiss=\"modal\"><%= buttons.close %></button>\n        <% if (buttons.submit) { %>\n        <button type=\"button\" class=\"btn btn-primary submit-button\"><%= buttons.submit %></button>\n        <% } %>\n      </div>\n    </div>\n  </div>\n</div>\n";
 
 },{}],23:[function(require,module,exports){
-module.exports = "<div class=\"form-group\">\n  <label for=\"csh-map-search-type\">Search by:</label><br>\n  <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n    <!-- <button type=\"button\" class=\"btn btn-primary csh-map-search-type-btn\" data-value=\"<%= types.NAME %>\">Name</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.USERNAME %>\">Username</button>\n    <button type=\"button\" class=\"btn btn-default csh-map-search-type-btn\" data-value=\"<%= types.ADDRESS %>\">Address</button> -->\n    <% Object.keys(types).forEach(function(type) { %>\n    <button type=\"button\"\n            class=\"btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>\"\n            data-value=\"<%= types[type] %>\">\n      <%= types[type] %>\n    </button>\n    <% }); %>\n  </div>\n</div>\n<div class=\"form-group\">\n  <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\" value=\"<%= query %>\"/>\n</div>\n<div id=\"csh-map-search-results\"></div>\n";
+module.exports = "<div class=\"form-group\">\n  <label for=\"csh-map-search-type\">Search by:</label><br>\n  <div class=\"btn-group\" role=\"group\" aria-label=\"search-type\">\n    <% Object.keys(types).forEach(function(type) { %>\n    <button type=\"button\"\n            class=\"btn csh-map-search-type-btn <% if (activeType === types[type]) { %>btn-primary<% } else { %> btn-default <% } %>\"\n            data-value=\"<%= types[type] %>\">\n      <%= types[type] %>\n    </button>\n    <% }); %>\n  </div>\n</div>\n<div class=\"form-group\">\n  <input type=\"text\" class=\"form-control\" id=\"csh-map-search-input\" placeholder=\"Search\" autocomplete=\"false\" value=\"<%= query %>\"/>\n</div>\n<div id=\"csh-map-search-results\"></div>\n";
 
 },{}],24:[function(require,module,exports){
-module.exports = "<% if (results.length)  { %>\n  <% results.forEach(function(result) { %>\n  <a href=\"#\" class=\"result\"><%= result %></a>\n  <% }); %>\n<% } else { %>\n  <div class=\"no-result\">No results found</div>\n<% } %>\n";
+module.exports = "<% if (results.length)  { %>\n  <% results.forEach(function(result, index) { %>\n  <a href=\"#\" class=\"result\" data-id=\"<%= index %>\"><%= result.label %></a>\n  <% }); %>\n<% } else { %>\n  <div class=\"no-result\">No results found</div>\n<% } %>\n";
 
 },{}],25:[function(require,module,exports){
-module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
+module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#csh-map-toolbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">\n        CSH Alumni Map\n      </a>\n    </div>\n    <div class=\"collapse navbar-collapse\" id=\"csh-map-toolbar-collapse\">\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\" class=\"toolbar-center\">Center Map</a></li>\n        <li><a href=\"#\" class=\"toolbar-search\">Search</a></li>\n        <li><a href=\"#\" class=\"toolbar-info\">My Location</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>\n";
 
 },{}],26:[function(require,module,exports){
 'use strict';
@@ -17070,6 +17110,8 @@ var MapView = (function (_Backbone$View) {
       });
       decorator.googleMarker.addListener('click', function () {
         decorator.infoWindow.open(_this2.gmap, decorator.googleMarker);
+        _this2.gmap.setCenter(decorator.googleMarker.position);
+        _this2.gmap.setZoom(6);
       });
       decorator.unset = function unset() {
         this.googleMarker.setMap(null);
@@ -17262,6 +17304,10 @@ var _underscore = require('underscore');
 
 var _underscore2 = _interopRequireDefault(_underscore);
 
+var _events = require('../../events');
+
+var _events2 = _interopRequireDefault(_events);
+
 var _templatesSearchResultsHtml = require('../../templates/search-results.html');
 
 var _templatesSearchResultsHtml2 = _interopRequireDefault(_templatesSearchResultsHtml);
@@ -17297,7 +17343,9 @@ var SearchResultsView = (function (_Backbone$View) {
   }, {
     key: '_handleClick',
     value: function _handleClick(e) {
-      console.log(e);
+      var index = $(e.target).data('id');
+      var marker = this.results[index].marker;
+      _events2['default'].trigger('search-result', marker);
     }
   }]);
 
@@ -17307,7 +17355,7 @@ var SearchResultsView = (function (_Backbone$View) {
 exports['default'] = SearchResultsView;
 module.exports = exports['default'];
 
-},{"../../templates/search-results.html":24,"backbone":1,"underscore":6}],32:[function(require,module,exports){
+},{"../../events":14,"../../templates/search-results.html":24,"backbone":1,"underscore":6}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17454,6 +17502,7 @@ var ToolbarView = (function (_Backbone$View) {
 
     _get(Object.getPrototypeOf(ToolbarView.prototype), 'constructor', this).call(this, options);
     this.events = {
+      'click a.toolbar-center': '_onClickCenter',
       'click a.toolbar-search': '_onClickSearch',
       'click a.toolbar-info': '_onClickInfo'
     };
@@ -17468,16 +17517,30 @@ var ToolbarView = (function (_Backbone$View) {
       return this;
     }
   }, {
+    key: '_onClickCenter',
+    value: function _onClickCenter(e) {
+      e.preventDefault();
+      this._collapseNavbar();
+      _events2['default'].trigger('center');
+    }
+  }, {
     key: '_onClickSearch',
     value: function _onClickSearch(e) {
       e.preventDefault();
+      this._collapseNavbar();
       _events2['default'].trigger('search');
     }
   }, {
     key: '_onClickInfo',
     value: function _onClickInfo(e) {
       e.preventDefault();
+      this._collapseNavbar();
       _events2['default'].trigger('info');
+    }
+  }, {
+    key: '_collapseNavbar',
+    value: function _collapseNavbar() {
+      this.$('.collapse').collapse('hide');
     }
   }]);
 
