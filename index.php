@@ -14,7 +14,7 @@ $user_data['cn'] = htmlentities($_SERVER['WEBAUTH_LDAP_CN']);
 <body>
 <div id="spin"></div>
 <div id="csh-map"></div>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMg7g6Cq-D_y-jVmnvX3XNfcYZc5lPu_8&v=3.22"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMg7g6Cq-D_y-jVmnvX3XNfcYZc5lPu_8&v=3.25"></script>
 <script type="text/javascript" src="https://members.csh.rit.edu/~bencentra/alumni-map/client/dist/csh-map-ui.min.js"></script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript">
