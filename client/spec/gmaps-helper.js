@@ -4,6 +4,8 @@ function MockMap(element, options) {
   this.spy(element, options);
 }
 MockMap.prototype.spy = jasmine.createSpy('MockMap');
+MockMap.prototype.setCenter = jasmine.createSpy('setCenter');
+MockMap.prototype.setZoom = jasmine.createSpy('setZoom');
 
 function MockGeocoder(params) {
   this.spy = jasmine.createSpy('MockGeocoder');
@@ -48,5 +50,8 @@ window.google = {
     LatLng: MockLatLng,
     Marker: MockMarker,
     InfoWindow: MockInfoWindow,
+    event: {
+      trigger: jasmine.createSpy('trigger'),
+    },
   },
 };

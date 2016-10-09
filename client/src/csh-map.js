@@ -130,6 +130,7 @@ class CSHMap {
 
   _showSearchResult(marker) {
     this.searchModalView.hide();
+    this.searchModel.set('query', '');
     google.maps.event.trigger(marker.googleMarker, 'click', {});
   }
 
