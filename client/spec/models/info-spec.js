@@ -15,28 +15,28 @@ describe('InfoModel', () => {
     uid: 'bencentra',
     cn: 'Ben Centra',
     hostUrl: 'http://localhost:8888',
-    apiUrl: 'http://localhost:3000/v1'
+    apiUrl: 'http://localhost:3000/v1',
   });
   const mockMember = new Backbone.Model({
     uid: mockConfig.uid,
-    cn: mockConfig.cn
+    cn: mockConfig.cn,
   });
   const mockLocation = new Backbone.Model({
     id: 1,
     address: mockAddress,
     latitude: 12,
-    longitude: 34
+    longitude: 34,
   });
   const mockRecord = new Backbone.Model({
     MemberUid: mockMember.get('uid'),
-    LocationId: mockLocation.get('id')
+    LocationId: mockLocation.get('id'),
   });
   const mockSuccess = function (successCallback) {
     successCallback();
     return {
       error(errorCallback) {
         errorCallback();
-      }
+      },
     };
   };
   const mockGeocodeResults = [{
@@ -44,16 +44,16 @@ describe('InfoModel', () => {
     geometry: {
       location: {
         lat() { return 12; },
-        lng() { return 34; }
-      }
-    }
+        lng() { return 34; },
+      },
+    },
   }];
 
   beforeEach(() => {
     mockMap = new MapModel({ mockConfig });
     mockAttributes = {
       config: mockConfig,
-      map: mockMap
+      map: mockMap,
     };
     spyOn(InfoModel.prototype, 'defaults').and.callThrough();
     infoModel = new InfoModel(mockAttributes, mockOptions);
@@ -92,7 +92,7 @@ describe('InfoModel', () => {
 
     beforeEach(() => {
       spyOn(Backbone, 'sync').and.returnValue({
-        success: mockSuccess
+        success: mockSuccess,
       });
       infoModel.set('member', mockMember);
     });
@@ -120,7 +120,7 @@ describe('InfoModel', () => {
       infoModel.set({
         city: 'Boston',
         state: 'MA',
-        country: 'USA'
+        country: 'USA',
       });
     });
 
@@ -170,7 +170,7 @@ describe('InfoModel', () => {
 
     beforeEach(() => {
       spyOn(Backbone, 'sync').and.returnValue({
-        success: mockSuccess
+        success: mockSuccess,
       });
     });
 
@@ -195,7 +195,7 @@ describe('InfoModel', () => {
 
     beforeEach(() => {
       spyOn(Backbone, 'sync').and.returnValue({
-        success: mockSuccess
+        success: mockSuccess,
       });
       infoModel.geocodeResult = mockGeocodeResults[0];
     });
@@ -206,7 +206,7 @@ describe('InfoModel', () => {
         expect(infoModel.updateData.location.toJSON()).toEqual({
           address: mockGeocodeResults[0].formatted_address,
           latitude: mockGeocodeResults[0].geometry.location.lat(),
-          longitude: mockGeocodeResults[0].geometry.location.lng()
+          longitude: mockGeocodeResults[0].geometry.location.lng(),
         });
         done();
       });
@@ -224,14 +224,14 @@ describe('InfoModel', () => {
 
     beforeEach(() => {
       spyOn(Backbone, 'sync').and.returnValue({
-        success: mockSuccess
+        success: mockSuccess,
       });
     });
 
     it('adds a record of the move', (done) => {
       infoModel.updateData = {
         member: mockMember,
-        location: mockLocation
+        location: mockLocation,
       };
       infoModel._createMoveRecord().then(() => {
         const record = infoModel.get('map').get('records').pop();

@@ -10,13 +10,13 @@ describe('MapView', () => {
         location: {
           address: 'Boston, MA, USA',
           latitude: 12,
-          longitude: 34
+          longitude: 34,
         },
         members: [
-          { cn: 'Ben Centra', uid: 'bencentra' }
-        ]
-      }
-    }
+          { cn: 'Ben Centra', uid: 'bencentra' },
+        ],
+      },
+    },
   });
 
   beforeEach(() => {

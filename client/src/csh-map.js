@@ -8,7 +8,8 @@ import SearchModel from './models/search';
 import InfoModel from './models/info';
 import MapView from './views/map';
 import ToolbarView from './views/toolbar';
-import SearchView from './views/search';
+import ModalView from './views/modals/modal';
+import SearchView from './views/search/search';
 import InfoView from './views/info';
 import AlertView from './views/alert';
 
@@ -18,7 +19,7 @@ const SELECTORS = {
   TOOLBAR: '#csh-map-toolbar',
   ALERT: '#csh-map-alert',
   SEARCH_MODAL: '#csh-map-search-modal',
-  INFO_MODAL: '#csh-map-info-modal'
+  INFO_MODAL: '#csh-map-info-modal',
 };
 
 /*
@@ -39,35 +40,48 @@ class CSHMap {
 
   _initModels() {
     this.mapModel = new MapModel({
-      config: this.config
+      config: this.config,
     });
     this.searchModel = new SearchModel({
       config: this.config,
-      map: this.mapModel
+      map: this.mapModel,
     });
     this.infoModel = new InfoModel({
       config: this.config,
-      map: this.mapModel
+      map: this.mapModel,
     });
   }
 
   _initViews() {
     $(SELECTORS.WRAPPER).html(mainTemplate);
     this.mapView = new MapView({
-      model: this.mapModel
+      model: this.mapModel,
     });
     this.toolbarView = new ToolbarView();
     this.alertView = new AlertView();
+    this.searchModalView = new ModalView({
+      title: 'Search',
+    });
     this.searchView = new SearchView({
-      model: this.searchModel
+      model: this.searchModel,
+      parentModal: this.searchModalView,
+    });
+    this.infoModalView = new ModalView({
+      title: `${this.config.cn}'s Location`,
+      buttons: {
+        submit: 'Update',
+      },
     });
     this.infoView = new InfoView({
-      model: this.infoModel
+      model: this.infoModel,
+      parentModal: this.infoModalView,
     });
   }
 
   _initEvents() {
+    MapEvents.on('center', this._centerMap, this);
     MapEvents.on('search', this._showSearchModal, this);
+    MapEvents.on('search-result', this._showSearchResult, this);
     MapEvents.on('info', this._showInfoModal, this);
     MapEvents.on('update', this._loadMapDataAndRender, this);
     MapEvents.on('alert', this._showAlert, this);
@@ -97,19 +111,31 @@ class CSHMap {
   }
 
   _renderSearchModal() {
-    $(SELECTORS.SEARCH_MODAL).html(this.searchView.render().el);
+    $(SELECTORS.SEARCH_MODAL).html(this.searchModalView.render().el);
   }
 
   _renderInfoModal() {
-    $(SELECTORS.INFO_MODAL).html(this.infoView.render().el);
+    $(SELECTORS.INFO_MODAL).html(this.infoModalView.render().el);
+  }
+
+  _centerMap() {
+    const options = this.mapView.gmapOptions;
+    this.mapView.gmap.setCenter(options.center);
+    this.mapView.gmap.setZoom(options.zoom);
   }
 
   _showSearchModal() {
-    this.searchView.render().show();
+    this.searchModalView.render().show();
+  }
+
+  _showSearchResult(marker) {
+    this.searchModalView.hide();
+    this.searchModel.set('query', '');
+    google.maps.event.trigger(marker.googleMarker, 'click', {});
   }
 
   _showInfoModal() {
-    this.infoView.render().show();
+    this.infoModalView.render().show();
   }
 
   _showAlert(type, message) {

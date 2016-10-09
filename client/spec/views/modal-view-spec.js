@@ -1,4 +1,5 @@
-import ModalView from '../../src/views/modal-view';
+import ModalView from '../../src/views/modals/modal';
+import ModalContentView from '../../src/views/modals/modal-content';
 import Config from '../../src/config';
 import Backbone from 'backbone';
 
@@ -11,14 +12,18 @@ describe('Modal View', () => {
     uid: 'bencentra',
     cn: 'Ben Centra',
     hostUrl: 'http://localhost:8888',
-    apiUrl: 'http://localhost:3000/v1'
+    apiUrl: 'http://localhost:3000/v1',
   });
   const mockModel = new Backbone.Model({
-    config: mockConfig
+    config: mockConfig,
   });
 
   beforeEach(() => {
     modalView = new ModalView({ model: mockModel });
+    modalView.setContentView(new ModalContentView({
+      model: new Backbone.Model(),
+      parentModal: modalView,
+    }));
     modalView.template = jasmine.createSpy('template').and.returnValue(testTemplate);
   });
 

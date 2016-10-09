@@ -14,5 +14,5 @@ var app = new MapAPI({
 });
 
 app.start().catch(function(err) {
-	console.log(err);
+	console.error(err);
 });

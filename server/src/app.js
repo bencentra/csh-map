@@ -32,7 +32,9 @@ MapAPI.prototype._setupExpressInstance = function () {
   this.app.use(cors(this._corsOptionsDelegate.bind(this)));
   this.app.use(bodyParser.json());
   this.app.use(bodyParser.urlencoded({ extended: false }));
-  this.app.use(this._createRefererMiddleware());
+  if (this.options.env !== 'development') {
+    this.app.use(this._createRefererMiddleware());
+  }
   this.app.set('port', this.options.port);
   this.app.set('env', this.options.env);
 };

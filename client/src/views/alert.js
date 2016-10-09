@@ -18,7 +18,7 @@ class AlertView extends Backbone.View {
   setData(type, message) {
     this.data = {
       type,
-      message
+      message,
     };
   }
 

@@ -1,6 +1,6 @@
 import InfoView from '../../src/views/info';
 import InfoModel from '../../src/models/info';
-import ModalView from '../../src/views/modal-view';
+import ModalView from '../../src/views/modals/modal';
 import MapModel from '../../src/models/map';
 import ReasonCollection from '../../src/collections/reasons';
 import Config from '../../src/config';
@@ -14,40 +14,45 @@ describe('InfoView', () => {
     uid: 'bencentra',
     cn: 'Ben Centra',
     hostUrl: 'http://localhost:8888',
-    apiUrl: 'http://localhost:3000/v1'
+    apiUrl: 'http://localhost:3000/v1',
   });
   const mockMap = new MapModel({
-    config: mockConfig
+    config: mockConfig,
   });
   mockMap.set('reasons', new ReasonCollection([
     { id: 1, name: 'Not Specified', description: '' },
-    { id: 2, name: 'Specified!', description: '' }
+    { id: 2, name: 'Specified!', description: '' },
   ]));
   const mockModel = new InfoModel({
     config: mockConfig,
-    map: mockMap
+    map: mockMap,
   });
   mockModel.set({
     member: new Backbone.Model({
       uid: 'bencentra',
-      cn: 'Ben Centra'
+      cn: 'Ben Centra',
     }),
     location: new Backbone.Model({
       id: 1,
-      address: 'Boston, MA, USA'
+      address: 'Boston, MA, USA',
     }),
     record: new Backbone.Model({
       LocationId: 1,
-      MemberUid: 'bencentra'
+      MemberUid: 'bencentra',
     }),
     reason: 1,
     city: 'Boston',
     state: 'MA',
-    country: 'USA'
+    country: 'USA',
   });
+  const mockModalView = new ModalView();
 
   beforeEach(() => {
-    infoView = new InfoView({ model: mockModel });
+    infoView = new InfoView({
+      model: mockModel,
+      parentModal: mockModalView,
+    });
+    mockModalView.render();
   });
 
   it('can be constructed', () => {
@@ -60,7 +65,6 @@ describe('InfoView', () => {
 
     beforeEach(() => {
       spyOn(infoView.model, 'loadDataFromMap');
-      spyOn(ModalView.prototype, 'render').and.callThrough();
     });
 
     it('loads data from the model', () => {
@@ -70,8 +74,11 @@ describe('InfoView', () => {
 
     it('renders the view', () => {
       const result = infoView.render();
-      expect(ModalView.prototype.render).toHaveBeenCalledWith(infoView.model.toJSON());
       expect(result).toEqual(infoView);
+      expect(infoView.$('.city-input').val()).toEqual(mockModel.get('city'));
+      expect(infoView.$('.state-input').val()).toEqual(mockModel.get('state'));
+      expect(infoView.$('.country-input').val()).toEqual(mockModel.get('country'));
+      expect(infoView.$('.reason-input').val()).toEqual(`${mockModel.get('reason')}`);
     });
 
   });
@@ -124,12 +131,6 @@ describe('InfoView', () => {
       expect(infoView.model.get('reason')).toEqual(1);
       $reasonInput.trigger('change');
       expect(infoView.model.get('reason')).toEqual(2);
-    });
-
-    // TODO: figure out promises, test eventual MapEvents calls
-    it('listens for click events on the submit button', () => {
-      infoView.$('.submit-button').trigger('click');
-      expect(infoView.model.updateAddress).toHaveBeenCalled();
     });
 
     // TODO: figure out promises, test eventual MapEvents calls

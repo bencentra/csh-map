@@ -8,8 +8,9 @@ class ToolbarView extends Backbone.View {
   constructor(options) {
     super(options);
     this.events = {
+      'click a.toolbar-center': '_onClickCenter',
       'click a.toolbar-search': '_onClickSearch',
-      'click a.toolbar-info': '_onClickInfo'
+      'click a.toolbar-info': '_onClickInfo',
     };
     this.template = _.template(toolbarTemplate);
   }
@@ -20,14 +21,26 @@ class ToolbarView extends Backbone.View {
     return this;
   }
 
+  _onClickCenter(e) {
+    e.preventDefault();
+    this._collapseNavbar();
+    MapEvents.trigger('center');
+  }
+
   _onClickSearch(e) {
     e.preventDefault();
+    this._collapseNavbar();
     MapEvents.trigger('search');
   }
 
   _onClickInfo(e) {
     e.preventDefault();
+    this._collapseNavbar();
     MapEvents.trigger('info');
+  }
+
+  _collapseNavbar() {
+    this.$('.collapse').collapse('hide');
   }
 
 }

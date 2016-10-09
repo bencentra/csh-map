@@ -27,7 +27,7 @@ class MapModel extends Backbone.Model {
       this.get('locations').init(),
       this.get('members').init(),
       this.get('records').init(),
-      this.get('reasons').init()
+      this.get('reasons').init(),
     ]).then(this._ready.bind(this))
       .catch(this._initError.bind(this));
   }
@@ -53,7 +53,7 @@ class MapModel extends Backbone.Model {
       if (!markers[locationId]) {
         markers[locationId] = {
           location,
-          members: [member]
+          members: [member],
         };
       } else {
         markers[locationId].members.push(member);

@@ -4,6 +4,8 @@ function MockMap(element, options) {
   this.spy(element, options);
 }
 MockMap.prototype.spy = jasmine.createSpy('MockMap');
+MockMap.prototype.setCenter = jasmine.createSpy('setCenter');
+MockMap.prototype.setZoom = jasmine.createSpy('setZoom');
 
 function MockGeocoder(params) {
   this.spy = jasmine.createSpy('MockGeocoder');
@@ -13,7 +15,7 @@ MockGeocoder.prototype.geocode = function () {};
 
 const MockGeocoderStatus = {
   OK: 1,
-  NOT_OK: 2
+  NOT_OK: 2,
 };
 
 function MockLatLng(latitude, longitude) {
@@ -47,6 +49,9 @@ window.google = {
     GeocoderStatus: MockGeocoderStatus,
     LatLng: MockLatLng,
     Marker: MockMarker,
-    InfoWindow: MockInfoWindow
-  }
+    InfoWindow: MockInfoWindow,
+    event: {
+      trigger: jasmine.createSpy('trigger'),
+    },
+  },
 };
