@@ -42,6 +42,7 @@
   "devDependencies": {
     "eslint": "2.x",
     "eslint-config-airbnb-base": "3.x",
+    "eslint-plugin-import": "^1.16.0",
     "istanbul": "^0.4.1",
     "jasmine": "^2.4.1",
     "rewire": "^2.5.1",
