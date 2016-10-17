@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+// Load environment variables
 var dotenv = require('dotenv').config({
 	path: process.env.DOTENV_PATH || '.env'
 });
 
+// Create the API instance
 var MapAPI = require('../src/app');
 var app = new MapAPI({
 	port: process.env.PORT || 3000,
@@ -13,6 +15,7 @@ var app = new MapAPI({
 	secret: process.env.SECRET || false
 });
 
+// Start the server
 app.start().catch(function(err) {
 	console.error(err);
 });

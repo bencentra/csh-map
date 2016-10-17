@@ -3,6 +3,11 @@ import MapEvents from '../events';
 import ModalContentView from '../views/modals/modal-content';
 import infoModalTemplate from '../templates/info-modal.html';
 
+/*
+* View for the "My Location" modal.
+*
+* Contains a form for the user to add or update their location.
+*/
 class InfoView extends ModalContentView {
 
   constructor(options) {
@@ -47,8 +52,10 @@ class InfoView extends ModalContentView {
 
   _submitOrUpdate(event, field) {
     if (event.which === 13) {
+      // If the "Enter" key was pressed, submit the form
       this.submit();
     } else {
+      // Otherwise, update the field on the model
       this.model.set(field, event.target.value);
     }
   }

@@ -2,6 +2,9 @@ import Backbone from 'backbone';
 import Q from 'q';
 import Config from '../config';
 
+/*
+* A Backbone Collection with promisified methods to handle async loading
+*/
 class AsyncCollection extends Backbone.Collection {
 
   constructor(options) {

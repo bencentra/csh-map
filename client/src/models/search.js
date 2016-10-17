@@ -7,6 +7,14 @@ const searchTypes = {
   addr: 'Address',
 };
 
+/*
+* Model for the search functionality.
+*
+* The search "algorithm" is pretty basic:
+* - Take the query string and make it lowercase
+* - Compare it to the corresponding field in each marker
+* - If there's a substring match, add it to the results array
+*/
 class SearchModel extends Backbone.Model {
 
   constructor(attributes, options) {
@@ -21,7 +29,7 @@ class SearchModel extends Backbone.Model {
     const formattedQuery = this.get('query').toLowerCase();
     let results = [];
     if (formattedQuery.length === 0) {
-      // Nope
+      console.log('empty search query');
     } else if (activeType === searchTypes.cn) {
       results = this._searchByName(formattedQuery);
     } else if (activeType === searchTypes.uid) {

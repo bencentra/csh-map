@@ -39,13 +39,16 @@ class CSHMap {
   }
 
   _initModels() {
+    // Primary model for the map
     this.mapModel = new MapModel({
       config: this.config,
     });
+    // Model for handling searches
     this.searchModel = new SearchModel({
       config: this.config,
       map: this.mapModel,
     });
+    // Model for handling the current user's information
     this.infoModel = new InfoModel({
       config: this.config,
       map: this.mapModel,
@@ -54,11 +57,15 @@ class CSHMap {
 
   _initViews() {
     $(SELECTORS.WRAPPER).html(mainTemplate);
+    // Primary view for the map
     this.mapView = new MapView({
       model: this.mapModel,
     });
+    // View for the toolbar
     this.toolbarView = new ToolbarView();
+    // View for the success/failure message
     this.alertView = new AlertView();
+    // Views for the "Search" modal
     this.searchModalView = new ModalView({
       title: 'Search',
     });
@@ -66,6 +73,7 @@ class CSHMap {
       model: this.searchModel,
       parentModal: this.searchModalView,
     });
+    // Views for the "My Location" modal
     this.infoModalView = new ModalView({
       title: `${this.config.cn}'s Location`,
       buttons: {
@@ -87,6 +95,7 @@ class CSHMap {
     MapEvents.on('alert', this._showAlert, this);
   }
 
+  // After loading map data, render each piece of the UI
   _render() {
     return this._loadMapDataAndRender()
       .then(this._renderToolbar.bind(this))
@@ -118,6 +127,7 @@ class CSHMap {
     $(SELECTORS.INFO_MODAL).html(this.infoModalView.render().el);
   }
 
+  // Reset the position and zoom of the map
   _centerMap() {
     const options = this.mapView.gmapOptions;
     this.mapView.gmap.setCenter(options.center);

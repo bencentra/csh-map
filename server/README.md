@@ -2,13 +2,14 @@
 
 ExpressJS API for the CSH Alumni Map.
 
-Tested with Node v0.12.9 and v4.4.0.
+Tested with Node 0.12.9, 4.4.0, and 6.7.0.
 
 ## Installation
 
 1) Install dependencies:
 
 ```bash
+nvm use # Get nvm: https://github.com/creationix/nvm
 npm install
 ```
 
@@ -31,6 +32,8 @@ mysql -u root
 
 2) Create databases and user:
 
+Enter these mysql statements:
+
 ```sql
 CREATE USER 'csh_map'@'localhost' IDENTIFIED BY 'password';
 CREATE DATABASE csh_map;
@@ -40,22 +43,24 @@ GRANT ALL PRIVILEGES ON csh_map_test.* TO 'csh_map'@'localhost';
 exit;
 ```
 
+Or run `bin/db-setup.sql`.
+
 3) Create `config/config.json` from sample:
 
 ```json
 {
-	"development": {
-		"dialiect": "mysql",
-		"username": "csh_map",
-		"database": "csh_map_test",
-		"password": "",
-		"host": "127.0.0.1"
-	},
+  "development": {
+    "dialiect": "mysql",
+    "username": "csh_map",
+    "database": "csh_map_test",
+    "password": "password",
+    "host": "127.0.0.1"
+  },
   "production": {
     "dialiect": "mysql",
     "username": "csh_map",
     "database": "csh_map",
-    "password": "",
+    "password": "password",
     "host": "127.0.0.1"
   }
 }
@@ -81,6 +86,8 @@ PORT=3000
 ORIGIN="http://localhost:8888"
 # Expected contents of the Referer header (optional)
 REFERER="http://localhost:8888/demo/"
+# Secret token for overriding CORS and Referer restrictions (optional)
+SECRET="some super secret token"
 ```
 
 ## API
@@ -406,4 +413,4 @@ A Record is a saved record of a Member moving to a Location for a Reason.
 }
 ```
 
-**NOTE:** To remove a Member from the map, create a Record with a null Location for that Member. This can be done by POST-ing to /records with a LocationId of -1.
+**NOTE:** To remove a Member from the map, create a Record with a null Location for that Member. This can be done by POST-ing to `/records` with a LocationId of -1.

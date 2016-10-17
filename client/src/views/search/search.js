@@ -3,6 +3,11 @@ import ModalContentView from '../modals/modal-content';
 import SearchResultsView from './search-results';
 import searchModalTemplate from '../../templates/search-modal.html';
 
+/*
+* View for the contents of the Search modal.
+*
+* Contains a basic form for selecting the type of search, and an input for the search query.
+*/
 class SearchView extends ModalContentView {
 
   constructor(options) {
@@ -18,7 +23,9 @@ class SearchView extends ModalContentView {
 
   render() {
     const data = this.model.toJSON();
+    // Render the search form
     this.$el.html(this.template(data));
+    // Render the search results area
     this.$('#csh-map-search-results').html(this.resultsView.render().el);
     this._showResults();
     this.delegateEvents();
@@ -26,6 +33,7 @@ class SearchView extends ModalContentView {
   }
 
   close() {
+    // Clear the search query on close
     this.model.set('query', '');
   }
 
@@ -37,6 +45,8 @@ class SearchView extends ModalContentView {
     this._search();
   }
 
+  // Search can be an expensive operation.
+  // Debounce it to prevent it from being called too many times in a row.
   _debounceSearch(e) {
     clearTimeout(this.searchTimeout);
     this.searchTimeout = setTimeout(() => {

@@ -20,6 +20,7 @@ function MapAPI(options) {
 
 MapAPI.prototype.start = function () {
   var options = {
+    // Overwrite the database if in "development" mode
     force: (this.options.env === 'development')
   };
   return this.db.sequelize.sync(options)
@@ -73,6 +74,7 @@ MapAPI.prototype._startServer = function () {
   }.bind(this));
 };
 
+// Seed the database with test data (development mode only)
 MapAPI.prototype._seedData = function () {
   var that = this;
   var files = ['./fixtures/reasons.json'];
@@ -89,6 +91,8 @@ MapAPI.prototype._seedData = function () {
   });
 };
 
+// Configure CORS to prevent requests from outside domains (unless they have the secret token)
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 MapAPI.prototype._corsOptionsDelegate = function (req, callback) {
   var corsOptions = {};
   var secret = this.options.secret;
@@ -102,6 +106,9 @@ MapAPI.prototype._corsOptionsDelegate = function (req, callback) {
   callback(null, corsOptions);
 };
 
+// Prevent requests that come from unexpected sites (unless they have the secret token)
+// This is done in addition to CORS to attempt to allow a single "authorized application"
+// TODO - Using the Referer header works but is not standard or fully secure.
 MapAPI.prototype._createRefererMiddleware = function () {
   var secret = this.options.secret;
   var referer = this.options.referer;

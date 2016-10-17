@@ -6,8 +6,8 @@ process.env.TESTING = true;
 
 describe('v1 API routes', function () {
 
-  var mapAPI = null;  // MapAPI instance
-  var app = null;     // Express app
+  var mapAPI = null; // MapAPI instance
+  var app = null; // Express app
   var jsonRegex = /application\/json/;
   var membersLength = 0;
   var body = null;
@@ -344,7 +344,7 @@ describe('v1 API routes', function () {
       });
     });
 
-    // TODO: This returns a 200 even though the origin headers are different...
+    // TODO - This returns a 200 even though the origin headers are different...
     xit('500s on an invalid origin header', function (done) {
       request(app)
         .get('/v1/members')

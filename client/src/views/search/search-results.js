@@ -3,6 +3,11 @@ import _ from 'underscore';
 import MapEvents from '../../events';
 import searchResultsTemplate from '../../templates/search-results.html';
 
+/*
+* View for the results of a Search.
+*
+* I didn't want to use jQuery UI's autocomplete, so I wrote this myself.
+*/
 class SearchResultsView extends Backbone.View {
 
   constructor(options) {
@@ -22,10 +27,12 @@ class SearchResultsView extends Backbone.View {
     return this;
   }
 
+  // Set the search results from the model
   setResults(results) {
     this.results = results;
   }
 
+  // Center the map on the selected search result marker
   _handleClick(e) {
     const index = $(e.target).data('id');
     const marker = this.results[index].marker;
