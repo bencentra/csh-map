@@ -29,13 +29,19 @@ class CSHMap {
 
   constructor(config) {
     this.config = new Config(config);
-  }
-
-  init() {
     this._initModels();
     this._initViews();
     this._initEvents();
-    return this._render();
+  }
+
+  init() {
+    return this._loadMapDataAndRender()
+      .then(this._renderToolbar.bind(this))
+      .then(this._renderSearchModal.bind(this))
+      .then(this._renderInfoModal.bind(this))
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   _initModels() {
@@ -93,17 +99,6 @@ class CSHMap {
     MapEvents.on('info', this._showInfoModal, this);
     MapEvents.on('update', this._loadMapDataAndRender, this);
     MapEvents.on('alert', this._showAlert, this);
-  }
-
-  // After loading map data, render each piece of the UI
-  _render() {
-    return this._loadMapDataAndRender()
-      .then(this._renderToolbar.bind(this))
-      .then(this._renderSearchModal.bind(this))
-      .then(this._renderInfoModal.bind(this))
-      .catch(error => {
-        console.error(error);
-      });
   }
 
   _loadMapDataAndRender() {

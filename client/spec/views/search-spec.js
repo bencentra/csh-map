@@ -2,6 +2,7 @@ import SearchView from '../../src/views/search/search';
 import SearchModel from '../../src/models/search';
 import ModalView from '../../src/views/modals/modal';
 import Config from '../../src/config';
+import MapEvents from '../../src/events';
 
 describe('Search View', () => {
 
@@ -84,6 +85,22 @@ describe('Search View', () => {
       setTimeout(() => {
         expect(searchView.model.get('query')).toBe(query);
         expect(searchView.$('.result').length).toBe(1);
+        done();
+      }, 400); // Double the expected wait time, to be safe
+    });
+
+    it('handles clicks on a search result', done => {
+      spyOn(MapEvents, 'trigger');
+      const mockResults = [{
+        label: 'Ben Centra',
+        marker: {},
+      }];
+      spyOn(searchView.model, 'search').and.returnValue(mockResults);
+      const query = 'b';
+      searchView.$('#csh-map-search-input').val(query).trigger('keyup');
+      setTimeout(() => {
+        searchView.$('.result').first().click();
+        expect(MapEvents.trigger).toHaveBeenCalledWith('search-result', mockResults[0].marker);
         done();
       }, 400); // Double the expected wait time, to be safe
     });

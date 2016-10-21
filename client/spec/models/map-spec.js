@@ -58,7 +58,7 @@ describe('MapModel', () => {
       spyOn(AsyncCollection.prototype, 'init').and.returnValue(Q(true));
     });
 
-    it('creates the map marker data', (done) => {
+    it('creates the map marker data', done => {
       mapModel.init().then(() => {
         expect(mapModel.get('locations').init).toHaveBeenCalled();
         expect(mapModel.get('members').init).toHaveBeenCalled();
