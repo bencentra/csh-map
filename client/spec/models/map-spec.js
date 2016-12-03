@@ -1,5 +1,4 @@
 import MapModel from '../../src/models/map';
-import AsyncCollection from '../../src/collections/async-collection';
 import Config from '../../src/config';
 import Q from 'q';
 
@@ -21,17 +20,21 @@ describe('MapModel', () => {
     { uid: 'mcsaucy', cn: 'Josh McSaveney' },
     { uid: 'cohoe', cn: 'Grant Cohoe' },
   ];
+  const testReasons = [
+    { id: 1, name: 'Other', description: 'Other' },
+  ];
   const testRecords = [
     { LocationId: 2, MemberUid: 'mcsaucy', ReasonId: 1 },
     { LocationId: 1, MemberUid: 'cohoe', ReasonId: 1 },
     { LocationId: 2, MemberUid: 'bencentra', ReasonId: 1 },
   ];
-  const junkMarkers = {
-    10: {
-      location: {},
-      members: [],
-    },
-  };
+
+  function fakeInit(asyncCollection, state) {
+    return function () {
+      asyncCollection.add(state);
+      return Q(true);
+    };
+  }
 
   beforeEach(() => {
     mapModel = new MapModel({
@@ -51,11 +54,10 @@ describe('MapModel', () => {
   describe('init()', () => {
 
     beforeEach(() => {
-      mapModel.get('locations').add(testLocations);
-      mapModel.get('members').add(testMembers);
-      mapModel.get('records').add(testRecords);
-      mapModel.set('markers', junkMarkers);
-      spyOn(AsyncCollection.prototype, 'init').and.returnValue(Q(true));
+      spyOn(mapModel.get('locations'), 'init').and.callFake(fakeInit(mapModel.get('locations'), testLocations));
+      spyOn(mapModel.get('members'), 'init').and.callFake(fakeInit(mapModel.get('members'), testMembers));
+      spyOn(mapModel.get('records'), 'init').and.callFake(fakeInit(mapModel.get('records'), testRecords));
+      spyOn(mapModel.get('reasons'), 'init').and.callFake(fakeInit(mapModel.get('reasons'), testReasons));
     });
 
     it('creates the map marker data', done => {

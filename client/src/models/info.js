@@ -60,7 +60,7 @@ class InfoModel extends Backbone.Model {
   // Remove a user from the map
   removeFromMap() {
     return this._removeMember()
-      .then(this.defaults.bind(this));
+      .then(() => this.set(this.defaults()));
   }
 
   _geocodeAddress(address) {

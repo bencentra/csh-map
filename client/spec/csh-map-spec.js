@@ -1,5 +1,6 @@
 import MapEvents from '../src/events';
 import Q from 'q';
+import MapModel from '../src/models/map';
 
 describe('CSH Map', () => {
 
@@ -67,7 +68,7 @@ describe('CSH Map', () => {
   describe('init()', () => {
 
     beforeEach(done => {
-      spyOn(map.mapModel, 'init').and.returnValue(Q(true));
+      spyOn(MapModel.prototype, 'init').and.returnValue(Q(true));
       spyOn(map.mapView, 'render').and.callThrough();
       spyOn(map.toolbarView, 'render').and.callThrough();
       spyOn(map.alertView, 'render').and.callThrough();
@@ -79,7 +80,7 @@ describe('CSH Map', () => {
     });
 
     it('gets data from the model', () => {
-      expect(map.mapModel.init).toHaveBeenCalled();
+      expect(MapModel.prototype.init).toHaveBeenCalled();
     });
 
     it('appends the template to the DOM', () => {
@@ -105,7 +106,9 @@ describe('CSH Map', () => {
   describe('events', () => {
 
     beforeEach(done => {
-      spyOn(map.mapModel, 'init').and.returnValue(Q(true));
+      // Spy on the prototype because .bind()-ing the event handler
+      // causes a spy on map.mapModel.init() to not be applied properly
+      spyOn(MapModel.prototype, 'init').and.returnValue(Q(true));
       map.init().then(done);
     });
 
@@ -150,7 +153,7 @@ describe('CSH Map', () => {
     });
 
     it('re-renders the map on "update" event', done => {
-      map.mapModel.init.calls.reset();
+      MapModel.prototype.init.calls.reset();
       spyOn(map.mapView, 'render').and.callThrough();
       MapEvents.trigger('update');
       setTimeout(() => {
