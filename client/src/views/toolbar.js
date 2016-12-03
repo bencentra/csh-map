@@ -3,6 +3,14 @@ import _ from 'underscore';
 import MapEvents from '../events';
 import toolbarTemplate from '../templates/toolbar.html';
 
+/*
+* View for the map's toolbar.
+*
+* Has buttons for:
+* - Centering the map
+* - Searching the map
+* - Updating your location on the map
+*/
 class ToolbarView extends Backbone.View {
 
   constructor(options) {
@@ -39,6 +47,7 @@ class ToolbarView extends Backbone.View {
     MapEvents.trigger('info');
   }
 
+  // Collapse the navigation on mobile browsers
   _collapseNavbar() {
     this.$('.collapse').collapse('hide');
   }

@@ -2,7 +2,7 @@
 
 Static BackboneJS UI app for the CSH Alumni Map.
 
-Written in ES6, transpiled with Babel, and bundled with Browserify.
+Written in ES2015, transpiled with Babel, and bundled with Browserify.
 
 ## Installation
 

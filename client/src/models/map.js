@@ -9,6 +9,14 @@ import ReasonCollection from '../collections/reasons';
 let start = null;
 let end = null;
 
+/*
+* Model representing the map and all its data:
+* - members: CSHers who have added themselves to the map
+* - locations: Places where CSHers are or have been
+* - records: Records of each move a CSHer has MapModel
+* - reasons: Reasons a CSHer can record for why they moved
+* - markers: Markers on the map, one per location with a list of members who reside there
+*/
 class MapModel extends Backbone.Model {
 
   constructor(attributes, options) {
@@ -42,6 +50,8 @@ class MapModel extends Backbone.Model {
     console.log(`Time: ${end - start}ms`);
   }
 
+  // Create map markers from the raw data
+  // TODO - Make markers a proper Backbone Collection, each marker a Backbone Models
   _createMarkers() {
     const markers = {};
     this._destroyMarkers();
@@ -62,6 +72,7 @@ class MapModel extends Backbone.Model {
     this.set('markers', markers);
   }
 
+  // Reset the markers, removing them from the Google map along the way
   _destroyMarkers() {
     _.each(this.get('markers'), marker => {
       if (typeof marker.unset === 'function') {

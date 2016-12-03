@@ -1,6 +1,11 @@
 import Backbone from 'backbone';
 import Q from 'q';
 
+/*
+* Model for the current user's information. Used in the "My Location" modal.
+*
+* Responsible for getting and setting the user's location on the map.
+*/
 class InfoModel extends Backbone.Model {
 
   constructor(attributes, options) {
@@ -8,11 +13,10 @@ class InfoModel extends Backbone.Model {
     this.geocoder = new google.maps.Geocoder();
     this.geocodeResult = {};
     this.updateData = {};
-    this.defaults();
   }
 
   defaults() {
-    this.set({
+    return {
       member: null,
       record: null,
       location: null,
@@ -20,9 +24,11 @@ class InfoModel extends Backbone.Model {
       city: '',
       state: '',
       country: '',
-    });
+    };
   }
 
+  // Populate the model with information from the Map model
+  // Return without setting data if the user is not on the map yet.
   loadDataFromMap() {
     const member = this.get('map').get('members').findWhere({ uid: this.get('config').uid });
     if (!member) return;
@@ -41,6 +47,7 @@ class InfoModel extends Backbone.Model {
     });
   }
 
+  // Update the user's location on the map
   updateAddress() {
     const address = `${this.get('city')}, ${this.get('state')}, ${this.get('country')}`;
     return this._geocodeAddress(address)
@@ -50,9 +57,10 @@ class InfoModel extends Backbone.Model {
       .then(this.loadDataFromMap.bind(this));
   }
 
+  // Remove a user from the map
   removeFromMap() {
     return this._removeMember()
-      .then(this.defaults.bind(this));
+      .then(() => this.set(this.defaults()));
   }
 
   _geocodeAddress(address) {
@@ -133,7 +141,7 @@ class InfoModel extends Backbone.Model {
     const uid = this.get('member').get('uid');
     const record = {
       MemberUid: uid,
-      LocationId: -1,
+      LocationId: -1, // Magic number representing no location
       ReasonId: this.get('reason'),
     };
     return this.get('map').get('records').addAndSync('create', record);

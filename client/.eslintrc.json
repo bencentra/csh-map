@@ -10,6 +10,7 @@
     "CSHMap": true
   },
   "rules": {
+    "max-len": [2, 120],
     "new-cap": 1,
     "no-useless-constructor": 1,
     "no-underscore-dangle": 0,

@@ -1,5 +1,9 @@
 let instance = null;
 
+/*
+* Configuration passed in from the loader app.
+* TODO - This is a Singleton, so it doesn't need to be a "Class." Use an object literal instead.
+*/
 export default class Config {
 
   constructor(config) {

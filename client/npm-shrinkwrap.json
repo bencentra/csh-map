@@ -3229,6 +3229,11 @@
       "from": "karma-phantomjs-launcher@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/karma-phantomjs-launcher/-/karma-phantomjs-launcher-1.0.2.tgz"
     },
+    "karma-spec-reporter": {
+      "version": "0.0.26",
+      "from": "karma-spec-reporter@latest",
+      "resolved": "https://registry.npmjs.org/karma-spec-reporter/-/karma-spec-reporter-0.0.26.tgz"
+    },
     "kew": {
       "version": "0.7.0",
       "from": "kew@>=0.7.0 <0.8.0",

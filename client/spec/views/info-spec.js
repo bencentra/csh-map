@@ -6,6 +6,7 @@ import ReasonCollection from '../../src/collections/reasons';
 import Config from '../../src/config';
 import Backbone from 'backbone';
 import Q from 'q';
+import MapEvents from '../../src/events';
 
 describe('InfoView', () => {
 
@@ -86,6 +87,7 @@ describe('InfoView', () => {
   describe('events', () => {
 
     beforeEach(() => {
+      spyOn(MapEvents, 'trigger');
       spyOn(infoView.model, 'loadDataFromMap');
       spyOn(infoView.model, 'updateAddress').and.returnValue(Q(true));
       spyOn(infoView.model, 'removeFromMap').and.returnValue(Q(true));
