@@ -56,7 +56,9 @@ class MapView extends Backbone.View {
     decorator.googleMarker.addListener('click', () => {
       decorator.infoWindow.open(this.gmap, decorator.googleMarker);
       this.gmap.setCenter(decorator.googleMarker.position);
-      this.gmap.setZoom(6);
+      if (this.gmap.getZoom() < 6) {
+        this.gmap.setZoom(6);
+      }
     });
     // Create a method for removing the Google Maps Marker from the map
     decorator.unset = function unset() {
