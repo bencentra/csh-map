@@ -1,0 +1,7 @@
+{
+  "name": "csh-map-lol",
+  "scripts": {
+    "start": "sh start.sh"
+  }
+}
+
